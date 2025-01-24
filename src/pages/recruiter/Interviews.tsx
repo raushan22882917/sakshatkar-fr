@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getInterviewList, updateInterviewStatus } from "@/services/interviewService";
 import { Interview } from "@/types/interview";
 
-export function Interviews() {
+const Interviews = () => {
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const { toast } = useToast();
 
@@ -76,4 +76,6 @@ export function Interviews() {
       </div>
     </div>
   );
-}
+};
+
+export default Interviews;

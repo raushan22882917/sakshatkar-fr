@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Table } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { getJobs, deleteJob } from "@/services/jobService";
-import { Job } from "@/types/job";
+import { Job } from "@/types/jobs";
 
-const Jobs: React.FC = () => {
+const Jobs = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const { toast } = useToast();
 
@@ -34,6 +34,7 @@ const Jobs: React.FC = () => {
       toast({
         title: "Success",
         description: "Job deleted successfully.",
+        variant: "destructive",
       });
     } catch (error) {
       toast({
