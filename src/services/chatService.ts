@@ -1,28 +1,5 @@
 import { groqApi } from './groqApi';
-
-export interface PracticeQuestion {
-  type: 'mcq' | 'subjective' | 'debugging' | 'coding' | 'fill_in_blank';
-  question: string;
-  options?: string[];
-  code?: string;
-  blanks?: string[];
-  correctAnswer: string;
-  sampleAnswer?: string;
-  testCases?: Array<{
-    input: string;
-    expectedOutput: string;
-  }>;
-  hints?: string[];
-  explanation?: string;
-}
-
-export interface ChatMessage {
-  id: string;
-  type: 'user' | 'understanding-check' | 'practice-question' | 'feedback' | 'error' | 'next-step-prompt';
-  content: string;
-  suggestedQuestions?: string[];
-  practiceData?: PracticeQuestion;
-}
+import { ChatMessage, PracticeQuestion, QuestionType } from '../types/chat';
 
 class ChatService {
   private static instance: ChatService;
@@ -51,7 +28,8 @@ class ChatService {
         {
           id: Date.now().toString(),
           content: explanation.response,
-          type: 'text'
+          type: 'understanding-check',
+          suggestedQuestions: explanation.suggestedQuestions
         },
         {
           id: (Date.now() + 1).toString(),
@@ -68,14 +46,13 @@ class ChatService {
   public async handleUnderstanding(understood: boolean, previousExplanation: string): Promise<ChatMessage[]> {
     try {
       if (understood) {
-        // Generate a question based on the current query
-        const questionData = await groqApi.generateQuestion(this.currentQuery);
+        const questionData = await this.generatePracticeQuestion(this.currentQuery);
         
         return [
           {
             id: Date.now().toString(),
             content: "Great! Let's practice with this question about " + this.currentQuery + ":",
-            type: 'text'
+            type: 'understanding-check'
           },
           {
             id: (Date.now() + 1).toString(),
@@ -86,7 +63,7 @@ class ChatService {
         ];
       } else {
         const simpleExplanation = await groqApi.generateSimplifiedExplanation(
-          this.currentQuery, // Use current query instead of original
+          this.currentQuery,
           previousExplanation
         );
 
@@ -94,7 +71,7 @@ class ChatService {
           {
             id: Date.now().toString(),
             content: simpleExplanation.response,
-            type: 'text'
+            type: 'understanding-check'
           },
           {
             id: (Date.now() + 1).toString(),
@@ -115,53 +92,36 @@ class ChatService {
     }
   }
 
-  private async generateRandomPracticeQuestion(query: string): Promise<ChatMessage[]> {
-    const question = await this.generatePracticeQuestion(query);
-    let content = '';
-
-    switch (question.type) {
-      case 'mcq':
-        content = `${question.question}\n\n${question.options?.join('\n')}`;
-        break;
-      case 'subjective':
-        content = question.question;
-        break;
-      case 'debugging':
-        content = `${question.question}\n\nDebug this code:\n\`\`\`\n${question.code}\n\`\`\``;
-        break;
-      case 'coding':
-        content = `${question.question}\n\n${question.testCases?.map((tc, i) => 
-          `Test Case ${i + 1}:\nInput: ${tc.input}\nExpected Output: ${tc.expectedOutput}`
-        ).join('\n\n')}`;
-        break;
-      case 'fill_in_blank':
-        content = `${question.question}\n\nFill in the blanks with: ${question.blanks?.join(', ')}`;
-        break;
-    }
-
-    return [
-      {
-        id: Date.now().toString(),
-        content,
-        type: 'practice-question',
-        practiceData: question
-      },
-      {
-        id: (Date.now() + 1).toString(),
-        content: "Would you like to try another question or move to a different topic?",
-        type: 'next-step-prompt'
-      }
-    ];
-  }
-
   public async generatePracticeQuestion(query: string): Promise<PracticeQuestion> {
     try {
-      const question = await groqApi.generatePracticeQuestion(query);
-      return question;
+      const questionType: QuestionType = this.determineQuestionType(query);
+      const response = await groqApi.generatePracticeQuestion(questionType, query);
+      
+      return {
+        type: questionType,
+        question: response.response,
+        options: response.practice_questions?.[0]?.options,
+        code: response.practice_questions?.[0]?.code,
+        correctAnswer: response.practice_questions?.[0]?.correctAnswer || '',
+        testCases: response.practice_questions?.[0]?.testCases,
+        hints: response.practice_questions?.[0]?.hints
+      };
     } catch (error) {
       console.error('Error generating practice question:', error);
       throw error;
     }
+  }
+
+  private determineQuestionType(query: string): QuestionType {
+    // Simple logic to determine question type based on query content
+    if (query.toLowerCase().includes('debug') || query.toLowerCase().includes('fix')) {
+      return 'debugging';
+    } else if (query.toLowerCase().includes('code') || query.toLowerCase().includes('implement')) {
+      return 'coding';
+    } else if (query.toLowerCase().includes('explain') || query.toLowerCase().includes('describe')) {
+      return 'theoretical';
+    }
+    return 'mcq'; // default to MCQ
   }
 }
 

@@ -3,9 +3,19 @@ import axios, { AxiosError } from 'axios';
 interface GroqResponse {
   response: string;
   topic?: string;
-  next_topic?: string;
-  next_topic_introduction?: string;
-  practice_questions?: any[];
+  suggestedQuestions?: string[];
+  practice_questions?: Array<{
+    question: string;
+    type: string;
+    options?: string[];
+    code?: string;
+    correctAnswer: string;
+    testCases?: Array<{
+      input: string;
+      expectedOutput: string;
+    }>;
+    hints?: string[];
+  }>;
 }
 
 class GroqAPI {
@@ -154,7 +164,7 @@ class GroqAPI {
     return this.makeRequest(messages);
   }
 
-  public async generatePracticeQuestion(type: 'mcq' | 'debugging' | 'theoretical' | 'coding', query: string): Promise<GroqResponse> {
+  public async generatePracticeQuestion(type: string, query: string): Promise<GroqResponse> {
     const messages = [
       {
         role: 'system',
