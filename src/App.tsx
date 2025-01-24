@@ -9,6 +9,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { AdminRoute } from "@/components/AdminRoute";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import StudyMateAI from "@/pages/StudyMateAI";
 import DevOpsFlow from "@/components/DevOpsFlow";
 import MLFlow from './components/MLFlow/MLFlow';
 import Index from "./pages/Index";
@@ -94,6 +95,16 @@ const App = () => {
                     <AppSidebar />
                     <main className="flex-1">
                       <Routes>
+                        {/* Add StudyMate AI route */}
+                        <Route 
+                          path="/studymate-ai" 
+                          element={
+                            <ProtectedRoute>
+                              <StudyMateAI />
+                            </ProtectedRoute>
+                          } 
+                        />
+                        
                         {/* Learning Path Routes */}
                         <Route 
                           path="/learn" 

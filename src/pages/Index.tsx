@@ -220,6 +220,10 @@ export default function Index() {
     navigate('/learn');
   };
 
+  const handleStudyMateClick = () => {
+    navigate('/studymate-ai');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#fdfcfb] to-[#e2d1c3] dark:from-gray-900 dark:to-gray-800">
       <Navbar />
@@ -260,7 +264,7 @@ export default function Index() {
                   </Button>
 
                   <Button
-                    onClick={() => setShowLearningPaths(!showLearningPaths)}
+                    onClick={handleStudyMateClick}
                     className="relative px-6 py-3 text-white rounded-full flex items-center transition-all duration-300 
                              bg-gray-800 hover:bg-gradient-to-r from-pink-600 to-purple-500 
                              shadow-lg shadow-pink-500/50 border border-transparent hover:border-pink-400"
