@@ -1,26 +1,41 @@
-import type { Database } from './database.types';
+export type ContestStatus = 'UPCOMING' | 'ONGOING' | 'ENDED';
+export type UserStatus = 'Solved' | 'Attempted';
+export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
-export type Contest = Database['public']['Tables']['coding_contests']['Row'] & {
-  problems?: Problem[];
-  user_rank?: number;
-};
+export interface ContestProblem {
+  id: string;
+  title: string;
+  difficulty: Difficulty;
+  points: number;
+  solved_count: number;
+  attempted_count: number;
+  user_status: UserStatus;
+}
 
-export type Problem = Database['public']['Tables']['coding_problems']['Row'] & {
-  user_status?: 'Solved' | 'Attempted' | null;
-};
+export interface Contest {
+  id: string;
+  title: string;
+  description: string;
+  start_time: string;
+  end_time: string;
+  problems: ContestProblem[];
+  total_participants: number;
+  coding_problems?: ContestProblem[];
+}
 
-export type ContestParticipant = Database['public']['Tables']['contest_participants']['Row'] & {
-  profiles?: {
-    name: string;
-  };
-};
+export interface ContestParticipant {
+  id: string;
+  contest_id: string;
+  user_id: string;
+  joined_at: string;
+  score: number;
+  solved_problems: number;
+  rank: number;
+  name?: string;
+}
 
-export type ContestSubmission = Database['public']['Tables']['contest_submissions']['Row'];
-
-export type TestCase = {
+export interface TestCase {
   input: string;
   expectedOutput: string;
-  actualOutput?: string;
-  passed?: boolean;
   explanation?: string;
-};
+}

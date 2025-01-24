@@ -1,21 +1,90 @@
 export interface Database {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          name: string | null;
+          email: string | null;
+          college: string | null;
+          created_at: string;
+          updated_at: string;
+          profile_image_url: string | null;
+          bio: string | null;
+          badges: any[] | null;
+          resume_url: string | null;
+          level: string | null;
+          open_to_work: boolean | null;
+          user_type: string | null;
+        };
+        Insert: {
+          id: string;
+          name?: string | null;
+          email?: string | null;
+          college?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          profile_image_url?: string | null;
+          bio?: string | null;
+          badges?: any[] | null;
+          resume_url?: string | null;
+          level?: string | null;
+          open_to_work?: boolean | null;
+          user_type?: string | null;
+        };
+        Update: {
+          id?: string;
+          name?: string | null;
+          email?: string | null;
+          college?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          profile_image_url?: string | null;
+          bio?: string | null;
+          badges?: any[] | null;
+          resume_url?: string | null;
+          level?: string | null;
+          open_to_work?: boolean | null;
+          user_type?: string | null;
+        };
+      };
       coding_contests: {
         Row: {
           id: string;
           title: string;
-          description: string;
+          description: string | null;
           start_time: string;
           end_time: string;
           created_at: string;
-          created_by: string;
+          created_by: string | null;
           is_public: boolean;
           status: 'UPCOMING' | 'ONGOING' | 'ENDED';
           participant_count: number;
         };
-        Insert: Omit<Tables['coding_contests']['Row'], 'id' | 'created_at' | 'participant_count'>;
-        Update: Partial<Tables['coding_contests']['Row']>;
+        Insert: {
+          id?: string;
+          title: string;
+          description?: string | null;
+          start_time: string;
+          end_time: string;
+          created_at?: string;
+          created_by?: string | null;
+          is_public?: boolean;
+          status?: 'UPCOMING' | 'ONGOING' | 'ENDED';
+          participant_count?: number;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string | null;
+          start_time?: string;
+          end_time?: string;
+          created_at?: string;
+          created_by?: string | null;
+          is_public?: boolean;
+          status?: 'UPCOMING' | 'ONGOING' | 'ENDED';
+          participant_count?: number;
+        };
       };
       coding_problems: {
         Row: {
@@ -25,21 +94,47 @@ export interface Database {
           description: string;
           difficulty: 'EASY' | 'MEDIUM' | 'HARD';
           points: number;
-          constraints: string;
-          input_format: string;
-          output_format: string;
+          constraints: string | null;
+          input_format: string | null;
+          output_format: string | null;
           time_limit: number;
           memory_limit: number;
-          test_cases: {
-            input: string;
-            output: string;
-            explanation?: string;
-          }[];
+          test_cases: any;
           solved_count: number;
           attempted_count: number;
         };
-        Insert: Omit<Tables['coding_problems']['Row'], 'id' | 'solved_count' | 'attempted_count'>;
-        Update: Partial<Tables['coding_problems']['Row']>;
+        Insert: {
+          id?: string;
+          contest_id: string;
+          title: string;
+          description: string;
+          difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+          points: number;
+          constraints?: string | null;
+          input_format?: string | null;
+          output_format?: string | null;
+          time_limit?: number;
+          memory_limit?: number;
+          test_cases?: any;
+          solved_count?: number;
+          attempted_count?: number;
+        };
+        Update: {
+          id?: string;
+          contest_id?: string;
+          title?: string;
+          description?: string;
+          difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
+          points?: number;
+          constraints?: string | null;
+          input_format?: string | null;
+          output_format?: string | null;
+          time_limit?: number;
+          memory_limit?: number;
+          test_cases?: any;
+          solved_count?: number;
+          attempted_count?: number;
+        };
       };
       contest_participants: {
         Row: {
@@ -51,8 +146,24 @@ export interface Database {
           solved_problems: number;
           rank: number;
         };
-        Insert: Omit<Tables['contest_participants']['Row'], 'id' | 'joined_at' | 'score' | 'solved_problems' | 'rank'>;
-        Update: Partial<Tables['contest_participants']['Row']>;
+        Insert: {
+          id?: string;
+          contest_id: string;
+          user_id: string;
+          joined_at?: string;
+          score?: number;
+          solved_problems?: number;
+          rank?: number;
+        };
+        Update: {
+          id?: string;
+          contest_id?: string;
+          user_id?: string;
+          joined_at?: string;
+          score?: number;
+          solved_problems?: number;
+          rank?: number;
+        };
       };
       contest_submissions: {
         Row: {
@@ -64,22 +175,36 @@ export interface Database {
           language: string;
           status: 'ACCEPTED' | 'WRONG_ANSWER' | 'TIME_LIMIT_EXCEEDED' | 'MEMORY_LIMIT_EXCEEDED' | 'RUNTIME_ERROR';
           score: number;
-          execution_time: number;
-          memory_used: number;
+          execution_time: number | null;
+          memory_used: number | null;
           submitted_at: string;
         };
-        Insert: Omit<Tables['contest_submissions']['Row'], 'id' | 'submitted_at'>;
-        Update: Partial<Tables['contest_submissions']['Row']>;
-      };
-      profiles: {
-        Row: {
-          id: string;
-          name: string;
-          email: string;
-          avatar_url: string | null;
+        Insert: {
+          id?: string;
+          contest_id: string;
+          problem_id: string;
+          user_id: string;
+          code: string;
+          language: string;
+          status: 'ACCEPTED' | 'WRONG_ANSWER' | 'TIME_LIMIT_EXCEEDED' | 'MEMORY_LIMIT_EXCEEDED' | 'RUNTIME_ERROR';
+          score?: number;
+          execution_time?: number | null;
+          memory_used?: number | null;
+          submitted_at?: string;
         };
-        Insert: Omit<Tables['profiles']['Row'], 'id'>;
-        Update: Partial<Tables['profiles']['Row']>;
+        Update: {
+          id?: string;
+          contest_id?: string;
+          problem_id?: string;
+          user_id?: string;
+          code?: string;
+          language?: string;
+          status?: 'ACCEPTED' | 'WRONG_ANSWER' | 'TIME_LIMIT_EXCEEDED' | 'MEMORY_LIMIT_EXCEEDED' | 'RUNTIME_ERROR';
+          score?: number;
+          execution_time?: number | null;
+          memory_used?: number | null;
+          submitted_at?: string;
+        };
       };
     };
   };

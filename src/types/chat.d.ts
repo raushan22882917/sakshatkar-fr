@@ -20,6 +20,8 @@ export interface EvaluationResponse {
   isCorrect: boolean;
   feedback: string;
   explanation: string;
+  passed?: boolean;
+  message?: string;
 }
 
 export type MessageType = 
