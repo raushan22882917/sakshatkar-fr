@@ -94,6 +94,48 @@ const App = () => {
                     <AppSidebar />
                     <main className="flex-1">
                       <Routes>
+                        {/* Learning Path Routes */}
+                        <Route 
+                          path="/learn" 
+                          element={
+                            <ProtectedRoute>
+                              <ChatLayout />
+                            </ProtectedRoute>
+                          } 
+                        />
+                        <Route 
+                          path="/learn/python" 
+                          element={
+                            <ProtectedRoute>
+                              <ChatLayout />
+                            </ProtectedRoute>
+                          } 
+                        />
+                        <Route 
+                          path="/learn/dsa-basic" 
+                          element={
+                            <ProtectedRoute>
+                              <ChatLayout />
+                            </ProtectedRoute>
+                          } 
+                        />
+                        <Route 
+                          path="/learn/dsa-intermediate" 
+                          element={
+                            <ProtectedRoute>
+                              <ChatLayout />
+                            </ProtectedRoute>
+                          } 
+                        />
+                        <Route 
+                          path="/learn/dsa-advanced" 
+                          element={
+                            <ProtectedRoute>
+                              <ChatLayout />
+                            </ProtectedRoute>
+                          } 
+                        />
+                        
                         {/* Public routes */}
                         <Route path="/jobpost" element={<JobsPost />} />
                         
