@@ -71,14 +71,14 @@ const practiceModes = [
   {
     title: "Beginers Coder",
     description: "Enhance your coding skills independently with comprehensive feedback.",
-    icon: User,
+    icon: Code2,
     route: "/self-practice",
     image: "https://www.yarddiant.com/images/how-to-practice-coding-every-day.jpg",
   },
   {
     title: "Experianced Coder",
     description: "Work alongside peers to solve problems and learn collectively.",
-    icon: Users,
+    icon: UsersIcon,
     route: "/peer-practice",
     image: "https://www.codio.com/hubfs/Blog_EN_PICS/August%202021%20Blog%20-%20Collaborative%20Coding%20in%20Codio.png#keepProtocol",
   },
@@ -86,21 +86,21 @@ const practiceModes = [
   {
     title: "AI-Assisted DevOps",
     description: "Practice DevOps concepts with the support of AI tools.",
-    icon: Code,
+    icon: Code2,
     route: "/devops-practice",
     image: "https://www.amplework.com/wp-content/uploads/2022/07/DevOps-with-AI.png",
   },
   {
     title: "HR Round Simulation",
     description: "Prepare for HR interviews by practicing common questions and scenarios.",
-    icon: UserCog,
+    icon: UsersIcon,
     route: "/hr-interview",
     image: "https://media.gettyimages.com/id/1365436662/photo/successful-partnership.jpg?s=612x612&w=0&k=20&c=B1xspe9Q5WMsLc7Hc9clR8MWUL4bsK1MfUdDNVNR2Xg=",
   },
   {
     title: "Technical Round Simulation",
     description: "Sharpen your technical skills with simulated problem-solving sessions.",
-    icon: Code,
+    icon: Code2,
     route: "/technical-round",
     image: "",
   },
@@ -115,7 +115,7 @@ const practiceModes = [
 
 const services = [
   {
-    icon: Brain,
+    icon: BrainCircuit,
     title: "Technical Interview Practice",
     description: "Practice technical interviews with AI-powered feedback and evaluation",
     color: "bg-purple-500/10 text-purple-500",
