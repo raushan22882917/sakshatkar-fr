@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User, Users, UserCheck, Building, UserCog, Code, Star, Heart,BrainCircuit , ThumbsUp, BrainCog, Book, Video } from "lucide-react";
+import { User, Users, UserCheck, Building, UserCog, Code, Star, Heart, BrainCircuit, ThumbsUp, BrainCog, Book, Video } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PracticeModeCard } from "@/components/PracticeModeCard";
@@ -9,7 +9,7 @@ import { MdSmartToy } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Brain, Code2, Users as UsersIcon, MessageSquare, BookOpen, Target, Zap, Plus, Minus } from "lucide-react";
+import { LearningPathCards } from "@/components/learning/LearningPathCards";
 
 const feedbacks = [
   {
@@ -174,6 +174,7 @@ export default function Index() {
   const [currentText, setCurrentText] = useState("");
   const [currentFeedbackIndex, setCurrentFeedbackIndex] = useState(0);
   const textArray = ["Master Every Interview, Land Your Dream Job!"];
+  const [showLearningPaths, setShowLearningPaths] = useState(false);
 
   const { data: userCount = 0, isLoading: isLoadingUserCount } = useQuery({
     queryKey: ['userCount'],
@@ -230,30 +231,37 @@ export default function Index() {
                 </p>
 
                 <div className="flex space-x-4">
-  <Button
-    onClick={() => navigate('/video-interview')}
-    className="relative px-6 py-3 text-white rounded-full flex items-center transition-all duration-300 
-               bg-gray-800 hover:bg-gradient-to-r from-purple-600 to-blue-500 
-               shadow-lg shadow-blue-500/50 border border-transparent hover:border-blue-400"
-  >
-    <Video className="mr-2 w-6 h-6 text-blue-300 group-hover:text-blue-400 transition-colors" />
-    <span className="text-lg font-semibold">Virtual Interview AI</span>
-    <span className="absolute inset-0 rounded-full animate-pulse opacity-40"></span>
-  </Button>
+                  <Button
+                    onClick={() => navigate('/video-interview')}
+                    className="relative px-6 py-3 text-white rounded-full flex items-center transition-all duration-300 
+                             bg-gray-800 hover:bg-gradient-to-r from-purple-600 to-blue-500 
+                             shadow-lg shadow-blue-500/50 border border-transparent hover:border-blue-400"
+                  >
+                    <Video className="mr-2 w-6 h-6 text-blue-300 group-hover:text-blue-400 transition-colors" />
+                    <span className="text-lg font-semibold">Virtual Interview AI</span>
+                    <span className="absolute inset-0 rounded-full animate-pulse opacity-40"></span>
+                  </Button>
 
-  <Button
-    onClick={handleGetStarted}
-    className="relative px-6 py-3 text-white rounded-full flex items-center transition-all duration-300 
-               bg-gray-800 hover:bg-gradient-to-r from-pink-600 to-purple-500 
-               shadow-lg shadow-pink-500/50 border border-transparent hover:border-pink-400"
-  >
-    <BrainCircuit className="mr-2 w-6 h-6 text-pink-300 group-hover:text-pink-400 transition-colors" />
-    <span className="text-lg font-semibold">StudyMate AI</span>
-    <span className="absolute inset-0 rounded-full animate-pulse opacity-40"></span>
-  </Button>
-</div>
+                  <Button
+                    onClick={() => setShowLearningPaths(!showLearningPaths)}
+                    className="relative px-6 py-3 text-white rounded-full flex items-center transition-all duration-300 
+                             bg-gray-800 hover:bg-gradient-to-r from-pink-600 to-purple-500 
+                             shadow-lg shadow-pink-500/50 border border-transparent hover:border-pink-400"
+                  >
+                    <BrainCircuit className="mr-2 w-6 h-6 text-pink-300 group-hover:text-pink-400 transition-colors" />
+                    <span className="text-lg font-semibold">StudyMate AI</span>
+                    <span className="absolute inset-0 rounded-full animate-pulse opacity-40"></span>
+                  </Button>
+                </div>
 
+                {showLearningPaths && (
+                  <div className="mt-8 animate-fade-in">
+                    <h2 className="text-2xl font-bold mb-6">Choose Your Learning Path</h2>
+                    <LearningPathCards />
+                  </div>
+                )}
               </div>
+
               <div className="relative md:w-1/2 ml-8 bg-transparent">
                 <img
                   src="front.png"
