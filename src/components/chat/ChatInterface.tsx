@@ -26,7 +26,8 @@ import {
   Briefcase,
   Code2,
   HelpCircle as HelpCircleIcon,
-  ChevronDown
+  ChevronDown,
+  Menu
 } from "lucide-react";
 import { langchainService } from '@/services/langchainService';
 import { cn } from "@/lib/utils";
@@ -36,6 +37,7 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import aiGif from '@/assets/ai-tutor.png';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import topicsData from '../../data/topics.json';
 
 interface CodeProps {
   node?: any;
@@ -215,7 +217,20 @@ const chatSuggestions = [
   },
 ];
 
-const ChatInterface = forwardRef((props, ref) => {
+interface TopicData {
+  id: string;
+  title: string;
+  subtopics: Array<{
+    id: string;
+    title: string;
+  }>;
+}
+
+const ChatInterface: React.FC = () => {
+  const { topicId } = useParams<{ topicId: string }>();
+  const [selectedSubtopic, setSelectedSubtopic] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [currentMessage, setCurrentMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -232,6 +247,25 @@ const ChatInterface = forwardRef((props, ref) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [speaking, setSpeaking] = useState<string | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(true);
+
+  const currentTopic = (topicsData as Record<string, TopicData>)[topicId || ''];
+
+  const handleSubtopicClick = (subtopicId: string) => {
+    setSelectedSubtopic(subtopicId);
+    // Here you can trigger the chat to load content for this subtopic
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(currentMessage);
+  };
+
+  const handleEdit = () => {
+    // Implement edit functionality
+  };
+
+  const handleDelete = () => {
+    // Implement delete functionality
+  };
 
   React.useImperativeHandle(ref, () => ({
     sendMessage: (message: string) => {
@@ -515,298 +549,320 @@ const ChatInterface = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-background">
-      <TutorSidebar
-        onDownload={handleDownloadPDF}
-        onRestart={handleRestartChat}
-        onCopy={handleCopyChat}
-        onDelete={handleDeleteChat}
-        onEdit={handleEditChat}
-      />
-      <div className="flex-1 flex flex-col max-w-5xl mx-auto">
-        <ScrollArea className="flex-1 p-4">
-          <div className="space-y-4" ref={chatContainerRef}>
-            {messages.map((message) => (
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} bg-white shadow-lg transition-all duration-300 overflow-hidden`}>
+        <div className="p-4">
+          <h2 className="text-xl font-semibold mb-4">{currentTopic?.title}</h2>
+          <div className="space-y-2">
+            {currentTopic?.subtopics.map((subtopic) => (
               <div
-                key={message.id}
-                className={cn(
-                  "flex items-start gap-3",
-                  message.type === 'user' ? "justify-end" : "justify-start"
-                )}
+                key={subtopic.id}
+                className={`p-2 rounded cursor-pointer ${
+                  selectedSubtopic === subtopic.id
+                    ? 'bg-primary text-white'
+                    : 'hover:bg-gray-100'
+                }`}
+                onClick={() => handleSubtopicClick(subtopic.id)}
               >
-                {message.type !== 'user' && (
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden">
-                    <img 
-                      src={aiGif} 
-                      alt="AI" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                
-                <div
-                  className={cn(
-                    "max-w-2xl p-4 rounded-lg shadow-sm",
-                    message.type === 'user'
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted",
-                    message.type === 'practice-question' && "bg-secondary",
-                    message.type === 'understanding-check' && "bg-accent"
-                  )}
-                >
-                  <div className="flex justify-between items-start gap-2 mb-2">
-                    <div className="flex items-center gap-2">
-                      {message.type !== 'user' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={cn(
-                            "h-8 w-8 p-0",
-                            speaking === message.id && "text-primary"
-                          )}
-                          onClick={() => handleTextToSpeech(message.id, message.content)}
-                        >
-                          <VolumeIcon className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="prose prose-sm dark:prose-invert max-w-none">
-                    <div className="whitespace-pre-wrap break-words">
-                      {message.type === 'practice-question' ? (
-                        <>
-                          <h4 className="text-lg font-semibold mb-2">Practice Question</h4>
-                          <ReactMarkdown
-                            components={{
-                              code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                                const match = /language-(\w+)/.exec(className || '');
-                                return !inline && match ? (
-                                  <SyntaxHighlighter
-                                    {...props}
-                                    style={oneDark}
-                                    language={match[1]}
-                                    PreTag="div"
-                                  >
-                                    {String(children).replace(/\n$/, '')}
-                                  </SyntaxHighlighter>
-                                ) : (
-                                  <code {...props} className={className}>
-                                    {children}
-                                  </code>
-                                );
-                              },
-                            }}
-                          >
-                            {message.content}
-                          </ReactMarkdown>
-                        </>
-                      ) : message.type === 'feedback' ? (
-                        <>
-                          <h4 className="text-lg font-semibold mb-2">Feedback</h4>
-                          <ReactMarkdown
-                            components={{
-                              code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                                const match = /language-(\w+)/.exec(className || '');
-                                return !inline && match ? (
-                                  <SyntaxHighlighter
-                                    {...props}
-                                    style={oneDark}
-                                    language={match[1]}
-                                    PreTag="div"
-                                  >
-                                    {String(children).replace(/\n$/, '')}
-                                  </SyntaxHighlighter>
-                                ) : (
-                                  <code {...props} className={className}>
-                                    {children}
-                                  </code>
-                                );
-                              },
-                            }}
-                          >
-                            {message.content}
-                          </ReactMarkdown>
-                        </>
-                      ) : (
-                        <ReactMarkdown
-                          components={{
-                            code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                              const match = /language-(\w+)/.exec(className || '');
-                              return !inline && match ? (
-                                <SyntaxHighlighter
-                                  {...props}
-                                  style={oneDark}
-                                  language={match[1]}
-                                  PreTag="div"
-                                >
-                                  {String(children).replace(/\n$/, '')}
-                                </SyntaxHighlighter>
-                              ) : (
-                                <code {...props} className={className}>
-                                  {children}
-                                </code>
-                              );
-                            },
-                          }}
-                        >
-                          {message.content}
-                        </ReactMarkdown>
-                      )}
-                    </div>
-                    
-                    {message.type === 'understanding-check' && !loading && (
-                      <div className="mt-4 space-y-4">
-                        <div className="flex flex-wrap gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleUnderstanding(true)}
-                            className="bg-green-500/10 hover:bg-green-500/20 transition-colors"
-                          >
-                            <ThumbsUp className="w-4 h-4 mr-2" />
-                            Yes, I understand
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleUnderstanding(false)}
-                            className="bg-red-500/10 hover:bg-red-500/20 transition-colors"
-                          >
-                            <ThumbsDown className="w-4 h-4 mr-2" />
-                            No, explain simpler
-                          </Button>
-                        </div>
-
-                        {message.suggestedQuestions && message.suggestedQuestions.length > 0 && (
-                          <SuggestedQuestions
-                            questions={message.suggestedQuestions}
-                            onQuestionClick={handleSuggestedQuestion}
-                          />
-                        )}
-                      </div>
-                    )}
-
-                    {message.type === 'practice-question' && message.practiceData && (
-                      <div className="mt-4 space-y-4">
-                        {message.practiceData.code && (
-                          <div className="relative">
-                            <pre className="bg-background/50 p-4 rounded-lg overflow-x-auto font-mono text-sm">
-                              <code className="language-python">{message.practiceData.code}</code>
-                            </pre>
-                          </div>
-                        )}
-                        
-                        {message.practiceData.options ? (
-                          <div className="space-y-2">
-                            {message.practiceData.options.map((option, index) => (
-                              <Button
-                                key={index}
-                                variant="outline"
-                                className="w-full justify-start hover:bg-accent transition-colors text-left"
-                                onClick={() => handlePracticeAnswer(message.id, option)}
-                              >
-                                <span className="font-mono mr-2">{String.fromCharCode(65 + index)}.</span>
-                                {option}
-                              </Button>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <Textarea
-                              placeholder="Type your answer here..."
-                              className="min-h-[100px] resize-y"
-                              onChange={(e) => setInput(e.target.value)}
-                            />
-                            <Button
-                              onClick={() => handlePracticeAnswer(message.id, input)}
-                              className="w-full bg-primary hover:bg-primary/90 transition-colors"
-                            >
-                              Submit Answer
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {message.type === 'feedback' && message.practiceData?.explanation && (
-                      <div className="mt-4 p-3 bg-background/50 rounded-lg border border-border">
-                        <h4 className="text-sm font-semibold mb-2">Explanation:</h4>
-                        <p className="text-sm text-muted-foreground">{message.practiceData.explanation}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {message.type === 'user' && (
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                    <User className="w-5 h-5" />
-                  </div>
-                )}
+                {subtopic.title}
               </div>
             ))}
-            {showSuggestions && messages.length === 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 mb-4">
-                {chatSuggestions.map((suggestion, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    className="flex flex-col items-center p-6 h-auto space-y-3 hover:bg-accent hover:text-accent-foreground transition-colors"
-                    onClick={() => handleSuggestionClick(suggestion.prompt)}
-                  >
-                    {suggestion.icon}
-                    <span className="text-sm text-center">{suggestion.text}</span>
-                  </Button>
-                ))}
-              </div>
-            )}
-            <div ref={messagesEndRef} />
           </div>
-        </ScrollArea>
+        </div>
+      </div>
 
-        <div className="p-4 border-t">
-          <div className="max-w-3xl mx-auto flex gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={toggleRecording}
-              className={isRecording ? 'text-red-500' : ''}
-              disabled={loading}
-            >
-              {isRecording ? (
-                <MicOff className="w-4 h-4" />
-              ) : (
-                <Mic className="w-4 h-4" />
-              )}
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <div className="bg-white shadow-md p-4 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={handleCopy}>
+              <Copy className="h-5 w-5" />
             </Button>
-            <Input
-              placeholder="Type your message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage(input);
-                }
-              }}
-              disabled={loading}
-              className="flex-1"
-            />
-            <Button
-              onClick={handleSendClick}
-              disabled={loading || !input.trim()}
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Send className="w-4 h-4" />
-              )}
+            <Button variant="ghost" size="icon" onClick={handleEdit}>
+              <Edit className="h-5 w-5" />
             </Button>
+            <Button variant="ghost" size="icon" onClick={handleDelete}>
+              <Trash2 className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Chat Area */}
+        <div className="flex-1 overflow-auto p-4">
+          <ScrollArea className="flex-1 p-4">
+            <div className="space-y-4" ref={chatContainerRef}>
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={cn(
+                    "flex items-start gap-3",
+                    message.type === 'user' ? "justify-end" : "justify-start"
+                  )}
+                >
+                  {message.type !== 'user' && (
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden">
+                      <img 
+                        src={aiGif} 
+                        alt="AI" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  
+                  <div
+                    className={cn(
+                      "max-w-2xl p-4 rounded-lg shadow-sm",
+                      message.type === 'user'
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted",
+                      message.type === 'practice-question' && "bg-secondary",
+                      message.type === 'understanding-check' && "bg-accent"
+                    )}
+                  >
+                    <div className="flex justify-between items-start gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        {message.type !== 'user' && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              "h-8 w-8 p-0",
+                              speaking === message.id && "text-primary"
+                            )}
+                            onClick={() => handleTextToSpeech(message.id, message.content)}
+                          >
+                            <VolumeIcon className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <div className="whitespace-pre-wrap break-words">
+                        {message.type === 'practice-question' ? (
+                          <>
+                            <h4 className="text-lg font-semibold mb-2">Practice Question</h4>
+                            <ReactMarkdown
+                              components={{
+                                code: ({ node, inline, className, children, ...props }: CodeProps) => {
+                                  const match = /language-(\w+)/.exec(className || '');
+                                  return !inline && match ? (
+                                    <SyntaxHighlighter
+                                      {...props}
+                                      style={oneDark}
+                                      language={match[1]}
+                                      PreTag="div"
+                                    >
+                                      {String(children).replace(/\n$/, '')}
+                                    </SyntaxHighlighter>
+                                  ) : (
+                                    <code {...props} className={className}>
+                                      {children}
+                                    </code>
+                                  );
+                                },
+                              }}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
+                          </>
+                        ) : message.type === 'feedback' ? (
+                          <>
+                            <h4 className="text-lg font-semibold mb-2">Feedback</h4>
+                            <ReactMarkdown
+                              components={{
+                                code: ({ node, inline, className, children, ...props }: CodeProps) => {
+                                  const match = /language-(\w+)/.exec(className || '');
+                                  return !inline && match ? (
+                                    <SyntaxHighlighter
+                                      {...props}
+                                      style={oneDark}
+                                      language={match[1]}
+                                      PreTag="div"
+                                    >
+                                      {String(children).replace(/\n$/, '')}
+                                    </SyntaxHighlighter>
+                                  ) : (
+                                    <code {...props} className={className}>
+                                      {children}
+                                    </code>
+                                  );
+                                },
+                              }}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
+                          </>
+                        ) : (
+                          <ReactMarkdown
+                            components={{
+                              code: ({ node, inline, className, children, ...props }: CodeProps) => {
+                                const match = /language-(\w+)/.exec(className || '');
+                                return !inline && match ? (
+                                  <SyntaxHighlighter
+                                    {...props}
+                                    style={oneDark}
+                                    language={match[1]}
+                                    PreTag="div"
+                                  >
+                                    {String(children).replace(/\n$/, '')}
+                                  </SyntaxHighlighter>
+                                ) : (
+                                  <code {...props} className={className}>
+                                    {children}
+                                  </code>
+                                );
+                              },
+                            }}
+                          >
+                            {message.content}
+                          </ReactMarkdown>
+                        )}
+                      </div>
+                      
+                      {message.type === 'understanding-check' && !loading && (
+                        <div className="mt-4 space-y-4">
+                          <div className="flex flex-wrap gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleUnderstanding(true)}
+                              className="bg-green-500/10 hover:bg-green-500/20 transition-colors"
+                            >
+                              <ThumbsUp className="w-4 h-4 mr-2" />
+                              Yes, I understand
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleUnderstanding(false)}
+                              className="bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                            >
+                              <ThumbsDown className="w-4 h-4 mr-2" />
+                              No, explain simpler
+                            </Button>
+                          </div>
+
+                          {message.suggestedQuestions && message.suggestedQuestions.length > 0 && (
+                            <SuggestedQuestions
+                              questions={message.suggestedQuestions}
+                              onQuestionClick={handleSuggestedQuestion}
+                            />
+                          )}
+                        </div>
+                      )}
+
+                      {message.type === 'practice-question' && message.practiceData && (
+                        <div className="mt-4 space-y-4">
+                          {message.practiceData.code && (
+                            <div className="relative">
+                              <pre className="bg-background/50 p-4 rounded-lg overflow-x-auto font-mono text-sm">
+                                <code className="language-python">{message.practiceData.code}</code>
+                              </pre>
+                            </div>
+                          )}
+                          
+                          {message.practiceData.options ? (
+                            <div className="space-y-2">
+                              {message.practiceData.options.map((option, index) => (
+                                <Button
+                                  key={index}
+                                  variant="outline"
+                                  className="w-full justify-start hover:bg-accent transition-colors text-left"
+                                  onClick={() => handlePracticeAnswer(message.id, option)}
+                                >
+                                  <span className="font-mono mr-2">{String.fromCharCode(65 + index)}.</span>
+                                  {option}
+                                </Button>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              <Textarea
+                                placeholder="Type your answer here..."
+                                className="min-h-[100px] resize-y"
+                                onChange={(e) => setInput(e.target.value)}
+                              />
+                              <Button
+                                onClick={() => handlePracticeAnswer(message.id, input)}
+                                className="w-full bg-primary hover:bg-primary/90 transition-colors"
+                              >
+                                Submit Answer
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {message.type === 'feedback' && message.practiceData?.explanation && (
+                        <div className="mt-4 p-3 bg-background/50 rounded-lg border border-border">
+                          <h4 className="text-sm font-semibold mb-2">Explanation:</h4>
+                          <p className="text-sm text-muted-foreground">{message.practiceData.explanation}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {message.type === 'user' && (
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                      <User className="w-5 h-5" />
+                    </div>
+                  )}
+                </div>
+              ))}
+              {showSuggestions && messages.length === 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 mb-4">
+                  {chatSuggestions.map((suggestion, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      className="flex flex-col items-center p-6 h-auto space-y-3 hover:bg-accent hover:text-accent-foreground transition-colors"
+                      onClick={() => handleSuggestionClick(suggestion.prompt)}
+                    >
+                      {suggestion.icon}
+                      <span className="text-sm text-center">{suggestion.text}</span>
+                    </Button>
+                  ))}
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          </ScrollArea>
+
+          {/* Input Area */}
+          <div className="p-4 bg-white border-t">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Type your message..."
+                className="flex-1 p-2 border rounded-lg"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+              <Button
+                onClick={handleSendClick}
+                disabled={loading || !input.trim()}
+              >
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
-});
+};
 
 export default ChatInterface;

@@ -1,0 +1,64 @@
+{
+  "python": {
+    "id": "python",
+    "title": "Python Programming",
+    "subtopics": [
+      {
+        "id": "python-basics",
+        "title": "Python Basics"
+      },
+      {
+        "id": "data-structures",
+        "title": "Data Structures"
+      },
+      {
+        "id": "oop-concepts",
+        "title": "OOP Concepts"
+      },
+      {
+        "id": "file-handling",
+        "title": "File Handling"
+      },
+      {
+        "id": "error-handling",
+        "title": "Error Handling"
+      }
+    ]
+  },
+  "javascript": {
+    "id": "javascript",
+    "title": "JavaScript",
+    "subtopics": [
+      {
+        "id": "js-basics",
+        "title": "JavaScript Basics"
+      },
+      {
+        "id": "dom-manipulation",
+        "title": "DOM Manipulation"
+      },
+      {
+        "id": "async-programming",
+        "title": "Async Programming"
+      }
+    ]
+  },
+  "react": {
+    "id": "react",
+    "title": "React.js",
+    "subtopics": [
+      {
+        "id": "react-basics",
+        "title": "React Basics"
+      },
+      {
+        "id": "hooks",
+        "title": "React Hooks"
+      },
+      {
+        "id": "state-management",
+        "title": "State Management"
+      }
+    ]
+  }
+}

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Code, Brain, Cpu } from "lucide-react";
+import topicsData from '../../data/topics.json';
 
 const labs = [
   {
@@ -76,46 +77,32 @@ const labs = [
 const LabsSection: React.FC = () => {
   const navigate = useNavigate();
 
+  const handleCardClick = (topicId: string) => {
+    navigate(`/chat/${topicId}`);
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      {labs.map((lab) => {
-        const Icon = lab.icon;
-        return (
-          <Card key={lab.id} className="p-6 hover:shadow-lg transition-all duration-300">
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <Icon className="w-6 h-6 text-primary" />
-              </div>
-              <div className="flex-grow">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xl font-semibold">{lab.title}</h3>
-                  <Badge variant="outline">{lab.modules.length} modules</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {lab.description}
-                </p>
-                <Progress value={lab.progress} className="mb-4" />
-                <div className="space-y-2">
-                  {lab.modules.map((module, index) => (
-                    <div
-                      key={index}
-                      className="text-sm text-muted-foreground p-2 rounded-lg bg-secondary/10"
-                    >
-                      {module}
-                    </div>
-                  ))}
-                </div>
-                <Button 
-                  className="w-full mt-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-                  onClick={() => navigate(lab.route)}
-                >
-                  Start Learning
-                </Button>
-              </div>
-            </div>
-          </Card>
-        );
-      })}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      {Object.values(topicsData).map((topic) => (
+        <div
+          key={topic.id}
+          className="bg-white rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => handleCardClick(topic.id)}
+        >
+          <h3 className="text-xl font-semibold mb-4">{topic.title}</h3>
+          <div className="text-gray-600">
+            <p className="mb-2">Subtopics:</p>
+            <ul className="list-disc pl-5">
+              {topic.subtopics.slice(0, 3).map((subtopic) => (
+                <li key={subtopic.id}>{subtopic.title}</li>
+              ))}
+              {topic.subtopics.length > 3 && (
+                <li className="text-blue-500">+ {topic.subtopics.length - 3} more...</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
