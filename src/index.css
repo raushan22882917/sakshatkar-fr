@@ -99,3 +99,81 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Cursor Styles */
+* {
+  cursor: none !important;
+}
+
+.custom-cursor {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #3b82f6;
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s;
+  backdrop-filter: blur(1px);
+}
+
+.custom-cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease-in-out;
+}
+
+.custom-cursor-dot.scale-up {
+  transform: translate(-50%, -50%) scale(1.5);
+}
+
+/* Hide cursor on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .custom-cursor,
+  .custom-cursor-dot {
+    display: none;
+  }
+  * {
+    cursor: auto !important;
+  }
+}
+
+/* Gradient animation for cursor */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Hover effect for interactive elements */
+a:hover, button:hover, [role="button"]:hover {
+  cursor: none !important;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}

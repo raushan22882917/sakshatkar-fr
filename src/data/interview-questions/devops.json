@@ -1,0 +1,35 @@
+{
+  "category": "DevOps",
+  "questions": [
+    {
+      "id": 1,
+      "topic": "CI/CD",
+      "question": "Explain the concept of Continuous Integration and Continuous Deployment (CI/CD). What are its benefits?",
+      "answer": "CI/CD is a software development practice that combines Continuous Integration and Continuous Deployment:\n\nContinuous Integration (CI):\n- Developers regularly merge code changes into a central repository\n- Automated builds and tests are run\n- Early detection of integration problems\n- Ensures code quality and stability\n\nContinuous Deployment (CD):\n- Automatically deploys all code changes to production\n- After passing automated testing\n- Reduces manual intervention\n- Faster release cycles\n\nBenefits:\n1. Faster time to market\n2. Reduced deployment risks\n3. Better code quality\n4. Improved team collaboration\n5. Quick feedback loops\n6. Automated rollbacks if needed"
+    },
+    {
+      "id": 2,
+      "topic": "Docker",
+      "question": "What is Docker and how does it differ from traditional virtualization?",
+      "answer": "Docker is a platform for developing, shipping, and running applications in containers. Here's how it differs from traditional virtualization:\n\nDocker:\n1. Uses containerization\n2. Shares host OS kernel\n3. Lightweight and fast startup\n4. Less resource intensive\n5. Perfect for microservices\n\nTraditional Virtualization:\n1. Runs complete OS copy\n2. Requires more resources\n3. Slower startup time\n4. Better isolation\n5. Good for running different OS\n\nKey Benefits of Docker:\n- Consistency across environments\n- Efficient resource utilization\n- Quick deployment\n- Easy scaling\n- Version control for containers"
+    },
+    {
+      "id": 3,
+      "topic": "Kubernetes",
+      "question": "What is Kubernetes and what problems does it solve?",
+      "answer": "Kubernetes is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications.\n\nProblems it Solves:\n1. Container Orchestration:\n- Automated deployment\n- Scaling\n- Load balancing\n\n2. High Availability:\n- Self-healing\n- Auto-replacement of failed containers\n- Multi-zone deployment\n\n3. Scaling:\n- Horizontal scaling\n- Auto-scaling based on metrics\n- Load balancing\n\n4. Service Discovery:\n- Internal DNS\n- Service registration\n- Load balancing\n\n5. Configuration Management:\n- ConfigMaps\n- Secrets management\n- Environment variables"
+    },
+    {
+      "id": 4,
+      "topic": "Infrastructure as Code",
+      "question": "What is Infrastructure as Code (IaC) and what are its benefits?",
+      "answer": "Infrastructure as Code (IaC) is the practice of managing and provisioning infrastructure through code instead of manual processes.\n\nKey Concepts:\n1. Version Control:\n- Infrastructure changes tracked\n- Roll back capability\n- Collaboration friendly\n\n2. Automation:\n- Consistent deployments\n- Reduced human error\n- Faster provisioning\n\n3. Documentation:\n- Self-documenting infrastructure\n- Clear audit trail\n- Knowledge sharing\n\nBenefits:\n1. Reproducibility\n2. Scalability\n3. Cost reduction\n4. Disaster recovery\n5. Compliance and security"
+    },
+    {
+      "id": 5,
+      "topic": "Monitoring",
+      "question": "What are the key components of a monitoring system in a DevOps environment?",
+      "answer": "A comprehensive monitoring system in DevOps includes several key components:\n\n1. Infrastructure Monitoring:\n- Server health\n- Resource utilization\n- Network performance\n\n2. Application Monitoring:\n- Performance metrics\n- Error tracking\n- User experience\n\n3. Log Management:\n- Centralized logging\n- Log analysis\n- Error tracking\n\n4. Alerting:\n- Alert rules\n- Notification channels\n- Escalation policies\n\n5. Visualization:\n- Dashboards\n- Metrics visualization\n- Trend analysis\n\nPopular Tools:\n- Prometheus\n- Grafana\n- ELK Stack\n- Datadog\n- New Relic"
+    }
+  ]
+}

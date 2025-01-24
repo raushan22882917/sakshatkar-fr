@@ -9,30 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      admin_data: {
+      admin_users: {
         Row: {
           created_at: string
           id: string
           is_verified: boolean | null
-          last_login: string | null
-          login_attempts: number | null
           phone_number: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           is_verified?: boolean | null
-          last_login?: string | null
-          login_attempts?: number | null
           phone_number: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           is_verified?: boolean | null
-          last_login?: string | null
-          login_attempts?: number | null
           phone_number?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1621,45 +1618,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      user_step_marks: {
-        Row: {
-          approach_score: number | null
-          code_score: number | null
-          created_at: string
-          feedback: string | null
-          id: string
-          overall_score: number | null
-          question_id: string
-          test_cases_score: number | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          approach_score?: number | null
-          code_score?: number | null
-          created_at?: string
-          feedback?: string | null
-          id?: string
-          overall_score?: number | null
-          question_id: string
-          test_cases_score?: number | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          approach_score?: number | null
-          code_score?: number | null
-          created_at?: string
-          feedback?: string | null
-          id?: string
-          overall_score?: number | null
-          question_id?: string
-          test_cases_score?: number | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       user_subscriptions: {
         Row: {

@@ -1,0 +1,1 @@
+export const aiTeacherPrompt = `I am an AI teacher assistant, ready to help you learn and understand any topic. I'll explain concepts clearly, provide examples, and answer your questions. Feel free to ask about any subject!`;

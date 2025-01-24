@@ -1,0 +1,178 @@
+{
+    "1": {
+      "topicName": "Arrays and Hashing",
+      "questions": [
+        {
+          "id": 1,
+          "title": "Two Sum",
+          "difficulty": "Easy",
+          "tags": ["Arrays", "Hash Table"]
+        },
+        {
+          "id": 2,
+          "title": "Maximum Subarray",
+          "difficulty": "Medium",
+          "tags": ["Arrays", "Dynamic Programming"]
+        },
+        {
+          "id": 3,
+          "title": "Contains Duplicate",
+          "difficulty": "Easy",
+          "tags": ["Arrays", "Hash Table"]
+        },
+        {
+          "id": 4,
+          "title": "Group Anagrams",
+          "difficulty": "Medium",
+          "tags": ["Arrays", "Hash Table"]
+        },
+        {
+          "id": 5,
+          "title": "Top K Frequent Elements",
+          "difficulty": "Medium",
+          "tags": ["Arrays", "Heap"]
+        }
+      ]
+    },
+    "2": {
+      "topicName": "Linked Lists",
+      "questions": [
+        {
+          "id": 6,
+          "title": "Reverse Linked List",
+          "difficulty": "Easy",
+          "tags": ["Linked List"]
+        },
+        {
+          "id": 7,
+          "title": "Merge Two Sorted Lists",
+          "difficulty": "Easy",
+          "tags": ["Linked List"]
+        },
+        {
+          "id": 8,
+          "title": "Linked List Cycle",
+          "difficulty": "Easy",
+          "tags": ["Linked List", "Two Pointers"]
+        },
+        {
+          "id": 9,
+          "title": "Remove Nth Node From End of List",
+          "difficulty": "Medium",
+          "tags": ["Linked List", "Two Pointers"]
+        },
+        {
+          "id": 10,
+          "title": "Reorder List",
+          "difficulty": "Medium",
+          "tags": ["Linked List"]
+        }
+      ]
+    },
+    "3": {
+      "topicName": "Trees",
+      "questions": [
+        {
+          "id": 11,
+          "title": "Binary Tree Traversal",
+          "difficulty": "Medium",
+          "tags": ["Tree", "DFS"]
+        },
+        {
+          "id": 12,
+          "title": "Maximum Depth of Binary Tree",
+          "difficulty": "Easy",
+          "tags": ["Tree", "DFS", "BFS"]
+        },
+        {
+          "id": 13,
+          "title": "Validate Binary Search Tree",
+          "difficulty": "Medium",
+          "tags": ["Tree", "DFS"]
+        },
+        {
+          "id": 14,
+          "title": "Lowest Common Ancestor of a BST",
+          "difficulty": "Medium",
+          "tags": ["Tree"]
+        },
+        {
+          "id": 15,
+          "title": "Binary Tree Level Order Traversal",
+          "difficulty": "Medium",
+          "tags": ["Tree", "BFS"]
+        }
+      ]
+    },
+    "4": {
+      "topicName": "Graphs",
+      "questions": [
+        {
+          "id": 16,
+          "title": "Number of Islands",
+          "difficulty": "Medium",
+          "tags": ["Graph", "DFS", "BFS"]
+        },
+        {
+          "id": 17,
+          "title": "Clone Graph",
+          "difficulty": "Medium",
+          "tags": ["Graph", "DFS", "BFS"]
+        },
+        {
+          "id": 18,
+          "title": "Course Schedule",
+          "difficulty": "Medium",
+          "tags": ["Graph", "Topological Sort"]
+        },
+        {
+          "id": 19,
+          "title": "Word Ladder",
+          "difficulty": "Hard",
+          "tags": ["Graph", "BFS"]
+        },
+        {
+          "id": 20,
+          "title": "Graph Valid Tree",
+          "difficulty": "Medium",
+          "tags": ["Graph", "Union-Find"]
+        }
+      ]
+    },
+    "5": {
+      "topicName": "Dynamic Programming",
+      "questions": [
+        {
+          "id": 21,
+          "title": "Climbing Stairs",
+          "difficulty": "Easy",
+          "tags": ["Dynamic Programming"]
+        },
+        {
+          "id": 22,
+          "title": "House Robber",
+          "difficulty": "Medium",
+          "tags": ["Dynamic Programming"]
+        },
+        {
+          "id": 23,
+          "title": "Longest Increasing Subsequence",
+          "difficulty": "Medium",
+          "tags": ["Dynamic Programming"]
+        },
+        {
+          "id": 24,
+          "title": "Coin Change",
+          "difficulty": "Medium",
+          "tags": ["Dynamic Programming"]
+        },
+        {
+          "id": 25,
+          "title": "Palindromic Substrings",
+          "difficulty": "Medium",
+          "tags": ["Dynamic Programming"]
+        }
+      ]
+    }
+  }
+  

@@ -1,0 +1,64 @@
+{
+  "articles": [
+    {
+      "id": 1,
+      "title": "Understanding Modern Web Development",
+      "author": "Ravi Kumar",
+      "publishDate": "2024-01-15",
+      "category": "Web Development",
+      "content": "Modern web development has evolved significantly over the past few years...",
+      "readTime": "5 min read",
+      "likes": 124,
+      "dislikes": 5,
+      "tags": ["React", "JavaScript", "Web Development"]
+    },
+    {
+      "id": 2,
+      "title": "Getting Started with DevOps",
+      "author": "Priya Singh",
+      "publishDate": "2024-01-18",
+      "category": "DevOps",
+      "content": "DevOps is a set of practices that combines software development and IT operations...",
+      "readTime": "8 min read",
+      "likes": 89,
+      "dislikes": 3,
+      "tags": ["DevOps", "CI/CD", "Automation"]
+    },
+    {
+      "id": 3,
+      "title": "Machine Learning Fundamentals",
+      "author": "Amit Patel",
+      "publishDate": "2024-01-20",
+      "category": "AI/ML",
+      "content": "Machine Learning is transforming how we approach problem-solving in technology...",
+      "readTime": "10 min read",
+      "likes": 156,
+      "dislikes": 8,
+      "tags": ["Machine Learning", "AI", "Data Science"]
+    },
+    {
+      "id": 4,
+      "title": "Best Practices in Code Review",
+      "author": "Neha Sharma",
+      "publishDate": "2024-01-21",
+      "category": "Software Engineering",
+      "content": "Code reviews are a crucial part of maintaining code quality and team collaboration...",
+      "readTime": "6 min read",
+      "likes": 92,
+      "dislikes": 4,
+      "tags": ["Code Quality", "Team Collaboration", "Best Practices"]
+    },
+    {
+      "id": 5,
+      "title": "Introduction to System Design",
+      "author": "Rahul Verma",
+      "publishDate": "2024-01-22",
+      "category": "System Design",
+      "content": "System design is the process of defining architecture, components, and interfaces...",
+      "readTime": "12 min read",
+      "likes": 178,
+      "dislikes": 7,
+      "tags": ["System Design", "Architecture", "Scalability"]
+    }
+  ]
+}
