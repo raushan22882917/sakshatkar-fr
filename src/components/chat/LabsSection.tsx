@@ -5,16 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Code, Brain, Cpu } from "lucide-react";
-import topicsData from '../../data/topics.json';
 
 const labs = [
   {
-    id: 1,
+    id: "python",
     title: "Python Fundamentals",
     description: "Master Python programming from basics to advanced concepts",
-    route: "/learn/python",
-    progress: 0,
-    icon: Code,
     modules: [
       "Variables and Data Types",
       "Control Flow",
@@ -25,12 +21,9 @@ const labs = [
     ]
   },
   {
-    id: 2,
+    id: "dsa-basic",
     title: "DSA Basic",
     description: "Learn fundamental data structures and algorithms",
-    route: "/learn/dsa-basic",
-    progress: 0,
-    icon: Brain,
     modules: [
       "Arrays and Lists",
       "Stacks and Queues",
@@ -41,35 +34,16 @@ const labs = [
     ]
   },
   {
-    id: 3,
+    id: "dsa-intermediate",
     title: "DSA Intermediate",
     description: "Advance your DSA knowledge with complex problems",
-    route: "/learn/dsa-intermediate",
-    progress: 0,
-    icon: BookOpen,
     modules: [
       "Trees and Binary Trees",
-      "Hash Tables",
+      "Graphs and Graph Algorithms",
       "Advanced Sorting",
-      "Graph Basics",
-      "Dynamic Programming Intro",
-      "Greedy Algorithms"
-    ]
-  },
-  {
-    id: 4,
-    title: "DSA Advanced",
-    description: "Master advanced algorithms and optimization techniques",
-    route: "/learn/dsa-advanced",
-    progress: 0,
-    icon: Cpu,
-    modules: [
-      "Advanced Graph Algorithms",
-      "Advanced Dynamic Programming",
-      "String Algorithms",
-      "Network Flow",
-      "NP-Complete Problems",
-      "Optimization Techniques"
+      "Dynamic Programming",
+      "Greedy Algorithms",
+      "Backtracking"
     ]
   }
 ];
@@ -77,27 +51,27 @@ const labs = [
 const LabsSection: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleCardClick = (topicId: string) => {
-    navigate(`/chat/${topicId}`);
+  const handleCardClick = (labId: string) => {
+    navigate(`/chat/${labId}`);
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      {Object.values(topicsData).map((topic) => (
+      {labs.map((lab) => (
         <div
-          key={topic.id}
-          className="bg-white rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => handleCardClick(topic.id)}
+          key={lab.id}
+          className=" rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => handleCardClick(lab.id)}
         >
-          <h3 className="text-xl font-semibold mb-4">{topic.title}</h3>
+          <h3 className="text-xl font-semibold mb-4">{lab.title}</h3>
           <div className="text-gray-600">
-            <p className="mb-2">Subtopics:</p>
+            <p className="mb-2">Modules:</p>
             <ul className="list-disc pl-5">
-              {topic.subtopics.slice(0, 3).map((subtopic) => (
-                <li key={subtopic.id}>{subtopic.title}</li>
+              {lab.modules.slice(0, 3).map((module, index) => (
+                <li key={index} className="text-sm">{module}</li>
               ))}
-              {topic.subtopics.length > 3 && (
-                <li className="text-blue-500">+ {topic.subtopics.length - 3} more...</li>
+              {lab.modules.length > 3 && (
+                <li className="text-blue-500 text-sm">+ {lab.modules.length - 3} more...</li>
               )}
             </ul>
           </div>
