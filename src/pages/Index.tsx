@@ -1,5 +1,22 @@
 import { useState, useEffect } from "react";
-import { User, Users, UserCheck, Building, UserCog, Code, Star, Heart, BrainCircuit, ThumbsUp, BrainCog, Book, Video } from "lucide-react";
+import { 
+  Brain, 
+  Code2, 
+  Users as UsersIcon, 
+  Building, 
+  MessageSquare, 
+  BookOpen, 
+  Target, 
+  Zap,
+  Plus,
+  Minus,
+  Video,
+  Star,
+  Heart,
+  ThumbsUp,
+  BrainCircuit,
+  BrainCog
+} from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PracticeModeCard } from "@/components/PracticeModeCard";

@@ -1622,6 +1622,36 @@ export type Database = {
           },
         ]
       }
+      user_stats: {
+        Row: {
+          created_at: string | null
+          created_groups: number | null
+          id: string
+          is_subscribed: boolean | null
+          solved_questions: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_groups?: number | null
+          id?: string
+          is_subscribed?: boolean | null
+          solved_questions?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_groups?: number | null
+          id?: string
+          is_subscribed?: boolean | null
+          solved_questions?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_step_marks: {
         Row: {
           approach_score: number | null
