@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { aiTeacherPrompt } from './prompts/aiTeacherPrompt';
 import { useToast } from "@/components/ui/use-toast";
+import { langchainService } from '@/services/langchainService';
+import { PracticeQuestion, QuestionType } from '@/types/chat';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -340,3 +342,4 @@ export function TeachingChat({ onComplete, isLoading = false }: TeachingChatProp
     </Card>
   );
 }
+
