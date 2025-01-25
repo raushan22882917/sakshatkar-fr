@@ -11,11 +11,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
-type JobPost = Tables<'job_posts'>;
+type JobPost = Tables<'job_posts'> & {
+  experience_level?: string;
+};
 
 const JobsPost = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
+  const [sortBy, setSortBy] = useState('recent');
+  const [jobType, setJobType] = useState<string[]>([]);
+  const [experienceLevel, setExperienceLevel] = useState<string[]>([]);
   const { user } = useAuth();
   const { toast } = useToast();
   const [isApplying, setIsApplying] = useState<string | null>(null);
@@ -48,7 +53,14 @@ const JobsPost = () => {
       console.log('Fetching job posts...');
       const { data, error } = await supabase
         .from('job_posts')
-        .select('*')
+        .select(`
+          *,
+          profiles:recruiter_id(
+            full_name,
+            avatar_url,
+            company_name
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -56,7 +68,13 @@ const JobsPost = () => {
         throw error;
       }
       console.log('Fetched job posts:', data);
-      return data as JobPost[];
+      return data as (JobPost & {
+        profiles: {
+          full_name: string;
+          avatar_url: string | null;
+          company_name: string | null;
+        } | null;
+      })[];
     },
   });
 
@@ -116,62 +134,84 @@ const JobsPost = () => {
 
   const filteredJobs = jobPosts?.filter(job => {
     const matchesSearch = job.job_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.company_name.toLowerCase().includes(searchTerm.toLowerCase());
+      job.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.job_description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLocation = !locationFilter || job.job_location.toLowerCase().includes(locationFilter.toLowerCase());
-    return matchesSearch && matchesLocation;
+    const matchesJobType = jobType.length === 0 || jobType.includes(job.job_type);
+    const matchesExperience = experienceLevel.length === 0 || 
+      (job.experience_level && experienceLevel.includes(job.experience_level));
+    return matchesSearch && matchesLocation && matchesJobType && matchesExperience;
+  }).sort((a, b) => {
+    if (sortBy === 'recent') {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    } else if (sortBy === 'deadline') {
+      return new Date(a.application_deadline).getTime() - new Date(b.application_deadline).getTime();
+    }
+    return 0;
   });
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 overflow-auto">
-        <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
-              Find your <span className="text-blue-500">new job</span> today
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+          <div className="mb-8 text-center">
+            <h1 className="text-4xl font-bold mb-3 text-gray-900 dark:text-white">
+              Find Your Dream <span className="text-blue-600">Tech Job</span>
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Thousands of jobs in the computer engineering and technology sectors are waiting for you.
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Discover opportunities in tech, engineering, and digital innovation. Your next career move starts here.
             </p>
           </div>
 
-          <div className="flex gap-4 mb-8">
+          <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="flex-1">
               <Input
                 type="text"
-                placeholder="What position are you looking for?"
+                placeholder="Search by job title, company, or keywords..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
+                className="w-full h-12"
               />
             </div>
             <div className="flex-1">
               <Input
                 type="text"
-                placeholder="Location"
+                placeholder="Location (e.g., City, Country)"
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
-                className="w-full"
+                className="w-full h-12"
               />
             </div>
-            <Button className="bg-blue-500 hover:bg-blue-600">
-              Search job
+            <Button className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white">
+              <Filter className="w-4 h-4 mr-2" /> Search Jobs
             </Button>
           </div>
 
-          <div className="flex gap-8">
+          <div className="flex flex-col lg:flex-row gap-8">
             {/* Filters Section */}
-            <div className="w-64 space-y-6">
+            <div className="lg:w-72 space-y-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit">
               <div>
                 <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
                   <Filter className="w-4 h-4" /> Filters
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div>
-                    <h4 className="font-medium mb-2 text-gray-900 dark:text-white">Job Type</h4>
+                    <h4 className="font-medium mb-3 text-gray-900 dark:text-white">Job Type</h4>
                     <div className="space-y-2">
                       {['Full-time', 'Part-time', 'Contract', 'Internship'].map((type) => (
-                        <label key={type} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                          <input type="checkbox" className="rounded" />
+                        <label key={type} className="flex items-center gap-2 text-gray-700 dark:text-gray-300 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            className="rounded text-blue-600"
+                            checked={jobType.includes(type)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setJobType([...jobType, type]);
+                              } else {
+                                setJobType(jobType.filter(t => t !== type));
+                              }
+                            }}
+                          />
                           {type}
                         </label>
                       ))}
@@ -179,11 +219,22 @@ const JobsPost = () => {
                   </div>
 
                   <div>
-                    <h4 className="font-medium mb-2 text-gray-900 dark:text-white">Experience Level</h4>
+                    <h4 className="font-medium mb-3 text-gray-900 dark:text-white">Experience Level</h4>
                     <div className="space-y-2">
                       {['Entry Level', 'Mid Level', 'Senior Level', 'Lead'].map((level) => (
-                        <label key={level} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                          <input type="checkbox" className="rounded" />
+                        <label key={level} className="flex items-center gap-2 text-gray-700 dark:text-gray-300 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            className="rounded text-blue-600"
+                            checked={experienceLevel.includes(level)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setExperienceLevel([...experienceLevel, level]);
+                              } else {
+                                setExperienceLevel(experienceLevel.filter(l => l !== level));
+                              }
+                            }}
+                          />
                           {level}
                         </label>
                       ))}
@@ -199,18 +250,34 @@ const JobsPost = () => {
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   {filteredJobs?.length || 0} Jobs Available
                 </h2>
-                <select className="border rounded-md px-3 py-1 dark:bg-gray-800 dark:text-white">
-                  <option>Most recent</option>
-                  <option>Deadline approaching</option>
+                <select
+                  className="border rounded-lg px-4 py-2 bg-white dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="recent">Most Recent</option>
+                  <option value="deadline">Deadline Approaching</option>
                 </select>
               </div>
 
               {isLoading ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map((i) => (
-                    <Card key={i}>
+                    <Card key={i} className="bg-white dark:bg-gray-800">
                       <CardContent className="p-6">
-                        <Skeleton className="h-20 w-full" />
+                        <div className="flex gap-4">
+                          <Skeleton className="w-12 h-12 rounded-lg" />
+                          <div className="flex-1 space-y-2">
+                            <Skeleton className="h-6 w-1/3" />
+                            <Skeleton className="h-4 w-1/4" />
+                            <Skeleton className="h-4 w-full" />
+                            <div className="flex gap-4">
+                              <Skeleton className="h-4 w-24" />
+                              <Skeleton className="h-4 w-24" />
+                              <Skeleton className="h-4 w-24" />
+                            </div>
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
@@ -218,60 +285,67 @@ const JobsPost = () => {
               ) : (
                 <div className="space-y-4">
                   {filteredJobs?.map((job) => (
-                    <Card key={job.id} className="hover:shadow-lg transition-shadow dark:bg-gray-800">
+                    <Card key={job.id} className="bg-white hover:shadow-lg transition-shadow dark:bg-gray-800 border-0 shadow-sm">
                       <CardContent className="p-6">
-                        <div className="flex gap-4">
-                          <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                        <div className="flex gap-6">
+                          <div className="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center p-2">
                             {job.company_logo ? (
                               <img
                                 src={job.company_logo}
-                                alt={job.company_name}
-                                className="w-8 h-8 object-contain"
+                                alt={job.company_name || 'Company Logo'}
+                                className="w-full h-full object-contain"
                               />
                             ) : (
-                              <Building className="w-6 h-6 text-gray-400" />
+                              <Building className="w-8 h-8 text-gray-400" />
                             )}
                           </div>
                           <div className="flex-1">
                             <div className="flex justify-between items-start">
                               <div>
-                                <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
+                                <h3 className="font-semibold text-xl text-gray-900 dark:text-white mb-1">
                                   {job.job_title}
                                 </h3>
-                                <p className="text-gray-600 dark:text-gray-400">{job.company_name}</p>
+                                <p className="text-blue-600 dark:text-blue-400 font-medium">
+                                  {job.company_name || job.profiles?.company_name || 'Company Name Not Available'}
+                                </p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  Posted by: {job.profiles?.full_name || 'Anonymous Recruiter'}
+                                </p>
                               </div>
                               <div className="text-right">
-                                <span className="font-medium text-gray-900 dark:text-white">
+                                <div className="font-medium text-gray-900 dark:text-white mb-2">
                                   {job.salary_range}
-                                </span>
+                                </div>
                                 <Button
                                   onClick={() => handleApply(job.id)}
                                   disabled={isApplying === job.id || !user || appliedJobs.includes(job.id)}
-                                  className={`ml-4 ${
+                                  className={`${
                                     appliedJobs.includes(job.id)
-                                      ? 'bg-green-500 hover:bg-green-600'
-                                      : 'bg-blue-500 hover:bg-blue-600'
-                                  } text-white`}
+                                      ? 'bg-green-600 hover:bg-green-700'
+                                      : 'bg-blue-600 hover:bg-blue-700'
+                                  } text-white min-w-[120px]`}
                                 >
-                                  {appliedJobs.includes(job.id)
-                                    ? 'Applied'
+                                  {!user ? (
+                                    'Login to Apply'
+                                  ) : appliedJobs.includes(job.id)
+                                    ? '✓ Applied'
                                     : isApplying === job.id
                                     ? 'Applying...'
                                     : 'Apply Now'}
                                 </Button>
                               </div>
                             </div>
-                            <p className="text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
+                            <p className="text-gray-600 dark:text-gray-400 mt-3 mb-4 line-clamp-2">
                               {job.job_description}
                             </p>
-                            <div className="flex gap-4 mt-4 text-sm text-gray-500 dark:text-gray-400">
-                              <span className="flex items-center gap-1">
+                            <div className="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
+                              <span className="flex items-center gap-1.5 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
                                 <MapPin className="w-4 h-4" /> {job.job_location}
                               </span>
-                              <span className="flex items-center gap-1">
+                              <span className="flex items-center gap-1.5 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
                                 <Clock className="w-4 h-4" /> {job.job_type}
                               </span>
-                              <span className="flex items-center gap-1">
+                              <span className="flex items-center gap-1.5 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
                                 <Calendar className="w-4 h-4" /> 
                                 Deadline: {format(new Date(job.application_deadline), 'MMM dd, yyyy')}
                               </span>
@@ -281,6 +355,11 @@ const JobsPost = () => {
                       </CardContent>
                     </Card>
                   ))}
+                  {filteredJobs?.length === 0 && (
+                    <div className="text-center py-12">
+                      <p className="text-gray-600 dark:text-gray-400">No jobs found matching your criteria.</p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

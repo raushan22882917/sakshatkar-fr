@@ -72,6 +72,7 @@ import { ArticleDetail } from "@/pages/ArticleDetail";
 import VideoInterview from "./pages/VideoInterview";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import Editor from "./pages/Editor";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -83,7 +84,7 @@ const queryClient = new QueryClient({
 });
 
 const paypalOptions = {
-  "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
+  clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
   currency: "USD",
   intent: "capture",
 };
@@ -103,6 +104,15 @@ const App = () => {
                       <AppSidebar />
                       <main className="flex-1">
                         <Routes>
+                          {/* Editor Route */}
+                          <Route 
+                            path="/editor" 
+                            element={
+                              <ProtectedRoute>
+                                <Editor />
+                              </ProtectedRoute>
+                            } 
+                          />
                           {/* Add StudyMate AI route */}
                           <Route 
                             path="/studymate-ai" 

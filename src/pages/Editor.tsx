@@ -1,23 +1,54 @@
-import React, { useState } from 'react';
-import { Box, Select, Button, Text, Flex, useToast } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import axios from 'axios';
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
+
+interface Language {
+  value: string;
+  label: string;
+  id: number;
+}
+
+interface ExampleResponse {
+  language: string;
+  language_id: number;
+  example_code: string;
+}
 
 const Editor: React.FC = () => {
   const [language, setLanguage] = useState('python');
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
-  const toast = useToast();
+  const { toast } = useToast();
 
-  const languageOptions = [
-    { value: 'python', label: 'Python' },
-    { value: 'java', label: 'Java' },
-    { value: 'cpp', label: 'C++' },
-    { value: 'c', label: 'C' },
-    { value: 'ruby', label: 'Ruby' },
-    { value: 'r', label: 'R' },
+  const languageOptions: Language[] = [
+    { value: 'python', label: 'Python', id: 71 },
+    { value: 'java', label: 'Java', id: 62 },
+    { value: 'cpp', label: 'C++', id: 54 },
+    { value: 'c', label: 'C', id: 50 },
+    { value: 'ruby', label: 'Ruby', id: 72 },
+    { value: 'r', label: 'R', id: 80 },
   ];
+
+  useEffect(() => {
+    // Load example code when language changes
+    const loadExampleCode = async () => {
+      try {
+        const response = await axios.get<ExampleResponse>(`http://localhost:8000/api/example/${language}`);
+        setCode(response.data.example_code);
+      } catch (error) {
+        console.error('Error loading example code:', error);
+        // Fallback to default code if API fails
+        setCode(getDefaultCode(language));
+      }
+    };
+
+    loadExampleCode();
+  }, [language]);
 
   const getDefaultCode = (lang: string) => {
     switch (lang) {
@@ -53,59 +84,86 @@ int main() {
     }
   };
 
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLang = e.target.value;
-    setLanguage(newLang);
-    setCode(getDefaultCode(newLang));
+  const handleLanguageChange = (value: string) => {
+    setLanguage(value);
   };
 
-  const runCode = async () => {
+  const handleRunCode = async () => {
     setIsRunning(true);
+    setOutput('');
+
     try {
-      const response = await axios.post('/api/execute', {
-        language,
-        code
+      const selectedLang = languageOptions.find(lang => lang.value === language);
+      if (!selectedLang) throw new Error('Invalid language selected');
+
+      const response = await axios.post('http://localhost:8000/api/execute', {
+        code,
+        language_id: selectedLang.id,
+        stdin: '',
       });
-      setOutput(response.data.output);
+
+      const { status, output, error, execution_time, memory } = response.data;
+
+      if (status === 'success') {
+        setOutput(`Output:\n${output}\n\nExecution Time: ${execution_time}s\nMemory Used: ${memory}KB`);
+        toast({
+          title: "Code executed successfully",
+          description: "Check the output below",
+        });
+      } else if (status === 'compilation_error') {
+        throw new Error(`Compilation Error:\n${error}`);
+      } else if (status === 'wrong_answer') {
+        throw new Error(`Wrong Answer:\nYour output: ${output}\nExpected: ${response.data.expected}`);
+      } else {
+        throw new Error(error || 'An error occurred during execution');
+      }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while executing the code';
       toast({
-        title: 'Error executing code',
-        description: 'There was an error running your code. Please try again.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
+        variant: "destructive",
+        title: "Error running code",
+        description: errorMessage,
       });
-      setOutput('Error executing code');
+      setOutput(`Error: ${errorMessage}`);
+    } finally {
+      setIsRunning(false);
     }
-    setIsRunning(false);
   };
 
   return (
-    <Box p={4} maxW="1200px" mx="auto">
-      <Flex mb={4} gap={4} alignItems="center">
-        <Select
-          value={language}
-          onChange={handleLanguageChange}
-          w="200px"
-        >
-          {languageOptions.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
+    <div className="flex flex-col gap-4 p-4">
+      <div className="flex items-center gap-4">
+        <Select value={language} onValueChange={handleLanguageChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select language" />
+          </SelectTrigger>
+          <SelectContent>
+            {languageOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
-        <Button
-          colorScheme="blue"
-          onClick={runCode}
-          isLoading={isRunning}
+        <Button 
+          onClick={handleRunCode}
+          disabled={isRunning}
+          className="ml-auto"
         >
-          Run Code
+          {isRunning ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Running...
+            </>
+          ) : (
+            'Run Code'
+          )}
         </Button>
-      </Flex>
+      </div>
 
-      <Box mb={4} border="1px" borderColor="gray.200" borderRadius="md">
+      <div className="h-[500px] border rounded-md">
         <MonacoEditor
-          height="400px"
+          height="100%"
           language={language}
           value={code}
           onChange={(value) => setCode(value || '')}
@@ -116,22 +174,15 @@ int main() {
             automaticLayout: true,
           }}
         />
-      </Box>
+      </div>
 
-      <Box>
-        <Text fontWeight="bold" mb={2}>Output:</Text>
-        <Box
-          p={4}
-          bg="gray.50"
-          borderRadius="md"
-          fontFamily="monospace"
-          whiteSpace="pre-wrap"
-          minH="100px"
-        >
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold mb-2">Output:</h3>
+        <pre className="bg-secondary p-4 rounded-md whitespace-pre-wrap font-mono">
           {output || 'Run your code to see the output here'}
-        </Box>
-      </Box>
-    </Box>
+        </pre>
+      </div>
+    </div>
   );
 };
 

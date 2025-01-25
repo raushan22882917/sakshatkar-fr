@@ -36,7 +36,6 @@ const navigationItems = [
   { title: 'Home', icon: Home, url: '/' },
   { title: 'Coding', icon: Code, url: '/coding' },
   { title: 'Resources', icon: BookOpen, url: '/resources' },
-  { title: 'StudyMate AI', icon: BrainCog, url: '/learn' },
   { title: 'Interview Rounds', icon: UserCheck, url: '/interview-rounds' },
   { title: 'Contest', icon: Trophy, url: '/contest' },
   { title: 'Community', icon: Users, url: '/community' },

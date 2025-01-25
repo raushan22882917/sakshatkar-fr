@@ -2,17 +2,32 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+import os
+import json
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Optional
 from datetime import datetime, timedelta
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import uvicorn
+import judge0api as api
+import os
+import asyncio
+from dotenv import load_dotenv
 
 app = FastAPI(title="Interview Scores API")
 
-# Enable CORS
+# Load environment variables
+load_dotenv()
+
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with your frontend URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -73,6 +88,44 @@ class FeedbackScore(BaseModel):
     approach_score: int = 0
     testcase_score: int = 0
     code_score: int = 0
+
+class CodeRequest(BaseModel):
+    code: str
+    language_id: int
+    stdin: Optional[str] = ""
+    expected_output: Optional[str] = None
+
+class CodeResponse(BaseModel):
+    status: str
+    output: Optional[str] = None
+    error: Optional[str] = None
+    execution_time: Optional[float] = None
+    memory: Optional[int] = None
+    expected: Optional[str] = None
+
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+class ChatRequest(BaseModel):
+    message: str
+    currentTopic: Optional[str] = None
+    chatHistory: Optional[List[ChatMessage]] = None
+
+class QuestionRequest(BaseModel):
+    topic: str
+    chatHistory: Optional[List[ChatMessage]] = None
+    count: int = 5
+
+# Language mapping for easy reference
+LANGUAGES = {
+    "python": 71,
+    "java": 62,
+    "cpp": 54,
+    "c": 50,
+    "ruby": 72,
+    "r": 80,
+}
 
 def get_db_connection():
     try:
@@ -721,6 +774,200 @@ async def check_subscription_status(user_id: str):
         raise HTTPException(status_code=500, detail="Error checking subscription status")
     finally:
         conn.close()
+
+@app.get("/")
+async def root():
+    return {
+        "message": "Code Execution API is running",
+        "supported_languages": list(LANGUAGES.keys())
+    }
+
+@app.post("/api/execute", response_model=CodeResponse)
+async def execute_code(request: CodeRequest):
+    try:
+        # Initialize Judge0 client
+        client = api.Client(os.getenv("JUDGE0_API_URL", "https://api.judge0.com"))
+        client.wait = False
+
+        # Convert strings to bytes for the API
+        code_bytes = request.code.encode('utf-8')
+        stdin_bytes = request.stdin.encode('utf-8') if request.stdin else b''
+        expected_output_bytes = request.expected_output.encode('utf-8') if request.expected_output else None
+
+        # Submit code to Judge0
+        submission = api.submission.submit(
+            client,
+            code_bytes,
+            request.language_id,
+            stdin=stdin_bytes,
+            expected_output=expected_output_bytes
+        )
+
+        # Wait for the result
+        max_attempts = 10
+        attempt = 0
+        
+        while attempt < max_attempts:
+            submission.load(client)
+            if submission.status["id"] > 2:  # Status > 2 means processing is complete
+                break
+            attempt += 1
+            await asyncio.sleep(1)
+
+        # Process the result
+        if submission.status["id"] == 3:  # Accepted
+            return CodeResponse(
+                status="success",
+                output=submission.stdout,
+                execution_time=submission.time,
+                memory=submission.memory
+            )
+        elif submission.status["id"] == 4:  # Wrong Answer
+            return CodeResponse(
+                status="wrong_answer",
+                output=submission.stdout,
+                expected=request.expected_output
+            )
+        elif submission.status["id"] == 6:  # Compilation Error
+            return CodeResponse(
+                status="compilation_error",
+                error=submission.compile_output
+            )
+        else:
+            return CodeResponse(
+                status="error",
+                error=submission.stderr or "An error occurred during execution"
+            )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/example/{language}")
+async def get_example(language: str):
+    if language not in LANGUAGES:
+        raise HTTPException(status_code=400, detail=f"Language {language} not supported")
+    
+    examples = {
+        "python": 'print("Hello, World!")',
+        "java": '''public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}''',
+        "cpp": '''#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello, World!" << endl;
+    return 0;
+}''',
+        "c": '''#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\\n");
+    return 0;
+}''',
+        "ruby": 'puts "Hello, World!"',
+        "r": 'print("Hello, World!")'
+    }
+    
+    return {
+        "language": language,
+        "language_id": LANGUAGES[language],
+        "example_code": examples[language]
+    }
+
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+import os
+import json
+
+# Load your OpenAI API key
+openai_api_key = os.getenv("OPENAI_API_KEY")
+llm = ChatOpenAI(temperature=0.7, model="gpt-3.5-turbo")
+
+@app.post("/api/chat")
+async def chat_endpoint(request: ChatRequest):
+    try:
+        # Create system message based on topic
+        system_message = (
+            f"You are a helpful AI tutor teaching about {request.currentTopic}. "
+            "Provide clear, concise explanations with examples when appropriate. "
+            "Focus on practical understanding and real-world applications."
+        ) if request.currentTopic else (
+            "You are a helpful AI tutor. Provide clear, concise explanations."
+        )
+
+        # Build conversation history
+        messages = [("system", system_message)]
+        
+        if request.chatHistory:
+            for msg in request.chatHistory:
+                messages.append((msg.role, msg.content))
+        
+        messages.append(("user", request.message))
+        
+        # Create prompt with history
+        prompt = ChatPromptTemplate.from_messages(messages)
+
+        # Get response from LLM
+        response = llm(prompt.format_messages())
+
+        # Generate suggested follow-up questions based on the entire context
+        context = "\n".join([msg[1] for msg in messages[1:]])  # Skip system message
+        suggested_questions_prompt = ChatPromptTemplate.from_messages([
+            ("system", f"Based on the following conversation about {request.currentTopic if request.currentTopic else 'the topic'}, "
+                      "generate 3-4 relevant follow-up questions that would help deepen understanding. "
+                      "Questions should build on what has been discussed and explore related concepts."),
+            ("user", f"Conversation context:\n{context}\n\nResponse: {response.content}")
+        ])
+
+        questions_response = llm(suggested_questions_prompt.format_messages())
+        suggested_questions = [q.strip() for q in questions_response.content.split('\n') if q.strip()]
+
+        return {
+            "response": response.content,
+            "suggested_questions": suggested_questions
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/generate-questions")
+async def generate_questions(request: QuestionRequest):
+    try:
+        # Build context from chat history
+        context = ""
+        if request.chatHistory:
+            context = "\n".join([
+                f"{msg.role}: {msg.content}"
+                for msg in request.chatHistory
+            ])
+
+        # Create a prompt for generating test questions
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", f"You are an expert in {request.topic}. Generate {request.count} multiple-choice questions "
+                      "to test understanding based on the following conversation context. "
+                      "Questions should specifically test concepts that were discussed. "
+                      "Each question should have 4 options with one correct answer. "
+                      "Include an explanation for the correct answer that references the discussion. "
+                      "Format the response as a JSON array with objects containing: "
+                      "question, options (array), correctAnswer, and explanation."),
+            ("user", f"Topic: {request.topic}\n\nConversation Context:\n{context}")
+        ])
+
+        # Get response from LLM
+        response = llm(prompt.format_messages())
+
+        # Parse the response as JSON
+        questions = json.loads(response.content)
+
+        return {
+            "questions": questions
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

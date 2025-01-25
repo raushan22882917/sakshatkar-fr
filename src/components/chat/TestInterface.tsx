@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Brain } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, XCircle, ArrowRight, Code2, Bug, PuzzlePiece } from "lucide-react";
+import { CheckCircle, XCircle, ArrowRight, Code2, Bug } from "lucide-react";
 import { testService } from '@/services/testService';
 import { SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -103,7 +106,7 @@ const TestInterface: React.FC<TestProps> = ({ moduleId, moduleName, onComplete }
       case 'debugging':
         return <Bug className="h-6 w-6" />;
       case 'puzzle':
-        return <PuzzlePiece className="h-6 w-6" />;
+        return <Brain className="h-6 w-6" />;
       default:
         return null;
     }
