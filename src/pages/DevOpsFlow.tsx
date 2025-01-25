@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import ReactFlow, { Background, Controls, MiniMap } from 'reactflow';
+import 'reactflow/dist/style.css';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from "@/components/Navbar";
 import {
   Code,
@@ -168,6 +170,55 @@ const devopsTopics: DevOpsTopic[] = [
   },
 ];
 
+const initialNodes = [
+  {
+    id: '1',
+    type: 'input',
+    data: { label: 'Start DevOps Journey' },
+    position: { x: 250, y: 0 },
+  },
+  {
+    id: '2',
+    data: { label: 'Version Control (Git)' },
+    position: { x: 250, y: 100 },
+  },
+  {
+    id: '3',
+    data: { label: 'CI/CD Pipelines' },
+    position: { x: 250, y: 200 },
+  },
+  {
+    id: '4',
+    data: { label: 'Containerization (Docker)' },
+    position: { x: 250, y: 300 },
+  },
+  {
+    id: '5',
+    data: { label: 'Container Orchestration (Kubernetes)' },
+    position: { x: 250, y: 400 },
+  },
+  {
+    id: '6',
+    data: { label: 'Infrastructure as Code' },
+    position: { x: 250, y: 500 },
+  },
+  {
+    id: '7',
+    type: 'output',
+    data: { label: 'Monitoring & Logging' },
+    position: { x: 250, y: 600 },
+  },
+];
+
+const initialEdges = [
+  { id: 'e1-2', source: '1', target: '2' },
+  { id: 'e2-3', source: '2', target: '3' },
+  { id: 'e3-4', source: '3', target: '4' },
+  { id: 'e4-5', source: '4', target: '5' },
+  { id: 'e5-6', source: '5', target: '6' },
+  { id: 'e6-7', source: '6', target: '7' },
+];
+
 const PhaseTitle = ({ phase, title }: { phase: number; title: string }) => (
   <div className="flex items-center gap-2 text-2xl font-bold text-white mb-6">
     <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white">
@@ -177,33 +228,13 @@ const PhaseTitle = ({ phase, title }: { phase: number; title: string }) => (
   </div>
 );
 
-export default function DevOpsFlow() {
+const DevOpsFlow = () => {
   const navigate = useNavigate();
-  const [selectedTopic, setSelectedTopic] = useState<DevOpsTopic | null>(null);
-  const [selectedSubTopic, setSelectedSubTopic] = useState<SubTopic | null>(null);
 
-  const phases = [
-    {
-      number: 1,
-      title: "Foundation Phase",
-      topics: devopsTopics.filter((t) => t.phase === 1),
-    },
-    {
-      number: 2,
-      title: "Development Phase",
-      topics: devopsTopics.filter((t) => t.phase === 2),
-    },
-    {
-      number: 3,
-      title: "Operations Phase",
-      topics: devopsTopics.filter((t) => t.phase === 3),
-    },
-    {
-      number: 4,
-      title: "Advanced Phase",
-      topics: devopsTopics.filter((t) => t.phase === 4),
-    },
-  ];
+  const onNodeClick = (event: any, node: any) => {
+    // Navigate to practice page with the selected topic
+    navigate(`/devops-practice/${node.id}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -218,63 +249,31 @@ export default function DevOpsFlow() {
 
         {/* Vertical Flowchart */}
         <div className="space-y-12">
-          {phases.map((phase, phaseIndex) => (
-            <div key={phase.number} className="relative">
-              <PhaseTitle phase={phase.number} title={phase.title} />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {phase.topics.map((topic, topicIndex) => (
-                  <div key={topic.id} className="relative">
-                    <Card
-                      className=" border-gray-700 hover:border-red-500 transition-all cursor-pointer"
-                      onClick={() => {
-                        setSelectedTopic(topic);
-                        setSelectedSubTopic(null);
-                      }}
-                    >
-                      <CardHeader>
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-red-900 flex items-center justify-center">
-                            {<topic.icon className="w-6 h-6 text-red-400" />}
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg text-black-600">{topic.title}</CardTitle>
-                            <CardDescription className="text-gray-400">{topic.description}</CardDescription>
-                          </div>
-                        </div>
-                      </CardHeader>
-                    </Card>
-
-                    {/* Arrow to next card */}
-                    {topicIndex < phase.topics.length - 1 && (
-                      <div className="absolute -right-3 top-1/2 transform -translate-y-1/2 text-red-500">
-                        <ChevronRight className="w-6 h-6" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Arrow to next phase */}
-              {phaseIndex < phases.length - 1 && (
-                <div className="flex justify-center my-4">
-                  <ChevronDown className="w-8 h-8 text-red-500" />
-                </div>
-              )}
-            </div>
-          ))}
+          <div className="w-full h-screen">
+            <ReactFlow
+              nodes={initialNodes}
+              edges={initialEdges}
+              onNodeClick={onNodeClick}
+              fitView
+              attributionPosition="bottom-right"
+            >
+              <Background />
+              <Controls />
+              <MiniMap />
+            </ReactFlow>
+          </div>
         </div>
 
         {/* Topic Details Dialog */}
         <Dialog
-          open={!!selectedTopic}
+          open={false}
           onOpenChange={() => {
-            setSelectedTopic(null);
-            setSelectedSubTopic(null);
+            // setSelectedTopic(null);
+            // setSelectedSubTopic(null);
           }}
         >
           <DialogContent className="max-w-4xl bg-gray-900 text-white border-gray-700">
-            {selectedTopic && (
+            {/* {selectedTopic && (
               <>
                 <DialogHeader>
                   <div className="flex items-center gap-4">
@@ -356,10 +355,12 @@ export default function DevOpsFlow() {
                   </div>
                 )}
               </>
-            )}
+            )} */}
           </DialogContent>
         </Dialog>
       </main>
     </div>
   );
-}
+};
+
+export default DevOpsFlow;

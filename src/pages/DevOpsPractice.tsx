@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -15,6 +15,166 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Book, Globe, MessageSquare, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useParams } from 'react-router-dom';
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Editor from '@monaco-editor/react';
+
+interface PracticeContent {
+  title: string;
+  description: string;
+  theory: string;
+  practice: {
+    question: string;
+    hints: string[];
+    solution: string;
+  }[];
+}
+
+const practiceContent: { [key: string]: PracticeContent } = {
+  // Git Basics
+  '1-1': {
+    title: 'Git Basics',
+    description: 'Learn the fundamental Git commands and workflows',
+    theory: `
+# Git Basics
+
+Git is a distributed version control system that helps track changes in source code during software development.
+
+## Key Concepts
+1. Repository (Repo)
+2. Commit
+3. Branch
+4. Remote
+
+## Basic Commands
+- git init: Initialize a repository
+- git add: Stage changes
+- git commit: Save changes
+- git push: Upload to remote
+- git pull: Download from remote
+    `,
+    practice: [
+      {
+        question: 'Initialize a new Git repository and make your first commit',
+        hints: [
+          'Use git init to create a new repository',
+          'Use git add to stage files',
+          'Use git commit -m "message" to commit'
+        ],
+        solution: `
+git init
+git add .
+git commit -m "Initial commit"
+        `
+      }
+    ]
+  },
+  // Branching & Merging
+  '1-2': {
+    title: 'Branching & Merging',
+    description: 'Master Git branch management and merge strategies',
+    theory: `
+# Git Branching
+
+Branches allow you to develop features isolated from each other.
+
+## Key Concepts
+1. Branch Creation
+2. Switching Branches
+3. Merging
+4. Resolving Conflicts
+
+## Commands
+- git branch: List branches
+- git checkout -b: Create new branch
+- git merge: Merge branches
+    `,
+    practice: [
+      {
+        question: 'Create a new feature branch and merge it back to main',
+        hints: [
+          'Create branch with git checkout -b',
+          'Make changes and commit',
+          'Switch back to main',
+          'Merge the feature branch'
+        ],
+        solution: `
+git checkout -b feature/new-feature
+# make changes
+git add .
+git commit -m "Add new feature"
+git checkout main
+git merge feature/new-feature
+        `
+      }
+    ]
+  },
+  // Jenkins
+  '2-1': {
+    title: 'Jenkins',
+    description: 'Learn Jenkins pipeline configuration and automation',
+    theory: `
+# Jenkins CI/CD
+
+Jenkins is an open-source automation server for building, testing, and deploying code.
+
+## Key Concepts
+1. Pipeline
+2. Jenkinsfile
+3. Stages
+4. Steps
+
+## Basic Pipeline
+\`\`\`groovy
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building..'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+    }
+}
+\`\`\`
+    `,
+    practice: [
+      {
+        question: 'Create a basic Jenkins pipeline with build and test stages',
+        hints: [
+          'Use pipeline syntax',
+          'Define agent',
+          'Create stages',
+          'Add steps'
+        ],
+        solution: `
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+    }
+}
+        `
+      }
+    ]
+  }
+  // Add more practice content for other topics
+};
 
 const topics = [
   { 
@@ -70,7 +230,20 @@ interface PopupInfo {
   wikiUrl: string;
 }
 
-export default function DevOpsPractice() {
+import { useNavigate } from 'react-router-dom';
+
+const DevOpsPractice: React.FC = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const content = id ? practiceContent[id] : null;
+  const [activeTab, setActiveTab] = React.useState('theory');
+  const [selectedPractice, setSelectedPractice] = React.useState(0);
+  const [showSolution, setShowSolution] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+  const [selectedQuiz, setSelectedQuiz] = React.useState(0);
+  const [selectedAnswer, setSelectedAnswer] = React.useState<number | null>(null);
+  const [showQuizAnswer, setShowQuizAnswer] = React.useState(false);
+
   const [searchParams] = useSearchParams();
   const topic = searchParams.get('topic');
   const subtopic = searchParams.get('subtopic');
@@ -81,7 +254,7 @@ export default function DevOpsPractice() {
   const [topicContent, setTopicContent] = useState<TopicContent | null>(null);
   const [selectedWord, setSelectedWord] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [progress, setProgress] = useState<TopicProgress[]>(() => {
+  const [progressState, setProgressState] = useState<TopicProgress[]>(() => {
     const saved = localStorage.getItem('devops-progress');
     return saved ? JSON.parse(saved) : topics.map(t => ({ 
       id: t.id, 
@@ -117,8 +290,8 @@ export default function DevOpsPractice() {
 
   // Save progress to localStorage
   useEffect(() => {
-    localStorage.setItem('devops-progress', JSON.stringify(progress));
-  }, [progress]);
+    localStorage.setItem('devops-progress', JSON.stringify(progressState));
+  }, [progressState]);
 
   // Timer effect
   useEffect(() => {
@@ -126,7 +299,7 @@ export default function DevOpsPractice() {
     if (isTimerActive) {
       interval = setInterval(() => {
         setTimer(prev => prev + 1);
-        setProgress(prev => prev.map(p => 
+        setProgressState(prev => prev.map(p => 
           p.id === selectedTopicId 
             ? { ...p, timeSpent: p.timeSpent + 1 }
             : p
@@ -242,13 +415,13 @@ export default function DevOpsPractice() {
     const topic = topics.find(t => t.id === topicId);
     if (!topic || topic.dependencies.length === 0) return false;
     return !topic.dependencies.every(depId => 
-      progress.find(p => p.id === depId)?.completed
+      progressState.find(p => p.id === depId)?.completed
     );
   };
 
   const handleTopicComplete = () => {
     const currentTopic = topics.find(t => t.id === selectedTopicId);
-    const currentProgress = progress.find(p => p.id === selectedTopicId);
+    const currentProgress = progressState.find(p => p.id === selectedTopicId);
     
     if (!currentTopic || !currentProgress) return;
 
@@ -261,7 +434,7 @@ export default function DevOpsPractice() {
       return;
     }
 
-    setProgress(prev => prev.map(p => 
+    setProgressState(prev => prev.map(p => 
       p.id === selectedTopicId ? { ...p, completed: true } : p
     ));
 
@@ -272,7 +445,7 @@ export default function DevOpsPractice() {
 
     // Check if all topics are completed
     const allCompleted = topics.every(topic => 
-      progress.find(p => p.id === topic.id)?.completed
+      progressState.find(p => p.id === topic.id)?.completed
     );
 
     setAllTopicsCompleted(allCompleted);
@@ -316,9 +489,24 @@ export default function DevOpsPractice() {
   };
 
   // Calculate completion status
-  const completedTopics = progress.filter(p => p.completed).length;
+  const completedTopics = progressState.filter(p => p.completed).length;
   const totalTopics = topics.length;
   const completionPercentage = (completedTopics / totalTopics) * 100;
+
+  if (!content) {
+    return (
+      <div className="container mx-auto p-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Topic Not Found</CardTitle>
+            <CardDescription>
+              The requested topic could not be found.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
@@ -330,10 +518,10 @@ export default function DevOpsPractice() {
             <div className="mb-6 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span>Overall Progress</span>
-                <span>{progress.filter(p => p.completed).length}/{topics.length} Topics</span>
+                <span>{progressState.filter(p => p.completed).length}/{topics.length} Topics</span>
               </div>
               <Progress 
-                value={(progress.filter(p => p.completed).length / topics.length) * 100}
+                value={(progressState.filter(p => p.completed).length / topics.length) * 100}
                 className="h-2"
               />
             </div>
@@ -356,12 +544,7 @@ export default function DevOpsPractice() {
               <Button
                 onClick={handleViewCertificate}
                 disabled={!allTopicsCompleted}
-                className={`w-full flex items-center justify-center space-x-2 ${
-                  allTopicsCompleted 
-                    ? "bg-blue-500 hover:bg-blue-600" 
-                    : "bg-gray-400 cursor-not-allowed"
-                }`}
-                variant="default"
+                className="bg-blue-500 hover:bg-blue-600"
               >
                 <FaCertificate />
                 <span>{allTopicsCompleted ? "View Certificate" : "Complete All Topics"}</span>
@@ -369,12 +552,7 @@ export default function DevOpsPractice() {
               <Button
                 onClick={handleDownloadCertificate}
                 disabled={!allTopicsCompleted}
-                className={`w-full flex items-center justify-center space-x-2 ${
-                  allTopicsCompleted 
-                    ? "bg-green-500 hover:bg-green-600" 
-                    : "bg-gray-400 cursor-not-allowed"
-                }`}
-                variant="default"
+                className="bg-green-500 hover:bg-green-600"
               >
                 <FaDownload />
                 <span>{allTopicsCompleted ? "Download Certificate" : "Complete All Topics"}</span>
@@ -388,7 +566,7 @@ export default function DevOpsPractice() {
             <div className="space-y-2">
               <h3 className="font-semibold mb-2">Learning Path</h3>
               {topics.map((topic) => {
-                const topicProgress = progress.find(p => p.id === topic.id);
+                const topicProgress = progressState.find(p => p.id === topic.id);
                 const isLocked = isTopicLocked(topic.id);
                 const isCompleted = topicProgress?.completed;
 
@@ -437,7 +615,7 @@ export default function DevOpsPractice() {
           <div className="flex items-center space-x-4">
             <Button
               onClick={handleTopicComplete}
-              disabled={progress.find(p => p.id === selectedTopicId)?.completed}
+              disabled={progressState.find(p => p.id === selectedTopicId)?.completed}
               className="bg-green-500 hover:bg-green-600"
             >
               Complete Topic
@@ -445,17 +623,109 @@ export default function DevOpsPractice() {
           </div>
         </div>
 
-        {topicContent && (
-          <div className="prose dark:prose-invert max-w-none" onMouseUp={handleTextSelection2}>
-            <article className="space-y-6">
-              <h1 className="text-4xl font-bold text-gray-800 dark:text-white flex items-center justify-between">
-                {topicContent.title}
-                {progress.find(p => p.id === selectedTopicId)?.completed && (
-                  <FaCheck className="text-green-500" />
-                )}
-              </h1>
-              <ReactMarkdown>{topicContent.content}</ReactMarkdown>
-            </article>
+        {content && (
+          <div className="container mx-auto p-6">
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>{content.title}</CardTitle>
+                <CardDescription>{content.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Progress value={progress} className="mb-4" />
+              </CardContent>
+            </Card>
+
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList>
+                <TabsTrigger value="theory">Theory</TabsTrigger>
+                <TabsTrigger value="practice">Practice</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="theory">
+                <Card>
+                  <CardContent className="p-6">
+                    <ScrollArea className="h-[600px]">
+                      <div className="prose dark:prose-invert max-w-none">
+                        <div dangerouslySetInnerHTML={{ __html: content.theory }} />
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="practice">
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="space-y-6">
+                      <div className="prose dark:prose-invert">
+                        <h3>Practice Question {selectedPractice + 1}</h3>
+                        <p>{content.practice[selectedPractice].question}</p>
+                      </div>
+
+                      <div className="space-y-4">
+                        <h4 className="font-medium">Hints:</h4>
+                        <ul className="list-disc pl-6">
+                          {content.practice[selectedPractice].hints.map((hint, index) => (
+                            <li key={index}>{hint}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="space-y-4">
+                        <h4 className="font-medium">Your Solution:</h4>
+                        <Editor
+                          height="200px"
+                          defaultLanguage="shell"
+                          theme="vs-dark"
+                          options={{
+                            minimap: { enabled: false },
+                            fontSize: 14,
+                          }}
+                        />
+                      </div>
+
+                      <div className="flex justify-between">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowSolution(!showSolution)}
+                        >
+                          {showSolution ? 'Hide Solution' : 'Show Solution'}
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            const newProgress = ((selectedPractice + 1) / content.practice.length) * 100;
+                            setProgress(newProgress);
+                            if (selectedPractice < content.practice.length - 1) {
+                              setSelectedPractice(selectedPractice + 1);
+                              setShowSolution(false);
+                            }
+                          }}
+                        >
+                          Next Question
+                        </Button>
+                      </div>
+
+                      {showSolution && (
+                        <div className="mt-6">
+                          <h4 className="font-medium mb-2">Solution:</h4>
+                          <Editor
+                            height="200px"
+                            defaultLanguage="shell"
+                            value={content.practice[selectedPractice].solution}
+                            theme="vs-dark"
+                            options={{
+                              minimap: { enabled: false },
+                              fontSize: 14,
+                              readOnly: true,
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         )}
       </div>
@@ -646,3 +916,5 @@ export default function DevOpsPractice() {
     </div>
   );
 }
+
+export default DevOpsPractice;

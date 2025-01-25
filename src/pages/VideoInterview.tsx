@@ -325,206 +325,187 @@ export default function VideoInterview() {
         </Card>
       ) : (
         <>
-          {/* Video Feeds */}
-          <div className="grid grid-cols-1 gap-6">
-  <VideoFeed />
-  <VideoFeed isAI />
-</div>
-
-
-          {/* Progress and Timer */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Timer className="h-4 w-4" />
-              <span className="font-mono">{formatTime(timeLeft)}</span>
-            </div>
-            <Progress value={progress} className="w-1/2" />
-            <span className="text-sm text-muted-foreground">
-              Question {currentQuestionIndex + 1} of {questions.length}
-            </span>
+        {/* Video Feeds */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <VideoFeed />
+          <VideoFeed isAI />
+        </div>
+      
+        {/* Progress and Timer */}
+        <div className="flex items-center justify-between py-4">
+          <div className="flex items-center space-x-2">
+            <Timer className="h-4 w-4" />
+            <span className="font-mono text-xl">{formatTime(timeLeft)}</span>
           </div>
-
-          {/* Question and Answer Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Question Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="h-5 w-5" />
-                  {currentQuestion.type.toUpperCase()} Question
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-lg">{currentQuestion.question}</p>
-              </CardContent>
-            </Card>
-
-            {/* Answer Section */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex justify-between items-center">
-                  <span>Your Answer</span>
-                  {currentQuestion.type === 'code' && (
-                    <Select value={language} onValueChange={handleLanguageChange}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {languageOptions.map(option => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {currentQuestion.type === 'code' ? (
-                  <>
-                    <Editor
-                      height="300px"
-                      language={language}
-                      value={code}
-                      onChange={(value) => setCode(value || '')}
-                      theme="vs-dark"
-                      options={{
-                        minimap: { enabled: false },
-                        fontSize: 14,
-                      }}
-                    />
-                    <div className="space-y-4">
-                      <div className="flex justify-end space-x-2">
-                        <Button
-                          variant="outline"
-                          onClick={handleRunCode}
-                          disabled={isRunning}
-                        >
-                          <Play className="mr-2 h-4 w-4" />
-                          Run Code
-                        </Button>
-                      </div>
-                      {output && (
-                        <div className="bg-muted p-4 rounded-lg font-mono text-sm">
-                          {output}
-                        </div>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <textarea
-                    className="w-full h-[300px] p-4 rounded-lg border resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    placeholder="Type your answer here..."
-                  />
+          <Progress value={progress} className="w-3/4" />
+          <span className="text-sm text-muted-foreground">
+            Question {currentQuestionIndex + 1} of {questions.length}
+          </span>
+        </div>
+      
+        {/* Question and Answer Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Question Card */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                <Brain className="h-5 w-5 text-purple-500" />
+                {currentQuestion.type.toUpperCase()} Question
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg">{currentQuestion.question}</p>
+            </CardContent>
+          </Card>
+      
+          {/* Answer Section */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                <span className="font-medium">Your Answer</span>
+                {currentQuestion.type === 'code' && (
+                  <Select value={language} onValueChange={handleLanguageChange}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {languageOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Control Buttons */}
-          <div className="flex justify-between">
-            <Button variant="destructive" onClick={() => setIsStarted(false)}>
-              <StopCircle className="mr-2 h-4 w-4" />
-              End Interview
-            </Button>
-            <div className="space-x-2">
-              <Button variant="outline" onClick={handleSubmitAnswer}>
-                <Send className="mr-2 h-4 w-4" />
-                Submit Answer
-              </Button>
-            </div>
-          </div>
-
-          {/* Evaluation Dialog */}
-          <Dialog open={showEvaluation} onOpenChange={setShowEvaluation}>
-            <DialogContent className="max-w-4xl h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  Interview Evaluation
-                </DialogTitle>
-                <DialogDescription>
-                  Detailed feedback for each question
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-8">
-                {questions.map((q, i) => {
-                  const evaluation = evaluations[i];
-                  return (
-                    <div key={i} className="border rounded-lg p-6 space-y-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-lg font-semibold">
-                            {q.type.toUpperCase()} Question {i + 1}
-                          </h3>
-                          <p className="text-muted-foreground">{q.question}</p>
-                        </div>
-                        <div className="text-2xl font-bold text-purple-500">
-                          {evaluation?.score}/10
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-green-500">Strengths</h4>
-                          <ul className="list-disc list-inside space-y-1">
-                            {evaluation?.strengths.map((strength: string, idx: number) => (
-                              <li key={idx} className="text-sm">{strength}</li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-orange-500">Areas for Improvement</h4>
-                          <ul className="list-disc list-inside space-y-1">
-                            {evaluation?.improvements.map((improvement: string, idx: number) => (
-                              <li key={idx} className="text-sm">{improvement}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {currentQuestion.type === 'code' ? (
+                <>
+                  <Editor
+                    height="300px"
+                    language={language}
+                    value={code}
+                    onChange={(value) => setCode(value || '')}
+                    theme="vs-dark"
+                    options={{ minimap: { enabled: false }, fontSize: 14 }}
+                  />
+                  <div className="space-y-4 mt-4">
+                    <div className="flex justify-end space-x-2">
+                      <Button variant="outline" onClick={handleRunCode} disabled={isRunning}>
+                        <Play className="mr-2 h-4 w-4" />
+                        Run Code
+                      </Button>
                     </div>
-                  );
-                })}
-                
-                {/* Total Score Section */}
-                <div className="border-t pt-4 mt-8">
-                  <div className="flex justify-between items-center">
-                    <div className="text-xl font-semibold">Total Score</div>
-                    <div className="text-3xl font-bold text-purple-500">
-                      {getTotalScore()}/50
+                    {output && (
+                      <div className="bg-muted p-4 rounded-lg font-mono text-sm">
+                        {output}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <textarea
+                  className="w-full h-[300px] p-4 rounded-lg border resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  placeholder="Type your answer here..."
+                />
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      
+        {/* Control Buttons */}
+        <div className="flex justify-between py-4">
+          <Button variant="destructive" onClick={() => setIsStarted(false)}>
+            <StopCircle className="mr-2 h-4 w-4" />
+            End Interview
+          </Button>
+          <div className="space-x-2">
+            <Button variant="outline" onClick={handleSubmitAnswer}>
+              <Send className="mr-2 h-4 w-4" />
+              Submit Answer
+            </Button>
+          </div>
+        </div>
+      
+        {/* Evaluation Dialog */}
+        <Dialog open={showEvaluation} onOpenChange={setShowEvaluation}>
+          <DialogContent className="max-w-4xl h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-green-500" />
+                Interview Evaluation
+              </DialogTitle>
+              <DialogDescription>
+                Detailed feedback for each question
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-8">
+              {questions.map((q, i) => {
+                const evaluation = evaluations[i];
+                return (
+                  <div key={i} className="border rounded-lg p-6 space-y-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-lg font-semibold">{q.type.toUpperCase()} Question {i + 1}</h3>
+                        <p className="text-muted-foreground">{q.question}</p>
+                      </div>
+                      <div className="text-2xl font-bold text-purple-500">{evaluation?.score}/10</div>
+                    </div>
+      
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-green-500">Strengths</h4>
+                        <ul className="list-disc list-inside space-y-1">
+                          {evaluation?.strengths.map((strength, idx) => (
+                            <li key={idx} className="text-sm">{strength}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-orange-500">Areas for Improvement</h4>
+                        <ul className="list-disc list-inside space-y-1">
+                          {evaluation?.improvements.map((improvement, idx) => (
+                            <li key={idx} className="text-sm">{improvement}</li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Submit Button */}
-                <div className="flex justify-end mt-6">
-                  <Button 
-                    onClick={submitToDatabase}
-                    disabled={isLoading}
-                    className="bg-green-500 hover:bg-green-600 text-white"
-                    size="lg"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle2 className="mr-2 h-4 w-4" />
-                        Submit Interview Results
-                      </>
-                    )}
-                  </Button>
+                );
+              })}
+              
+              {/* Total Score Section */}
+              <div className="border-t pt-4 mt-8">
+                <div className="flex justify-between items-center">
+                  <div className="text-xl font-semibold">Total Score</div>
+                  <div className="text-3xl font-bold text-purple-500">{getTotalScore()}/50</div>
                 </div>
               </div>
-            </DialogContent>
-          </Dialog>
-
-        </>
+      
+              {/* Submit Button */}
+              <div className="flex justify-end mt-6">
+                <Button onClick={submitToDatabase} disabled={isLoading} className="bg-green-500 hover:bg-green-600 text-white" size="lg">
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      Submit Interview Results
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+      
       )}
     </div>
   );

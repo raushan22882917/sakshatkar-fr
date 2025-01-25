@@ -1,165 +1,235 @@
 import React from 'react';
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import './DevOpsFlow.css'; // Import your custom CSS
-import FlowNode from './flow/FlowNode';
-import SubTopicPanel from './flow/SubTopicPanel';
-import { FlowNode as FlowNodeType } from '@/types/flow';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { 
+  ChevronRight, 
+  ChevronDown, 
+  GitBranch, 
+  Box, 
+  Cpu,
+  Server,
+  Cloud,
+  Lock,
+  Terminal,
+  Settings,
+  Monitor
+} from "lucide-react";
 
-const initialNodes = [
+interface TopicNode {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  color: string;
+  subtopics: SubTopic[];
+  progress: number;
+}
+
+interface SubTopic {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  tags: string[];
+}
+
+const topics: TopicNode[] = [
   {
     id: '1',
-    type: 'input',
-    data: {
-      label: 'DevOps Learning Path',
-      subTopics: ['Introduction', 'Overview', 'Career Path'],
-      completedSubTopics: []
-    },
-    position: { x: 500, y: 50 },
-    className: 'flow-node'
+    title: 'Version Control (Git)',
+    description: 'Master Git fundamentals and advanced workflows',
+    icon: GitBranch,
+    color: 'blue',
+    progress: 0,
+    subtopics: [
+      {
+        id: '1-1',
+        title: 'Git Basics',
+        description: 'Learn essential Git commands and workflows',
+        duration: '2 hours',
+        difficulty: 'Beginner',
+        tags: ['git', 'version-control', 'basics']
+      },
+      {
+        id: '1-2',
+        title: 'Branching & Merging',
+        description: 'Master branch management and merge strategies',
+        duration: '3 hours',
+        difficulty: 'Intermediate',
+        tags: ['git', 'branching', 'merging']
+      },
+      {
+        id: '1-3',
+        title: 'Advanced Git',
+        description: 'Advanced topics like rebasing and cherry-picking',
+        duration: '4 hours',
+        difficulty: 'Advanced',
+        tags: ['git', 'advanced', 'rebase']
+      }
+    ]
   },
   {
     id: '2',
-    data: {
-      label: 'Programming Languages',
-      subTopics: ['Python', 'JavaScript', 'Go', 'Ruby', 'Shell Scripting'],
-      completedSubTopics: []
-    },
-    position: { x: 300, y: 200 },
-    className: 'flow-node'
+    title: 'CI/CD Pipelines',
+    description: 'Build robust continuous integration and deployment pipelines',
+    icon: Box,
+    color: 'green',
+    progress: 0,
+    subtopics: [
+      {
+        id: '2-1',
+        title: 'Jenkins Fundamentals',
+        description: 'Learn Jenkins pipeline configuration and automation',
+        duration: '4 hours',
+        difficulty: 'Intermediate',
+        tags: ['jenkins', 'ci-cd', 'automation']
+      },
+      {
+        id: '2-2',
+        title: 'GitHub Actions',
+        description: 'Create automated workflows with GitHub Actions',
+        duration: '3 hours',
+        difficulty: 'Intermediate',
+        tags: ['github', 'actions', 'ci-cd']
+      },
+      {
+        id: '2-3',
+        title: 'GitLab CI',
+        description: 'Master GitLab CI/CD pipelines and runners',
+        duration: '4 hours',
+        difficulty: 'Advanced',
+        tags: ['gitlab', 'ci-cd', 'pipelines']
+      }
+    ]
   },
   {
     id: '3',
-    data: {
-      label: 'Operating Systems',
-      subTopics: ['Linux', 'Unix', 'Windows Server', 'Process Management', 'File Systems'],
-      completedSubTopics: []
-    },
-    position: { x: 700, y: 200 },
-    className: 'flow-node'
-  },
-  {
-    id: '4',
-    data: {
-      label: 'Networking Basics',
-      subTopics: ['TCP/IP', 'DNS', 'HTTP/HTTPS', 'SSL/TLS', 'Load Balancing'],
-      completedSubTopics: []
-    },
-    position: { x: 200, y: 400 },
-    className: 'flow-node'
-  },
-  {
-    id: '5',
-    data: {
-      label: 'Version Control',
-      subTopics: ['Git Basics', 'Branching', 'Merging', 'Git Flow', 'GitHub'],
-      completedSubTopics: []
-    },
-    position: { x: 800, y: 400 },
-    className: 'flow-node'
-  },
-  {
-    id: '6',
-    data: {
-      label: 'CI/CD',
-      subTopics: ['Jenkins', 'GitHub Actions', 'GitLab CI', 'Travis CI', 'CircleCI'],
-      completedSubTopics: []
-    },
-    position: { x: 500, y: 400 },
-    className: 'flow-node'
-  },
-  {
-    id: '7',
-    data: {
-      label: 'Monitoring & Logging',
-      subTopics: ['Prometheus', 'Grafana', 'ELK Stack', 'Application Monitoring'],
-      completedSubTopics: []
-    },
-    position: { x: 500, y: 600 },
-    className: 'flow-node'
+    title: 'Containerization',
+    description: 'Learn Docker and container orchestration',
+    icon: Server,
+    color: 'purple',
+    progress: 0,
+    subtopics: [
+      {
+        id: '3-1',
+        title: 'Docker Fundamentals',
+        description: 'Master Docker basics and container management',
+        duration: '3 hours',
+        difficulty: 'Beginner',
+        tags: ['docker', 'containers', 'basics']
+      },
+      {
+        id: '3-2',
+        title: 'Docker Compose',
+        description: 'Build and manage multi-container applications',
+        duration: '3 hours',
+        difficulty: 'Intermediate',
+        tags: ['docker', 'compose', 'multi-container']
+      },
+      {
+        id: '3-3',
+        title: 'Container Security',
+        description: 'Learn best practices for securing containers',
+        duration: '4 hours',
+        difficulty: 'Advanced',
+        tags: ['docker', 'security', 'best-practices']
+      }
+    ]
   }
 ];
 
-const initialEdges = [
-  { id: 'e1-2', source: '1', target: '2', animated: true, type: 'smoothstep', style: { stroke: 'gray', strokeDasharray: '5,5' } },
-  { id: 'e1-3', source: '1', target: '3', animated: true, type: 'smoothstep', style: { stroke: 'gray', strokeDasharray: '5,5' } },
-  { id: 'e2-4', source: '2', target: '4', animated: true, type: 'smoothstep', style: { stroke: 'gray', strokeDasharray: '5,5' } },
-  { id: 'e3-5', source: '3', target: '5', animated: true, type: 'smoothstep', style: { stroke: 'gray', strokeDasharray: '5,5' } },
-  { id: 'e2-6', source: '2', target: '6', animated: true, type: 'smoothstep', style: { stroke: 'gray', strokeDasharray: '5,5' } },
-  { id: 'e6-7', source: '6', target: '7', animated: true, type: 'smoothstep', style: { stroke: 'gray', strokeDasharray: '5,5' } }
-];
-
-const nodeTypes = {
-  default: FlowNode,
-  input: FlowNode,
-  output: FlowNode
+const getDifficultyColor = (difficulty: string) => {
+  switch (difficulty) {
+    case 'Beginner':
+      return 'bg-green-100 text-green-800';
+    case 'Intermediate':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'Advanced':
+      return 'bg-red-100 text-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
 };
 
 const DevOpsFlow = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [selectedNode, setSelectedNode] = React.useState<FlowNodeType | null>(null);
+  const navigate = useNavigate();
 
-  const onConnect = React.useCallback(
-    (params: any) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
-
-  const onNodeClick = (_event: React.MouseEvent, node: FlowNodeType) => {
-    setSelectedNode(node);
-  };
-
-  const handleSubTopicComplete = (nodeId: string, subTopic: string) => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node.id === nodeId) {
-          const completedSubTopics = node.data.completedSubTopics || [];
-          const newCompletedSubTopics = completedSubTopics.includes(subTopic)
-            ? completedSubTopics.filter((t) => t !== subTopic)
-            : [...completedSubTopics, subTopic];
-
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              completedSubTopics: newCompletedSubTopics
-            },
-            className: `flow-node ${newCompletedSubTopics.length === (node.data.subTopics?.length || 0) ? 'completed' : ''}`
-          };
-        }
-        return node;
-      })
-    );
-  };
-
-  const handleClosePanel = () => {
-    setSelectedNode(null);
+  const handleTopicClick = (topicId: string) => {
+    navigate(`/devops-practice/${topicId}`);
   };
 
   return (
-    <div className="relative" style={{ width: '100%', height: '800px' }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onNodeClick={onNodeClick}
-        nodeTypes={nodeTypes}
-        fitView
-      >
-        <Background />
-        <Controls />
-        <MiniMap />
-      </ReactFlow>
+    <div className="container mx-auto p-6 space-y-12">
+      {topics.map((topic, index) => (
+        <div key={topic.id} className="space-y-6">
+          {/* Main Topic Card */}
+          <Card 
+            className={`hover:shadow-xl transition-all duration-300 border-l-4 border-${topic.color}-500 group`}
+          >
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className={`p-3 rounded-lg bg-${topic.color}-100 group-hover:bg-${topic.color}-200 transition-colors`}>
+                  <topic.icon className={`w-6 h-6 text-${topic.color}-600`} />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl font-bold">{topic.title}</CardTitle>
+                  <CardDescription className="text-base">{topic.description}</CardDescription>
+                </div>
+              </div>
+              <Progress value={topic.progress} className="w-32" />
+            </CardHeader>
+          </Card>
 
-      {selectedNode && (
-        <SubTopicPanel
-          node={selectedNode}
-          onComplete={handleSubTopicComplete}
-          onClose={handleClosePanel}
-        />
-      )}
+          {/* Subtopics Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pl-12 relative">
+            {/* Vertical Line */}
+            <div className={`absolute left-0 top-0 bottom-0 w-0.5 bg-${topic.color}-200`} />
+
+            {topic.subtopics.map((subtopic, subIndex) => (
+              <Card 
+                key={subtopic.id}
+                className="hover:shadow-lg transition-all duration-300 cursor-pointer"
+                onClick={() => handleTopicClick(subtopic.id)}
+              >
+                <CardHeader>
+                  <div className="flex justify-between items-start mb-2">
+                    <Badge className={getDifficultyColor(subtopic.difficulty)}>
+                      {subtopic.difficulty}
+                    </Badge>
+                    <Badge variant="outline">{subtopic.duration}</Badge>
+                  </div>
+                  <CardTitle className="text-lg font-semibold">
+                    {subtopic.title}
+                  </CardTitle>
+                  <CardDescription>{subtopic.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {subtopic.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Connection arrow */}
+          {index < topics.length - 1 && (
+            <div className="flex justify-center py-4">
+              <div className={`p-2 rounded-full bg-${topic.color}-100`}>
+                <ChevronDown className={`w-6 h-6 text-${topic.color}-600`} />
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
