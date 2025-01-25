@@ -74,7 +74,9 @@ export default function Resources() {
         image: "https://via.placeholder.com/300x200.png?text=ML+Interview+Tips",
       },
     ],
-    
+    "Articles": [
+      // Add more articles here if needed
+    ],
   };
 
   const filteredResources = resources[activeTab]?.filter(resource =>
@@ -124,30 +126,21 @@ export default function Resources() {
         </div>
 
         <div className="flex space-x-4 mb-6">
-          {Object.keys(resources).map((tab) => (
+          {["Reading Material", "Interview Material", "Articles"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg ${
-                activeTab === tab
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-              }`}
+              className={`relative px-6 py-3 text-white rounded-full flex items-center transition-all duration-300 
+                ${activeTab === tab
+                  ? " hover:bg-gradient-to-r from-red-600 to-blue-500 shadow-lg shadow-blue-500/50 text-primary-foreground terxt-black-600"
+                  : "bg-gray-800 hover:bg-gradient-to-r from-red-600 to-blue-500 shadow-lg shadow-blue-500/50 border border-transparent hover:border-blue-400"
+                }`}
             >
-              {tab}
+              <Code className="mr-2 w-6 h-6 text-blue-300 group-hover:text-blue-400 transition-colors" />
+              <span className="text-lg font-semibold">{tab}</span>
+              <span className="absolute inset-0 rounded-full animate-pulse opacity-40"></span>
             </button>
           ))}
-          <button
-            key="Articles"
-            onClick={() => setActiveTab("Articles")}
-            className={`px-4 py-2 rounded-lg ${
-              activeTab === "Articles"
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
-          >
-            Articles
-          </button>
         </div>
 
         {activeTab === "Articles" ? (
