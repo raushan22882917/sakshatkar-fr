@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Question } from "@/types/interview";
+import { codeExecutionService } from './codeExecutionService';
 
 const API_URL = 'http://localhost:8000/api';
 
@@ -82,17 +83,16 @@ export const evaluationService: EvaluationService = {
 
   async runCode(code: string, language: string, input: string): Promise<CodeRunResponse> {
     try {
-      const response = await axios.post(
-        `${API_URL}/code/run/`,
-        { code, language, input } as CodeRunRequest,
-        {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      return response.data;
+      const result = await codeExecutionService.executeCode({
+        code,
+        language,
+        input
+      });
+
+      return {
+        output: result.output || '',
+        error: result.error || null
+      };
     } catch (error) {
       console.error('Code run error:', error);
       throw error;
@@ -101,17 +101,43 @@ export const evaluationService: EvaluationService = {
 
   async submitCode(code: string, language: string, questionId: string): Promise<EvaluationResponse> {
     try {
-      const response = await axios.post(
-        `${API_URL}/code/submit/`,
-        { code, language, question_id: questionId },
-        {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+      // First run the code with test cases
+      const testCases = [
+        { input: "test input 1", expectedOutput: "expected output 1" },
+        { input: "test input 2", expectedOutput: "expected output 2" }
+      ];
+
+      const results = await Promise.all(
+        testCases.map(async (testCase) => {
+          const result = await codeExecutionService.executeCode({
+            code,
+            language,
+            input: testCase.input
+          });
+
+          if (result.error) {
+            return { passed: false, message: result.error };
+          }
+
+          const output = result.output.trim();
+          const expectedOutput = testCase.expectedOutput.trim();
+          return {
+            passed: output === expectedOutput,
+            message: output === expectedOutput 
+              ? "Test case passed!"
+              : `Expected: ${expectedOutput}, Got: ${output}`
+          };
+        })
       );
-      return response.data;
+
+      const allPassed = results.every(r => r.passed);
+      const messages = results.map((r, i) => `Test Case ${i + 1}: ${r.message}`).join('\n');
+
+      return {
+        id: parseInt(questionId),
+        feedback: messages,
+        score: allPassed ? 100 : 0
+      };
     } catch (error) {
       console.error('Code submission error:', error);
       throw error;

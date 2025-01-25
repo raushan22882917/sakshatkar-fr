@@ -15,6 +15,9 @@ const languages = [
   { id: "typescript", name: "TypeScript", extension: ".ts" },
   { id: "java", name: "Java", extension: ".java" },
   { id: "cpp", name: "C++", extension: ".cpp" },
+  { id: "c", name: "C", extension: ".c" },
+  { id: "ruby", name: "Ruby", extension: ".rb" },
+  { id: "r", name: "R", extension: ".r" },
 ];
 
 interface CodeEditorProps {
@@ -115,46 +118,85 @@ export default function CodeEditor({
   };
 
   const handleRunCode = async () => {
-    setIsLoading(true);
+    if (!editorRef.current) return;
+    
     setIsExecuting(true);
     setOutput(null);
     setError(null);
 
     try {
-      // Get the first test case as sample input
-      const sampleInput = testCases[0]?.input || '';
-      
-      const result = await codeExecutionService.executeCode({
-        code: `${editorRef.current?.getValue() || ""}\n\n// Sample input:\n${sampleInput}\n`,
+      const code = editorRef.current.getValue();
+      const response = await codeExecutionService.executeCode({
+        code,
         language,
-        input: sampleInput
+        input: "" // Add input support if needed
       });
 
-      if (result.error) {
-        setError(result.error);
+      if (response.error) {
+        setError(response.error);
+        toast({
+          variant: "destructive",
+          title: "Error executing code",
+          description: response.error
+        });
       } else {
-        setOutput(result.output);
-        
-        // Check if output matches the expected output
-        const cleanActualOutput = result.output.trim().replace(/\s+/g, '');
-        const cleanExpectedOutput = (testCases[0]?.expectedOutput || '').trim().replace(/\s+/g, '');
-        
-        if (cleanActualOutput === cleanExpectedOutput) {
-          toast({
-            title: "Sample Test Passed! ",
-            description: "Your code works for the sample input. Try running all test cases!",
-            variant: "default"
-          });
+        let outputText = response.output;
+        if (response.cpuTime) {
+          outputText += `\n\nExecution Time: ${response.cpuTime}s`;
         }
+        if (response.memory) {
+          outputText += `\nMemory Used: ${response.memory}KB`;
+        }
+        setOutput(outputText);
       }
     } catch (error: any) {
-      console.error("Code execution error:", error);
-      setError(
-        error.message || "Failed to execute code. Please try again."
-      );
+      const errorMessage = error.message || "An error occurred while executing the code";
+      setError(errorMessage);
+      toast({
+        variant: "destructive",
+        title: "Error executing code",
+        description: errorMessage
+      });
     } finally {
-      setIsLoading(false);
       setIsExecuting(false);
+    }
+  };
+
+  const handleRunTests = async () => {
+    if (!editorRef.current || testCases.length === 0) return;
+
+    setIsRunningTests(true);
+    const code = editorRef.current.getValue();
+    const results: string[] = [];
+
+    try {
+      for (const testCase of testCases) {
+        const response = await codeExecutionService.executeCode({
+          code,
+          language,
+          input: testCase.input
+        });
+
+        if (response.error) {
+          results.push(`Test Case ${testCase.id}: Failed (Error: ${response.error})`);
+        } else {
+          const output = response.output.trim();
+          const expectedOutput = testCase.expectedOutput.trim();
+          const passed = output === expectedOutput;
+          results.push(
+            `Test Case ${testCase.id}: ${passed ? 'Passed' : 'Failed'}\n` +
+            `Input: ${testCase.input}\n` +
+            `Expected: ${expectedOutput}\n` +
+            `Got: ${output}\n`
+          );
+        }
+      }
+
+      setOutput(results.join('\n\n'));
+    } catch (error: any) {
+      setError(error.message || "An error occurred while running tests");
+    } finally {
+      setIsRunningTests(false);
     }
   };
 
@@ -176,67 +218,6 @@ export default function CodeEditor({
 
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
-  };
-
-  const handleRunTests = async () => {
-    setIsRunningTests(true);
-    const updatedTestCases = [...testCases];
-    let passedCount = 0;
-    
-    try {
-      for (let i = 0; i < updatedTestCases.length; i++) {
-        const testCase = updatedTestCases[i];
-        
-        // Execute the code with test input
-        const result = await codeExecutionService.executeCode({
-          code: `${editorRef.current?.getValue() || ""}\n\n// Test input:\n${testCase.input}\n`,
-          language,
-          input: testCase.input
-        });
-
-        if (result.error) {
-          testCase.actualOutput = result.error;
-          testCase.passed = false;
-        } else {
-          // Clean up the output (remove whitespace, newlines, etc.)
-          const cleanActualOutput = result.output.trim().replace(/\s+/g, '');
-          const cleanExpectedOutput = testCase.expectedOutput.trim().replace(/\s+/g, '');
-          
-          testCase.actualOutput = result.output.trim();
-          testCase.passed = cleanActualOutput === cleanExpectedOutput;
-          
-          if (testCase.passed) {
-            passedCount++;
-          }
-        }
-      }
-
-      onTestCasesChange(updatedTestCases);
-
-      // Show test results summary
-      const totalTests = updatedTestCases.length;
-      const passRate = Math.round((passedCount / totalTests) * 100);
-      
-      toast({
-        title: passedCount === totalTests 
-          ? `All Tests Passed! (${passRate}%) ` 
-          : `${passedCount}/${totalTests} Tests Passed (${passRate}%)`,
-        description: passedCount === totalTests
-          ? "Great job! Your code passed all test cases."
-          : `Your code passed ${passedCount} out of ${totalTests} test cases. Check the results for details.`,
-        variant: passedCount === totalTests ? "default" : "destructive",
-      });
-
-    } catch (error: any) {
-      console.error("Test execution error:", error);
-      toast({
-        title: "Test Execution Error",
-        description: error.message || "Failed to execute tests. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsRunningTests(false);
-    }
   };
 
   useEffect(() => {

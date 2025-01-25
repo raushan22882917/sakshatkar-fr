@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import uvicorn
-import judge0api as api
+from jdoodle_api import JDoodleClient
 import os
 import asyncio
 from dotenv import load_dotenv
@@ -785,58 +785,31 @@ async def root():
 @app.post("/api/execute", response_model=CodeResponse)
 async def execute_code(request: CodeRequest):
     try:
-        # Initialize Judge0 client
-        client = api.Client(os.getenv("JUDGE0_API_URL", "https://api.judge0.com"))
-        client.wait = False
-
-        # Convert strings to bytes for the API
-        code_bytes = request.code.encode('utf-8')
-        stdin_bytes = request.stdin.encode('utf-8') if request.stdin else b''
-        expected_output_bytes = request.expected_output.encode('utf-8') if request.expected_output else None
-
-        # Submit code to Judge0
-        submission = api.submission.submit(
-            client,
-            code_bytes,
-            request.language_id,
-            stdin=stdin_bytes,
-            expected_output=expected_output_bytes
+        # Initialize JDoodle client
+        client = JDoodleClient(
+            client_id=os.getenv("JDOODLE_CLIENT_ID", "f12940925219d17c94d7f4843cf7582f"),
+            client_secret=os.getenv("JDOODLE_CLIENT_SECRET", "5e1f887d7690f2b5afd8c7394a21907be57dfedff06d33ebd748e8e26535fdb7")
         )
 
-        # Wait for the result
-        max_attempts = 10
-        attempt = 0
-        
-        while attempt < max_attempts:
-            submission.load(client)
-            if submission.status["id"] > 2:  # Status > 2 means processing is complete
-                break
-            attempt += 1
-            await asyncio.sleep(1)
+        # Execute code using JDoodle
+        result = client.execute(
+            script=request.code,
+            language_id=request.language_id,
+            stdin=request.stdin
+        )
 
         # Process the result
-        if submission.status["id"] == 3:  # Accepted
+        if result.get("statusCode") == 200:
             return CodeResponse(
                 status="success",
-                output=submission.stdout,
-                execution_time=submission.time,
-                memory=submission.memory
-            )
-        elif submission.status["id"] == 4:  # Wrong Answer
-            return CodeResponse(
-                status="wrong_answer",
-                output=submission.stdout,
-                expected=request.expected_output
-            )
-        elif submission.status["id"] == 6:  # Compilation Error
-            return CodeResponse(
-                status="compilation_error",
-                error=submission.compile_output
+                output=result.get("output", ""),
+                execution_time=float(result.get("cpuTime", "0")),
+                memory=float(result.get("memory", "0"))
             )
         else:
             return CodeResponse(
                 status="error",
-                error=submission.stderr or "An error occurred during execution"
+                error=result.get("error", "An error occurred during execution")
             )
 
     except Exception as e:

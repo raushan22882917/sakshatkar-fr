@@ -51,19 +51,38 @@ export default function PeerSolvePage() {
   const languageOptions = {
     python: {
       extension: "py",
+      language: "python",
       defaultCode: "def solution():\n    # Write your code here\n    pass\n\n# Example usage:\nif __name__ == '__main__':\n    result = solution()\n    print(result)"
     },
     javascript: {
       extension: "js",
+      language: "javascript",
+      defaultCode: "function solution() {\n    // Write your code here\n}\n\n// Example usage:\nconst result = solution();\nconsole.log(result);"
+    },
+    typescript: {
+      extension: "ts",
+      language: "typescript",
       defaultCode: "function solution() {\n    // Write your code here\n}\n\n// Example usage:\nconst result = solution();\nconsole.log(result);"
     },
     java: {
       extension: "java",
+      language: "java",
       defaultCode: "public class Solution {\n    public static void main(String[] args) {\n        Solution solution = new Solution();\n        // Add your test cases here\n    }\n\n    public void solution() {\n        // Write your code here\n    }\n}"
     },
     cpp: {
       extension: "cpp",
+      language: "cpp",
       defaultCode: "#include <iostream>\nusing namespace std;\n\nclass Solution {\npublic:\n    void solution() {\n        // Write your code here\n    }\n};\n\nint main() {\n    Solution solution;\n    // Add your test cases here\n    return 0;\n}"
+    },
+    c: {
+      extension: "c",
+      language: "c",
+      defaultCode: "#include <stdio.h>\n\nint main() {\n    // Write your code here\n    return 0;\n}"
+    },
+    ruby: {
+      extension: "rb",
+      language: "ruby",
+      defaultCode: "def solution\n    # Write your code here\nend\n\n# Example usage:\nresult = solution()\nputs result"
     }
   };
 
@@ -200,103 +219,76 @@ export default function PeerSolvePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Code Editor</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex gap-2">
-                    {Object.keys(languageOptions).map((lang) => (
-                      <Button
-                        key={lang}
-                        variant={selectedLanguage === lang ? "default" : "outline"}
-                        onClick={() => handleLanguageChange(lang)}
-                        className="capitalize"
-                      >
-                        {lang}
-                      </Button>
-                    ))}
-                  </div>
-                  <div className="h-[500px] border rounded-md overflow-hidden">
-                    <Editor
-                      height="100%"
-                      defaultLanguage={selectedLanguage}
-                      value={code}
-                      onChange={(value) => setCode(value || "")}
-                      theme="vs-dark"
-                      options={{
-                        minimap: { enabled: false },
-                        fontSize: 14,
-                        lineNumbers: "on",
-                        automaticLayout: true,
-                      }}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="space-y-4">
-            <Tabs defaultValue="input">
-              <TabsList>
-                <TabsTrigger value="input">Custom Input</TabsTrigger>
-                <TabsTrigger value="output">Output</TabsTrigger>
-                <TabsTrigger value="approach">Approach</TabsTrigger>
-              </TabsList>
-              <TabsContent value="input">
-                <Card>
-                  <CardContent className="pt-4">
-                    <Textarea
-                      placeholder="Enter your test case input here..."
-                      value={customInput}
-                      onChange={(e) => setCustomInput(e.target.value)}
-                      className="min-h-[200px]"
-                    />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="output">
-                <Card>
-                  <CardContent className="pt-4">
-                    <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
-                      {executionResult || "No output yet. Run your code to see results."}
-                    </pre>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="approach">
-                <Card>
-                  <CardContent className="pt-4">
-                    <Textarea
-                      placeholder="Write your approach here..."
-                      value={approach}
-                      onChange={(e) => setApproach(e.target.value)}
-                      className="min-h-[200px]"
-                    />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-
-            <div className="flex gap-4">
-              <Button
-                onClick={handleRun}
-                disabled={isRunning}
-                className="flex-1"
+            <div className="flex items-center justify-between mb-4">
+              <select
+                value={selectedLanguage}
+                onChange={(e) => handleLanguageChange(e.target.value)}
+                className="px-3 py-1 rounded border bg-background text-foreground"
               >
-                {isRunning ? "Running..." : "Run Code"}
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="flex-1"
-                variant="default"
-              >
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </Button>
+                {Object.entries(languageOptions).map(([key, value]) => (
+                  <option key={key} value={key}>
+                    {value.language.charAt(0).toUpperCase() + value.language.slice(1)}
+                  </option>
+                ))}
+              </select>
+              <div className="space-x-2">
+                <Button
+                  onClick={handleRun}
+                  disabled={isRunning}
+                  variant="secondary"
+                >
+                  {isRunning ? "Running..." : "Run Code"}
+                </Button>
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </Button>
+              </div>
             </div>
+
+            <div className="h-[500px] border rounded-md overflow-hidden">
+              <Editor
+                height="100%"
+                language={languageOptions[selectedLanguage as keyof typeof languageOptions].language}
+                value={code}
+                onChange={(value) => setCode(value || "")}
+                theme="vs-dark"
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  lineNumbers: "on",
+                  roundedSelection: false,
+                  scrollBeyondLastLine: false,
+                  readOnly: isRunning || isSubmitting,
+                  automaticLayout: true,
+                  tabSize: 2,
+                  wordWrap: "on",
+                  formatOnPaste: true,
+                  formatOnType: true
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold">Custom Input</h3>
+              <Textarea
+                value={customInput}
+                onChange={(e) => setCustomInput(e.target.value)}
+                placeholder="Enter your test input here..."
+                rows={4}
+              />
+            </div>
+
+            {executionResult && (
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">Output</h3>
+                <pre className="p-4 rounded-md bg-muted whitespace-pre-wrap font-mono">
+                  {executionResult}
+                </pre>
+              </div>
+            )}
           </div>
         </div>
       </div>
