@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+python-dotenv
+judge0api
+pydantic
+langchain
