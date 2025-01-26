@@ -38,7 +38,7 @@ const navigationItems = [
   { title: 'Resources', icon: BookOpen, url: '/resources' },
   { title: 'Interview Rounds', icon: UserCheck, url: '/interview-rounds' },
   { title: 'Contest', icon: Trophy, url: '/contest' },
-  { title: 'Community', icon: Users, url: '/community' },
+  { title: 'Mentorship', icon: Users, url: '/mentorship' },
   { title: 'Jobs', icon: Briefcase, url: '/jobpost' },
   { title: 'Pricing', icon: DollarSign, url: '/pricing' },
   { title: 'About', icon: Info, url: '/about' },
