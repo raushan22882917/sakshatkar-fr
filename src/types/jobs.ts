@@ -8,4 +8,10 @@ export interface Job {
   salary_range?: string;
   requirements?: string[];
   created_at: string;
+  recruiter_id: string;
+  profiles?: {
+    name: string | null;
+    profile_image_url: string | null;
+    company_name: string | null;
+  } | null;
 }

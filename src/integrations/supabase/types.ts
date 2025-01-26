@@ -1037,47 +1037,65 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           badges: Json[] | null
           bio: string | null
           college: string | null
+          company_name: string | null
           created_at: string
           email: string | null
+          full_name: string | null
           id: string
           level: string | null
           name: string | null
           open_to_work: boolean | null
           profile_image_url: string | null
           resume_url: string | null
+          subscription_end_date: string | null
+          subscription_status: string | null
+          subscription_type: string | null
           updated_at: string
           user_type: string | null
         }
         Insert: {
+          avatar_url?: string | null
           badges?: Json[] | null
           bio?: string | null
           college?: string | null
+          company_name?: string | null
           created_at?: string
           email?: string | null
+          full_name?: string | null
           id: string
           level?: string | null
           name?: string | null
           open_to_work?: boolean | null
           profile_image_url?: string | null
           resume_url?: string | null
+          subscription_end_date?: string | null
+          subscription_status?: string | null
+          subscription_type?: string | null
           updated_at?: string
           user_type?: string | null
         }
         Update: {
+          avatar_url?: string | null
           badges?: Json[] | null
           bio?: string | null
           college?: string | null
+          company_name?: string | null
           created_at?: string
           email?: string | null
+          full_name?: string | null
           id?: string
           level?: string | null
           name?: string | null
           open_to_work?: boolean | null
           profile_image_url?: string | null
           resume_url?: string | null
+          subscription_end_date?: string | null
+          subscription_status?: string | null
+          subscription_type?: string | null
           updated_at?: string
           user_type?: string | null
         }
@@ -1503,6 +1521,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscriptions: {
+        Row: {
+          created_at: string | null
+          id: string
+          subscription_end_date: string | null
+          subscription_status: string
+          subscription_type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          subscription_end_date?: string | null
+          subscription_status?: string
+          subscription_type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          subscription_end_date?: string | null
+          subscription_status?: string
+          subscription_type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       technical_questions: {
         Row: {
