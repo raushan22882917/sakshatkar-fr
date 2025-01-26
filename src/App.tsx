@@ -57,6 +57,10 @@ import { CustomCursor } from '@/components/ui/custom-cursor';
 import PeerSolvePage from "./pages/PeerSolvePage";
 import CompanyPractice from "./pages/CompanyPractice";
 import CompanyTopic from "./pages/CompanyTopic";
+import { MentorList } from "@/pages/mentorship/MentorList";
+import { MentorDetails } from "@/pages/mentorship/MentorDetails";
+import { MentorshipPayment } from "@/pages/mentorship/MentorshipPayment";
+import { MentorshipSuccess } from "@/pages/mentorship/MentorshipSuccess";
 import { 
   ContestHome,
   ContestPage,
@@ -104,6 +108,12 @@ const App = () => {
                       <AppSidebar />
                       <main className="flex-1">
                         <Routes>
+                          {/* Add Mentorship Routes */}
+                          <Route path="/mentorship" element={<MentorList />} />
+                          <Route path="/mentorship/:id" element={<MentorDetails />} />
+                          <Route path="/mentorship/payment" element={<MentorshipPayment />} />
+                          <Route path="/mentorship/success" element={<MentorshipSuccess />} />
+
                           {/* Editor Route */}
                           <Route 
                             path="/editor" 
