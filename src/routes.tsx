@@ -9,7 +9,8 @@ import Applications from '@/pages/recruiter/Applications';
 import ViewProfile from '@/pages/recruiter/ViewProfile';
 import Interviews from '@/pages/recruiter/Interviews';
 import JobsPost from '@/pages/JobsPost';
-import { Mentorship } from '@/pages/Mentorship';
+import { MentorList } from '@/pages/mentorship/MentorList';
+import { MentorDetails } from '@/pages/mentorship/MentorDetails';
 
 export const router = createBrowserRouter([
   {
@@ -18,7 +19,11 @@ export const router = createBrowserRouter([
   },
   {
     path: '/mentorship',
-    element: <Mentorship />,
+    element: <MentorList />,
+  },
+  {
+    path: '/mentorship/:id',
+    element: <MentorDetails />,
   },
   // Recruiter Routes
   {
