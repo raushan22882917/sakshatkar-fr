@@ -2,26 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { Progress } from "@/components/ui/progress";
 
 export interface QuestionTimerProps {
-  timeSpent: number;
-  maxTime: number;
+  duration?: number;
   onTimeUpdate: (time: number) => void;
 }
 
-export function QuestionTimer({ timeSpent, maxTime, onTimeUpdate }: QuestionTimerProps) {
-  const [timeLeft, setTimeLeft] = useState(maxTime - timeSpent);
-  const progress = (timeLeft / maxTime) * 100;
+export function QuestionTimer({ duration = 300, onTimeUpdate }: QuestionTimerProps) {
+  const [timeLeft, setTimeLeft] = useState(duration);
+  const progress = (timeLeft / duration) * 100;
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         const newTime = Math.max(0, prev - 1);
-        onTimeUpdate(maxTime - newTime);
+        onTimeUpdate(newTime);
         return newTime;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [maxTime, onTimeUpdate]);
+  }, [duration, onTimeUpdate]);
 
   return (
     <div className="w-full space-y-2">
