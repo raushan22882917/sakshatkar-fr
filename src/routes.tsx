@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { Login } from '@/pages/auth/Login';
+import Login from '@/pages/auth/Login';
 import PostJob from '@/pages/recruiter/PostJob';
 import Jobs from '@/pages/recruiter/Jobs';
 import Messages from '@/pages/recruiter/Messages';
@@ -11,6 +11,8 @@ import Interviews from '@/pages/recruiter/Interviews';
 import JobsPost from '@/pages/JobsPost';
 import { MentorList } from '@/pages/mentorship/MentorList';
 import { MentorDetails } from '@/pages/mentorship/MentorDetails';
+import { MentorshipPayment } from '@/pages/mentorship/MentorshipPayment';
+import { MentorshipSuccess } from '@/pages/mentorship/MentorshipSuccess';
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +26,14 @@ export const router = createBrowserRouter([
   {
     path: '/mentorship/:id',
     element: <MentorDetails />,
+  },
+  {
+    path: '/mentorship/payment',
+    element: <MentorshipPayment />,
+  },
+  {
+    path: '/mentorship/success',
+    element: <MentorshipSuccess />,
   },
   // Recruiter Routes
   {

@@ -14,9 +14,10 @@ import {
   Trophy,
   Briefcase,
   BrainCog,
-  Menu, // Added for mobile menu
+  Menu,
   Mail,
   Brain,
+  GraduationCap
 } from 'lucide-react';
 import {
   Sidebar,
@@ -38,7 +39,7 @@ const navigationItems = [
   { title: 'Resources', icon: BookOpen, url: '/resources' },
   { title: 'Interview Rounds', icon: UserCheck, url: '/interview-rounds' },
   { title: 'Contest', icon: Trophy, url: '/contest' },
-  { title: 'Mentorship', icon: Users, url: '/mentorship' },
+  { title: 'Mentorship', icon: GraduationCap, url: '/mentorship' },
   { title: 'Jobs', icon: Briefcase, url: '/jobpost' },
   { title: 'Pricing', icon: DollarSign, url: '/pricing' },
   { title: 'About', icon: Info, url: '/about' },
