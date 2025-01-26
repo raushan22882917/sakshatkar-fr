@@ -3,6 +3,8 @@ export type QuestionType = 'mcq' | 'debugging' | 'coding' | 'theoretical';
 export interface TestCase {
   input: string;
   expectedOutput: string;
+  actualOutput?: string;
+  passed?: boolean;
   explanation?: string;
 }
 
@@ -20,8 +22,8 @@ export interface EvaluationResponse {
   isCorrect: boolean;
   feedback: string;
   explanation: string;
-  passed?: boolean;
-  message?: string;
+  passed: boolean;
+  message: string;
 }
 
 export type MessageType = 
@@ -38,4 +40,5 @@ export interface ChatMessage {
   content: string;
   suggestedQuestions?: string[];
   practiceData?: PracticeQuestion;
+  role?: 'user' | 'assistant';
 }

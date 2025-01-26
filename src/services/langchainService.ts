@@ -184,19 +184,16 @@ class LangChainService {
     }
   }
 
-  public async handleResponse(input: string): Promise<{
+  public async handleResponse(input: string, selectedModule?: string, sessionHistory?: any[]): Promise<{
     content: string;
     suggestedQuestions: string[];
   }> {
     try {
-      // Add context about previous conversation
-      const contextPrompt = `Given our conversation history, answer the following question. 
+      const contextPrompt = `Given our conversation history about ${selectedModule || 'this topic'}, answer the following question. 
       If it relates to previous topics we discussed, reference those in your explanation: "${input}"`;
       
-      this.addToHistory('user', input);
       const response = await this.getResponse(contextPrompt);
-      this.addToHistory('assistant', response);
-
+      
       const [explanation = '', questions = ''] = response.split('[Suggested Questions]');
       
       const suggestedQuestions = questions
@@ -210,13 +207,7 @@ class LangChainService {
       };
     } catch (error) {
       console.error('Error in handleResponse:', error);
-      
-      // Try to find a relevant fallback response
       const fallbackResponse = this.getFallbackResponseForTopic(input) || this.getRandomFallbackResponse();
-      
-      // Add fallback to history to maintain context
-      this.addToHistory('assistant', fallbackResponse.content);
-      
       return {
         content: fallbackResponse.content,
         suggestedQuestions: fallbackResponse.suggestedQuestions
