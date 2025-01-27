@@ -4,8 +4,16 @@ export interface Question {
   options?: string[];
   code?: string;
   correctAnswer: string;
-  testCases?: { input: string; expectedOutput: string; }[];
+  testCases?: TestCase[];
   blanks?: string[];
   hints?: string[];
   explanation?: string;
+}
+
+export interface TestCase {
+  input: string;
+  expectedOutput: string;
+  output?: string;
+  actualOutput?: string;
+  passed?: boolean;
 }
