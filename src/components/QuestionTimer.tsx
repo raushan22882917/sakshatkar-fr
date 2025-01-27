@@ -4,11 +4,18 @@ import { Progress } from "@/components/ui/progress";
 export interface QuestionTimerProps {
   duration?: number;
   onTimeUpdate: (time: number) => void;
+  timeSpent?: number;
+  maxTime?: number;
 }
 
-export function QuestionTimer({ duration = 300, onTimeUpdate }: QuestionTimerProps) {
+export function QuestionTimer({ 
+  duration = 300, 
+  onTimeUpdate,
+  timeSpent = 0,
+  maxTime = duration 
+}: QuestionTimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
-  const progress = (timeLeft / duration) * 100;
+  const progress = (timeLeft / maxTime) * 100;
 
   useEffect(() => {
     const timer = setInterval(() => {

@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Navbar } from "@/components/Navbar";
-import { Search, Star, Users, Clock, Target, Lightbulb } from 'lucide-react';
+import { Search, Star, Users, Clock } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { Mentor } from '@/types/mentorship';
 
 export function MentorList() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export function MentorList() {
         `);
 
       if (error) throw error;
-      return data;
+      return data as Mentor[];
     },
   });
 
@@ -43,7 +44,7 @@ export function MentorList() {
   );
 
   return (
-    <div className="containers">
+    <div className="container mx-auto px-4 py-8">
       <Navbar />
 
       {showWelcome ? (

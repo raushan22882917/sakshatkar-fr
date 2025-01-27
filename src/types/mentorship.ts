@@ -10,6 +10,12 @@ export interface Mentor {
   profile_image_url?: string;
   skills: string[];
   mentoring_goals: string[];
+  company?: string;
+  experience?: number;
+  one_on_one_price?: number;
+  group_price?: number;
+  max_group_size?: number;
+  payment_options?: string[];
   profiles?: {
     name: string | null;
     email: string | null;
@@ -28,4 +34,19 @@ export interface MentorshipSession {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   payment_status: 'pending' | 'completed';
   amount: number;
+}
+
+export interface TestCase {
+  input: string;
+  expectedOutput: string;
+  actualOutput?: string;
+  passed?: boolean;
+}
+
+export interface EvaluationResponse {
+  isCorrect: boolean;
+  feedback: string;
+  explanation: string;
+  passed?: boolean;
+  message?: string;
 }
