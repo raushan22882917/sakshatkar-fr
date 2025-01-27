@@ -7,31 +7,17 @@ export interface Mentor {
   bio: string;
   rating: number;
   total_sessions: number;
-  profile_image_url?: string;
+  profile_image_url: string;
   skills: string[];
   mentoring_goals: string[];
-  company?: string;
-  experience?: number;
-  one_on_one_price?: number;
-  group_price?: number;
-  max_group_size?: number;
-  payment_options?: string[];
+  company: string;
+  experience: number;
+  one_on_one_price: number;
+  group_price: number;
+  max_group_size: number;
+  payment_options: string[];
   profiles?: {
-    name: string | null;
-    email: string | null;
-    company_name: string | null;
+    name: string;
+    email: string;
   };
-}
-
-export interface MentorshipSession {
-  id: string;
-  mentor_id: string;
-  student_id: string;
-  session_type: 'group' | 'one-on-one';
-  booking_date: string;
-  start_time: string;
-  end_time: string;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-  payment_status: 'pending' | 'completed';
-  amount: number;
 }
