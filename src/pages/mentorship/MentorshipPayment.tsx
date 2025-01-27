@@ -1,160 +1,101 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
-import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
-import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { PayPalButtons } from "@paypal/react-paypal-js";
+import { useToast } from "@/components/ui/use-toast";
+import { Mentor } from '@/types/mentorship';
 
-interface MentorshipPaymentProps {
-  mentorId?: string;
-  sessionType?: 'one-time' | 'monthly';
-}
-
-const amount = {
-  currency_code: 'USD',
-  value: '100.00'
-};
-
-export default function MentorshipPayment({ mentorId, sessionType }: MentorshipPaymentProps) {
-  const { id } = useParams();
+export function MentorshipPayment() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [mentor, setMentor] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchMentorDetails = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('mentors')
-          .select('*')
-          .eq('id', mentorId || id)
-          .single();
-
-        if (error) throw error;
-        setMentor(data);
-      } catch (err) {
-        setError('Failed to load mentor details');
-        console.error('Error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMentorDetails();
-  }, [mentorId, id]);
-
-  const handlePaymentSuccess = async (details: any) => {
-    try {
-      const { data: session } = await supabase.auth.getSession();
-      if (!session.session?.user) {
-        throw new Error('User not authenticated');
-      }
-
-      const { error } = await supabase.from('mentorship_sessions').insert({
-        mentor_id: mentorId || id,
-        student_id: session.session.user.id,
-        payment_id: details.id,
-        status: 'paid',
-        session_type: sessionType || 'one-time',
-        amount: parseFloat(amount.value)
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: 'Payment Successful',
-        description: 'Your mentorship session has been booked.',
-      });
-
-      navigate('/dashboard/mentorship');
-    } catch (err) {
-      console.error('Error saving payment details:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to process payment. Please try again.',
-        variant: 'destructive',
-      });
-    }
+  const [sessionType, setSessionType] = useState<'group' | 'one-on-one'>('group');
+  const { mentor, selectedDate, selectedTimeSlot } = location.state as {
+    mentor: Mentor;
+    selectedDate: Date;
+    selectedTimeSlot: string;
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
+  const price = sessionType === 'group' ? mentor.hourly_rate * 0.6 : mentor.hourly_rate;
 
-  if (error || !mentor) {
-    return (
-      <div className="container mx-auto p-4">
-        <Card>
-          <CardContent className="p-6">
-            <p className="text-red-500">{error || 'Mentor not found'}</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const handlePaymentSuccess = () => {
+    navigate('/mentorship/success', {
+      state: {
+        mentor,
+        sessionType,
+        selectedDate,
+        selectedTimeSlot,
+        price
+      }
+    });
+  };
 
   return (
-    <div className="container mx-auto p-4">
-      <Card>
+    <div className="container mx-auto px-4 py-8">
+      <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>Book Mentorship Session</CardTitle>
+          <CardTitle className="text-2xl">Session Payment</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
           <div className="space-y-4">
-            <div>
-              <h3 className="font-medium">Mentor Details</h3>
-              <p>{mentor.name}</p>
-              <p className="text-sm text-gray-500">{mentor.expertise}</p>
-            </div>
+            <h3 className="font-medium">Select Session Type</h3>
+            <RadioGroup
+              value={sessionType}
+              onValueChange={(value) => setSessionType(value as 'group' | 'one-on-one')}
+              className="space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="group" id="group" />
+                <Label htmlFor="group">Group Session (Max 5 students) - 40% off</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="one-on-one" id="one-on-one" />
+                <Label htmlFor="one-on-one">One-on-One Session</Label>
+              </div>
+            </RadioGroup>
+          </div>
 
-            <div>
-              <h3 className="font-medium">Session Details</h3>
-              <p>Type: {sessionType || 'One-time'} session</p>
-              <p>Amount: ${amount.value} USD</p>
+          <div className="border-t pt-4">
+            <div className="flex justify-between text-lg font-semibold">
+              <span>Total Amount:</span>
+              <span>${price}</span>
             </div>
+          </div>
 
-            <div className="pt-4">
-              <PayPalScriptProvider options={{
-                "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID
-              }}>
-                <PayPalButtons
-                  style={{ layout: "vertical" }}
-                  createOrder={(data, actions) => {
-                    return actions.order.create({
-                      purchase_units: [
-                        {
-                          amount: amount
-                        }
-                      ]
-                    });
-                  }}
-                  onApprove={async (data, actions) => {
-                    if (actions.order) {
-                      const details = await actions.order.capture();
-                      handlePaymentSuccess(details);
-                    }
-                  }}
-                  onError={(err) => {
-                    console.error('PayPal Error:', err);
-                    toast({
-                      title: 'Payment Error',
-                      description: 'There was an error processing your payment. Please try again.',
-                      variant: 'destructive',
-                    });
-                  }}
-                />
-              </PayPalScriptProvider>
-            </div>
+          <div className="space-y-4">
+            <PayPalButtons
+              createOrder={(data, actions) => {
+                return actions.order.create({
+                  purchase_units: [
+                    {
+                      amount: {
+                        value: price.toString(),
+                      },
+                    },
+                  ],
+                });
+              }}
+              onApprove={(data, actions) => {
+                return actions.order!.capture().then(() => {
+                  handlePaymentSuccess();
+                });
+              }}
+              onError={() => {
+                toast({
+                  title: "Payment Error",
+                  description: "There was an error processing your payment. Please try again.",
+                  variant: "destructive",
+                });
+              }}
+            />
           </div>
         </CardContent>
       </Card>
     </div>
   );
 }
+
+export default MentorshipPayment;

@@ -149,11 +149,7 @@ export function SolutionForm({
 
   return (
     <div className="space-y-4">
-      <QuestionTimer 
-        timeSpent={timeSpent} 
-        maxTime={3600}
-        onTimeUpdate={(time) => setTimeSpent(3600 - time)} 
-      />
+      <QuestionTimer timeSpent={timeSpent} maxTime={3600} />
       
       {submissionCount >= 10 && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
