@@ -1,101 +1,122 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { PayPalButtons } from "@paypal/react-paypal-js";
-import { useToast } from "@/components/ui/use-toast";
+```tsx
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mentor } from '@/types/mentorship';
 
-export function MentorshipPayment() {
-  const location = useLocation();
-  const navigate = useNavigate();
+export default function MentorshipPayment() {
+  const { id } = useParams();
+  const [mentor, setMentor] = useState<Mentor | null>(null);
+  const [amount, setAmount] = useState(0);
   const { toast } = useToast();
-  const [sessionType, setSessionType] = useState<'group' | 'one-on-one'>('group');
-  const { mentor, selectedDate, selectedTimeSlot } = location.state as {
-    mentor: Mentor;
-    selectedDate: Date;
-    selectedTimeSlot: string;
-  };
 
-  const price = sessionType === 'group' ? mentor.hourly_rate * 0.6 : mentor.hourly_rate;
+  useEffect(() => {
+    const fetchMentor = async () => {
+      if (!id) return;
 
-  const handlePaymentSuccess = () => {
-    navigate('/mentorship/success', {
-      state: {
-        mentor,
-        sessionType,
-        selectedDate,
-        selectedTimeSlot,
-        price
+      const { data, error } = await supabase
+        .from('mentor_profiles')
+        .select(`
+          *,
+          profiles:user_id (
+            name,
+            email,
+            company_name
+          )
+        `)
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch mentor details",
+          variant: "destructive",
+        });
+        return;
       }
+
+      setMentor(data);
+      setAmount(data.one_on_one_price || 0);
+    };
+
+    fetchMentor();
+  }, [id]);
+
+  const createOrder = (data: any, actions: any) => {
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          currency_code: 'USD',
+          value: amount.toString()
+        }
+      }],
+      intent: "CAPTURE"
     });
   };
 
+  const onApprove = async (data: any, actions: any) => {
+    try {
+      const details = await actions.order.capture();
+      
+      // Save payment details to database
+      const { error } = await supabase
+        .from('mentorship_payments')
+        .insert({
+          mentor_id: id,
+          amount: amount,
+          payment_id: details.id,
+          status: 'completed'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Payment completed successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process payment",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (!mentor) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-2xl mx-auto">
+    <div className="container mx-auto py-8">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Session Payment</CardTitle>
+          <CardTitle>Book Mentorship Session</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <h3 className="font-medium">Select Session Type</h3>
-            <RadioGroup
-              value={sessionType}
-              onValueChange={(value) => setSessionType(value as 'group' | 'one-on-one')}
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="group" id="group" />
-                <Label htmlFor="group">Group Session (Max 5 students) - 40% off</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="one-on-one" id="one-on-one" />
-                <Label htmlFor="one-on-one">One-on-One Session</Label>
-              </div>
-            </RadioGroup>
+        <CardContent>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold">Mentor Details</h3>
+            <p>Name: {mentor.profiles?.name}</p>
+            <p>Company: {mentor.profiles?.company_name}</p>
+            <p>Rate: ${amount}/hour</p>
           </div>
 
-          <div className="border-t pt-4">
-            <div className="flex justify-between text-lg font-semibold">
-              <span>Total Amount:</span>
-              <span>${price}</span>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <PayPalButtons
-              createOrder={(data, actions) => {
-                return actions.order.create({
-                  purchase_units: [
-                    {
-                      amount: {
-                        value: price.toString(),
-                      },
-                    },
-                  ],
-                });
-              }}
-              onApprove={(data, actions) => {
-                return actions.order!.capture().then(() => {
-                  handlePaymentSuccess();
-                });
-              }}
-              onError={() => {
-                toast({
-                  title: "Payment Error",
-                  description: "There was an error processing your payment. Please try again.",
-                  variant: "destructive",
-                });
-              }}
+          <PayPalScriptProvider options={{ 
+            "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "" 
+          }}>
+            <PayPalButtons 
+              createOrder={createOrder}
+              onApprove={onApprove}
+              style={{ layout: "horizontal" }}
             />
-          </div>
+          </PayPalScriptProvider>
         </CardContent>
       </Card>
     </div>
   );
 }
-
-export default MentorshipPayment;
+```

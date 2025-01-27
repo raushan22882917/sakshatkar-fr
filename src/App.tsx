@@ -1,436 +1,126 @@
+import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { Pricing } from "@/pages/Pricing";
+import { Community } from "@/pages/Community";
+import { Services } from "@/pages/Services";
+import { About } from "@/pages/About";
+import { Login } from "@/pages/Login";
+import { Signup } from "@/pages/Signup";
+import { Dashboard } from "@/pages/Dashboard";
+import { AuthCallback } from "@/pages/AuthCallback";
+import { Admin } from "@/pages/Admin";
 import { AdminRoute } from "@/components/AdminRoute";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import StudyMateAI from "@/pages/StudyMateAI";
-import DevOpsFlow from "@/components/DevOpsFlow";
-import MLFlow from './components/MLFlow/MLFlow';
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
-import PostJob from "./pages/recruiter/PostJob";
-import Jobs from "./pages/recruiter/Jobs";
-import Messages from "./pages/recruiter/Messages";
-import Settings from "./pages/recruiter/Settings";
-import Applications from "./pages/recruiter/Applications";
-import ViewProfile from "./pages/recruiter/ViewProfile";
-import Interviews from "./pages/recruiter/Interviews";
-import { Home as RecruiterHome } from "./pages/recruiter/Home";
-import PolicyPage from "./pages/PolicyPage";
-import NewsPage from './pages/NewsPage';
-import AuthCallback from "./pages/AuthCallback";
-import About from "./pages/About";
-import Services from "./pages/Services";
-import Topics from "./pages/Topics";
-import TopicQuestions from "./pages/TopicQuestions";
-import PeerTopic from "./pages/PeerTopic";
-import SolvePage from "./pages/SolvePage";
-import PeerPractice from "./pages/PeerPractice";
-import Dashboard from "./pages/Dashboard";
-import Community from "./pages/Community";
-import Pricing from "./pages/Pricing";
-import TeamCoding from "./pages/TeamCoding";
-import DevOpsPractice from "./pages/DevOpsPractice";
-import HRInterview from "./pages/HRInterview";
-import HRInterviewSession from "./pages/HRInterviewSession";
-import TechnicalRound from "./pages/TechnicalRound";
-import FAQ from "./pages/FAQ";
-import Coding from "./pages/Coding";
-import Resources from "./pages/Resources";
-import InterviewRounds from "./pages/InterviewRounds";
-import Contact from "./pages/Contact";
-import ArticlePage from "./pages/ArticlePage";
-import Payment from "./pages/Payment";
-import JobsPost from "./pages/JobsPost";
-import ChatInterface from './pages/ChatInterface';
-import ChatLayout from './components/chat/ChatLayout';
-import { HelmetProvider } from 'react-helmet-async';
-import { CustomCursor } from '@/components/ui/custom-cursor';
-import PeerSolvePage from "./pages/PeerSolvePage";
-import CompanyPractice from "./pages/CompanyPractice";
-import CompanyTopic from "./pages/CompanyTopic";
-import { MentorList } from "@/pages/mentorship/MentorList";
-import { MentorDetails } from "@/pages/mentorship/MentorDetails";
-import { MentorshipPayment } from "@/pages/mentorship/MentorshipPayment";
-import { MentorshipSuccess } from "@/pages/mentorship/MentorshipSuccess";
-import { 
-  ContestHome,
-  ContestPage,
-  ContestDetails,
-  ContestProblem,
-  ContestLeaderboard,
-  ContestCreate,
-  ContestPractice
-} from "@/pages/contests";
-import { InterviewPractice } from "@/pages/InterviewPractice";
-import { DevOpsQuestions } from "@/pages/interview/DevOpsQuestions";
+import { Coding } from "@/pages/Coding";
+import { SolvePage } from "@/pages/SolvePage";
+import { PeerSolvePage } from "@/pages/PeerSolvePage";
+import { TopicQuestions } from "@/pages/TopicQuestions";
 import { ArticleDetail } from "@/pages/ArticleDetail";
-import VideoInterview from "./pages/VideoInterview";
-import { RecentActivity } from "@/components/dashboard/RecentActivity";
-import { PayPalScriptProvider } from '@paypal/react-paypal-js';
-import Editor from "./pages/Editor";
+import MentorList from "@/pages/mentorship/MentorList";
+import { MentorshipPayment } from "@/pages/mentorship/MentorshipPayment";
+import { ContestPage } from "@/pages/contests/ContestPage";
+import { ContestDetails } from "@/pages/contests/ContestDetails";
+import { ContestProblem } from "@/pages/contests/ContestProblem";
+import { ContestLeaderboard } from "@/pages/contests/ContestLeaderboard";
+import { ReNewJob } from "@/pages/re/jobs/new";
+import { ReApplications } from "@/pages/re/applications";
+import { ReJobs } from "@/pages/re/jobs";
+import { ReInterviews } from "@/pages/re/interviews";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+function App() {
+  const [customCursor, setCustomCursor] = useState({ x: 0, y: 0 });
+  const [cursorDot, setCursorDot] = useState({ x: 0, y: 0, scale: 1 });
 
-const paypalOptions = {
-  clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
-  currency: "USD",
-  intent: "capture",
-};
+  useEffect(() => {
+    const moveCursor = (e: MouseEvent) => {
+      setCustomCursor({ x: e.clientX, y: e.clientY });
+      setCursorDot(prev => ({ ...prev, x: e.clientX, y: e.clientY }));
+    };
 
-const App = () => {
+    const handleMouseDown = () => {
+      setCursorDot(prev => ({ ...prev, scale: 1.5 }));
+    };
+
+    const handleMouseUp = () => {
+      setCursorDot(prev => ({ ...prev, scale: 1 }));
+    };
+
+    document.addEventListener("mousemove", moveCursor);
+    document.addEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", moveCursor);
+      document.removeEventListener("mousedown", handleMouseDown);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
   return (
-    <HelmetProvider>
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <SubscriptionProvider>
-              <TooltipProvider>
-                <SidebarProvider>
-                  <PayPalScriptProvider options={paypalOptions}>
-                    <div className="flex min-h-screen w-full">
-                      <CustomCursor />
-                      <AppSidebar />
-                      <main className="flex-1">
-                        <Routes>
-                          {/* Add Mentorship Routes */}
-                          <Route path="/mentorship" element={<MentorList />} />
-                          <Route path="/mentorship/:id" element={<MentorDetails />} />
-                          <Route path="/mentorship/payment" element={<MentorshipPayment />} />
-                          <Route path="/mentorship/success" element={<MentorshipSuccess />} />
-
-                          {/* Editor Route */}
-                          <Route 
-                            path="/editor" 
-                            element={
-                              <ProtectedRoute>
-                                <Editor />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          {/* Add StudyMate AI route */}
-                          <Route 
-                            path="/studymate-ai" 
-                            element={
-                              <ProtectedRoute>
-                                <StudyMateAI />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          
-                          {/* Learning Path Routes */}
-                          <Route 
-                            path="/learn" 
-                            element={
-                              <ProtectedRoute>
-                                <ChatLayout />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/learn/python" 
-                            element={
-                              <ProtectedRoute>
-                                <ChatLayout />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/learn/dsa-basic" 
-                            element={
-                              <ProtectedRoute>
-                                <ChatLayout />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/learn/dsa-intermediate" 
-                            element={
-                              <ProtectedRoute>
-                                <ChatLayout />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/learn/dsa-advanced" 
-                            element={
-                              <ProtectedRoute>
-                                <ChatLayout />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          
-                          {/* Public routes */}
-                          <Route path="/jobpost" element={<JobsPost />} />
-                          
-                          {/* DevOps Routes */}
-                          <Route 
-                            path="/devops-flow" 
-                            element={
-                              <ProtectedRoute>
-                                <DevOpsFlow />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/devops-practice/:id" 
-                            element={
-                              <ProtectedRoute>
-                                <DevOpsPractice />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          
-                          {/* Recruiter routes */}
-                          <Route path="/recruiter" element={<RecruiterHome />} />
-                          <Route path="/recruiter/dashboard" element={<RecruiterDashboard />} />
-                          <Route path="/recruiter/applications" element={<Applications />} />
-                          <Route path="/recruiter/applications/:applicationId/profile" element={<ViewProfile />} />
-                          <Route path="/recruiter/interviews/:applicationId" element={<Interviews />} />
-                          <Route 
-                            path="/recruiter/jobs/post" 
-                            element={
-                              <ProtectedRoute>
-                                <PostJob />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/recruiter/jobs" 
-                            element={
-                              <ProtectedRoute>
-                                <Jobs />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/recruiter/messages" 
-                            element={
-                              <ProtectedRoute>
-                                <Messages />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/recruiter/settings" 
-                            element={
-                              <ProtectedRoute>
-                                <Settings />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          
-                          {/* Contest Routes */}
-                          <Route path="contest">
-                            <Route index element={<ContestHome />} />
-                            <Route path="list" element={<ContestPage />} />
-                            <Route path="leaderboard" element={<ContestLeaderboard />} />
-                            <Route path="practice" element={<ContestPractice />} />
-                            <Route path="create" element={
-                              <ProtectedRoute>
-                                <ContestCreate />
-                              </ProtectedRoute>
-                            } />
-                            <Route path=":contestId" element={<ContestDetails />} />
-                            <Route path=":contestId/problem/:problemId" element={<ContestProblem />} />
-                          </Route>
-                          
-                          {/* Existing routes */}
-                          <Route path="/" element={<Index />} />
-                          <Route path="/login" element={<Login />} />
-                          <Route path="/signup" element={<Signup />} />
-                          <Route path="/auth/callback" element={<AuthCallback />} />
-                          <Route path="/about" element={<About />} />
-                          <Route path="/services" element={<Services />} />
-                          <Route path="/faq" element={<FAQ />} />
-                          <Route path="/coding" element={<Coding />} />
-                          <Route path="/resources" element={<Resources />} />
-                          <Route path="/interview-rounds" element={<InterviewRounds />} />
-                          <Route path="/self-practice" element={<Topics />} />
-                          <Route path="/news" element={<NewsPage />} /> 
-                          <Route path="/policy" element={<PolicyPage />} />
-                          <Route 
-                            path="/settings" 
-                            element={
-                              <ProtectedRoute>
-                                <Settings />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/topic/:id" 
-                            element={
-                              <ProtectedRoute>
-                                <TopicQuestions />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/solve/:id" 
-                            element={
-                              <ProtectedRoute>
-                                <SolvePage />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/peer-practice" 
-                            element={
-                              <ProtectedRoute>
-                                <PeerPractice />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/peer-practice/topic/:id" 
-                            element={
-                              <ProtectedRoute>
-                                <PeerTopic />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/peer-practice/solve/:id" 
-                            element={
-                              <ProtectedRoute>
-                                <PeerSolvePage />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/team-coding" 
-                            element={
-                              <ProtectedRoute>
-                                <TeamCoding />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/dashboard" 
-                            element={
-                              <ProtectedRoute>
-                                <Dashboard />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/community" 
-                            element={
-                              <ProtectedRoute>
-                                <Community />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route path="/payment" element={<Payment />} />
-                          <Route 
-                            path="/ML-flow" 
-                            element={
-                              <ProtectedRoute>
-                                <MLFlow />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/hr-interview" 
-                            element={
-                              <ProtectedRoute>
-                                <HRInterview />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/hr-interview/:id" 
-                            element={
-                              <ProtectedRoute>
-                                <HRInterviewSession />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/hr-interview-session/:id" 
-                            element={
-                              <ProtectedRoute>
-                                <HRInterviewSession />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/technical-round" 
-                            element={
-                              <ProtectedRoute>
-                                <TechnicalRound />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/pricing" 
-                            element={
-                              <ProtectedRoute>
-                                <Pricing />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route path="/contact" element={<Contact />} />
-                          <Route path="/article/:id" element={<ArticleDetail />} />
-                          <Route path="/chat" element={<ChatInterface />} />
-                          <Route path="/learn" element={<ChatLayout />} />
-                          <Route 
-                            path="/company-practice" 
-                            element={
-                              <ProtectedRoute>
-                                <CompanyPractice />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/company-practice/topic/:id" 
-                            element={
-                              <ProtectedRoute>
-                                <CompanyTopic />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route 
-                            path="/company-practice/solve/:id" 
-                            element={
-                              <ProtectedRoute>
-                                <PeerSolvePage />
-                              </ProtectedRoute>
-                            } 
-                          />
-                          <Route path="/interview-practice" element={<InterviewPractice />} />
-                          <Route path="/interview/devops-questions" element={<DevOpsQuestions />} />
-                          <Route path="/video-interview" element={<VideoInterview />} />
-                        </Routes>
-                      </main>
-                    </div>
-                  </PayPalScriptProvider>
-                  <CustomCursor />
-                  <Toaster />
-                  <Sonner />
-                </SidebarProvider>
-              </TooltipProvider>
-            </SubscriptionProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </BrowserRouter>
-    </HelmetProvider>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <AuthProvider>
+        <SubscriptionProvider>
+          <Router>
+            <div
+              className="custom-cursor"
+              style={{
+                left: `${customCursor.x}px`,
+                top: `${customCursor.y}px`,
+              }}
+            />
+            <div
+              className="custom-cursor-dot"
+              style={{
+                left: `${cursorDot.x}px`,
+                top: `${cursorDot.y}px`,
+                transform: `translate(-50%, -50%) scale(${cursorDot.scale})`,
+              }}
+            />
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <Admin />
+                  </AdminRoute>
+                }
+              />
+              <Route path="/coding" element={<Coding />} />
+              <Route path="/solve/:id" element={<SolvePage />} />
+              <Route path="/peer-solve/:id" element={<PeerSolvePage />} />
+              <Route path="/topic/:id" element={<TopicQuestions />} />
+              <Route path="/article/:id" element={<ArticleDetail />} />
+              <Route path="/mentorship" element={<MentorList />} />
+              <Route path="/mentorship/payment" element={<MentorshipPayment />} />
+              <Route path="/contests" element={<ContestPage />} />
+              <Route path="/contests/:id" element={<ContestDetails />} />
+              <Route path="/contests/:id/problem/:problemId" element={<ContestProblem />} />
+              <Route path="/contests/:id/leaderboard" element={<ContestLeaderboard />} />
+              <Route path="/re/jobs/new" element={<ReNewJob />} />
+              <Route path="/re/applications" element={<ReApplications />} />
+              <Route path="/re/jobs" element={<ReJobs />} />
+              <Route path="/re/interviews" element={<ReInterviews />} />
+            </Routes>
+            <Toaster />
+          </Router>
+        </SubscriptionProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
-};
+}
 
 export default App;
