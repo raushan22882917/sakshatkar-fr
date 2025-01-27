@@ -7,8 +7,15 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Navbar } from "@/components/Navbar";
-import { Search, Star, Users, Clock,Target, Lightbulb } from 'lucide-react'; // Only lucide-react icons
-import { Skeleton } from '@/components/ui/skeleton';
+import { lazy, Suspense } from 'react';
+
+// Lazy load icons
+const LazySearch = lazy(() => import('lucide-react').then(module => ({ default: module.Search })));
+const LazyStar = lazy(() => import('lucide-react').then(module => ({ default: module.Star })));
+const LazyUsers = lazy(() => import('lucide-react').then(module => ({ default: module.Users })));
+const LazyClock = lazy(() => import('lucide-react').then(module => ({ default: module.Clock })));
+const LazyTarget = lazy(() => import('lucide-react').then(module => ({ default: module.Target })));
+const LazyLightbulb = lazy(() => import('lucide-react').then(module => ({ default: module.Lightbulb })));
 
 export function MentorList() {
   const navigate = useNavigate();
@@ -59,7 +66,9 @@ export function MentorList() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
             {/* Card 1 */}
             <div className="border rounded-lg shadow-lg p-4">
-              <Search className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <Suspense fallback={<div className="w-12 h-12" />}>
+                <LazySearch className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              </Suspense>
               <h3 className="text-xl font-bold mb-2">Gain Knowledge</h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Learn from the experiences and insights of those who have walked the path before you.
@@ -67,7 +76,9 @@ export function MentorList() {
             </div>
             {/* Card 2 */}
             <div className="border rounded-lg shadow-lg p-4">
-              <Users className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <Suspense fallback={<div className="w-12 h-12" />}>
+                <LazyUsers className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              </Suspense>
               <h3 className="text-xl font-bold mb-2">Build Connections</h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Expand your network and open doors to new opportunities through mentorship.
@@ -75,7 +86,9 @@ export function MentorList() {
             </div>
             {/* Card 3 */}
             <div className="border rounded-lg shadow-lg p-4">
-              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <Suspense fallback={<div className="w-12 h-12" />}>
+                <LazyClock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              </Suspense>
               <h3 className="text-xl font-bold mb-2">Achieve Goals</h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Set and reach your personal and professional goals with the guidance of a mentor.
@@ -83,7 +96,9 @@ export function MentorList() {
             </div>
             {/* Card 4 */}
             <div className="border rounded-lg shadow-lg p-4">
-              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <Suspense fallback={<div className="w-12 h-12" />}>
+                <LazyClock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              </Suspense>
               <h3 className="text-xl font-bold mb-2">Receive Feedback</h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Get constructive feedback to improve your skills and performance.
@@ -91,7 +106,9 @@ export function MentorList() {
             </div>
             {/* Card 5 */}
             <div className="border rounded-lg shadow-lg p-4">
-              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <Suspense fallback={<div className="w-12 h-12" />}>
+                <LazyClock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              </Suspense>
               <h3 className="text-xl font-bold mb-2">Develop Skills</h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Enhance your skills and knowledge through tailored mentorship sessions.
@@ -99,7 +116,9 @@ export function MentorList() {
             </div>
             {/* Card 6 */}
             <div className="border rounded-lg shadow-lg p-4">
-              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <Suspense fallback={<div className="w-12 h-12" />}>
+                <LazyClock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              </Suspense>
               <h3 className="text-xl font-bold mb-2">Boost Confidence</h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Gain the confidence to take on new challenges and pursue your passions.
@@ -114,34 +133,38 @@ export function MentorList() {
 
           {/* Why Choose Us Section */}
           <div className="flex flex-col-reverse lg:flex-row items-center lg:items-start lg:justify-between gap-8 mt-12">
-  <div className="text-left max-w-xl space-y-8 ">
-    <div className="flex items-center gap-3 text-align:center">
-      <Users className="w-8 h-8 text-blue-500" />
-      <div>
-        <h2 className="text-2xl font-bold mb-4 ">What We Offer</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          Personalized mentorship programs, flexible schedules, and guidance to achieve your career goals.
-        </p>
-      </div>
-    </div>
-    <div className="flex items-center gap-3">
-      <Target className="w-8 h-8 text-green-500" />
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Why Choose Us?</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          We connect you with top industry experts to gain the skills and insights needed to succeed.
-        </p>
-      </div>
-    </div>
-  </div>
-  <div className="flex-shrink-0">
-    <img
-      src="mentor.png"
-      alt="Why Choose Us"
-      className="w-full max-w-md rounded-lg shadow-md"
-    />
-  </div>
-</div>
+            <div className="text-left max-w-xl space-y-8 ">
+              <div className="flex items-center gap-3 text-align:center">
+                <Suspense fallback={<div className="w-8 h-8" />}>
+                  <LazyUsers className="w-8 h-8 text-blue-500" />
+                </Suspense>
+                <div>
+                  <h2 className="text-2xl font-bold mb-4 ">What We Offer</h2>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Personalized mentorship programs, flexible schedules, and guidance to achieve your career goals.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Suspense fallback={<div className="w-8 h-8" />}>
+                  <LazyTarget className="w-8 h-8 text-green-500" />
+                </Suspense>
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">Why Choose Us?</h2>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    We connect you with top industry experts to gain the skills and insights needed to succeed.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              <img
+                src="mentor.png"
+                alt="Why Choose Us"
+                className="w-full max-w-md rounded-lg shadow-md"
+              />
+            </div>
+          </div>
         </div>
       ) : (
         <div>
@@ -170,7 +193,9 @@ export function MentorList() {
           </div>
 
           <div className="relative mb-8 max-w-lg mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Suspense fallback={<div className="w-4 h-4" />}>
+              <LazySearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </Suspense>
             <Input
               type="text"
               placeholder="Search by name or expertise..."
@@ -204,15 +229,20 @@ export function MentorList() {
                   onClick={() => navigate(`/mentorship/${mentor.id}`)}
                 >
                   <CardHeader className="flex flex-row items-center space-x-4">
-                    <img
-                      src={mentor.profile_image_url || '/placeholder.svg'}
-                      alt={mentor.profiles?.name || 'Mentor'}
+                    <img 
+                      src={mentor.profile_image_url} 
+                      alt={`${mentor.profiles?.name}'s profile`}
+                      loading="lazy"
+                      width="200"
+                      height="200"
                       className="w-12 h-12 rounded-full object-cover"
                     />
                     <div>
                       <CardTitle className="text-lg">{mentor.profiles?.name}</CardTitle>
                       <div className="flex items-center text-yellow-500">
-                        <Star className="w-4 h-4 fill-current" />
+                        <Suspense fallback={<div className="w-4 h-4" />}>
+                          <LazyStar className="w-4 h-4 fill-current" />
+                        </Suspense>
                         <span className="ml-1">{mentor.rating.toFixed(1)}</span>
                       </div>
                     </div>
@@ -230,11 +260,15 @@ export function MentorList() {
                     </div>
                     <div className="flex justify-between items-center text-sm text-gray-500">
                       <div className="flex items-center">
-                        <Users className="w-4 h-4 mr-1" />
+                        <Suspense fallback={<div className="w-4 h-4" />}>
+                          <LazyUsers className="w-4 h-4 mr-1" />
+                        </Suspense>
                         <span>{mentor.total_sessions} sessions</span>
                       </div>
                       <div className="flex items-center">
-                        <Clock className="w-4 h-4 mr-1" />
+                        <Suspense fallback={<div className="w-4 h-4" />}>
+                          <LazyClock className="w-4 h-4 mr-1" />
+                        </Suspense>
                         <span>${mentor.hourly_rate}/hour</span>
                       </div>
                     </div>
