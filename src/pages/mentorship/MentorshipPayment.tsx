@@ -122,12 +122,13 @@ export default function MentorshipPayment({ mentorId, sessionType }: MentorshipP
 
             <div className="pt-4">
               <PayPalScriptProvider options={{
-                "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID
+                "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test"
               }}>
                 <PayPalButtons
                   style={{ layout: "vertical" }}
                   createOrder={(data, actions) => {
                     return actions.order.create({
+                      intent: "CAPTURE",
                       purchase_units: [
                         {
                           amount: amount

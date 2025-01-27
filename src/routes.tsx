@@ -9,10 +9,10 @@ import Applications from '@/pages/recruiter/Applications';
 import ViewProfile from '@/pages/recruiter/ViewProfile';
 import Interviews from '@/pages/recruiter/Interviews';
 import JobsPost from '@/pages/JobsPost';
-import { MentorList } from '@/pages/mentorship/MentorList';
-import { MentorDetails } from '@/pages/mentorship/MentorDetails';
-import { MentorshipPayment } from '@/pages/mentorship/MentorshipPayment';
-import { MentorshipSuccess } from '@/pages/mentorship/MentorshipSuccess';
+import MentorList from '@/pages/mentorship/MentorList';
+import MentorDetails from '@/pages/mentorship/MentorDetails';
+import MentorshipPayment from '@/pages/mentorship/MentorshipPayment';
+import MentorshipSuccess from '@/pages/mentorship/MentorshipSuccess';
 
 export const router = createBrowserRouter([
   {
