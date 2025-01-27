@@ -1,150 +1,214 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { supabase } from "@/lib/supabaseClient";
-import { Mentor } from "@/types/mentorship";
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Mentor } from '@/types/mentorship';
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, Mail, MapPin, Star, Users } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Star, Users, Briefcase, GraduationCap, Clock, Calendar as CalendarIcon } from 'lucide-react';
 
-export default function MentorDetails() {
+export function MentorDetails() {
   const { id } = useParams();
-  const { toast } = useToast();
-  const [mentor, setMentor] = useState<Mentor | null>(null);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>("");
 
-  useEffect(() => {
-    fetchMentorDetails();
-  }, [id]);
-
-  const fetchMentorDetails = async () => {
-    try {
+  const { data: mentor, isLoading } = useQuery({
+    queryKey: ['mentor', id],
+    queryFn: async () => {
       const { data, error } = await supabase
-        .from("mentor_profiles")
+        .from('mentor_profiles')
         .select(`
           *,
-          profile:profiles(name, email, company_name)
+          profiles:user_id (
+            name,
+            email,
+            company_name
+          )
         `)
-        .eq("id", id)
+        .eq('id', id)
         .single();
-
+      
       if (error) throw error;
-
-      setMentor(data);
-    } catch (error) {
-      console.error("Error fetching mentor details:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load mentor details",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+      return data as Mentor;
     }
+  });
+
+  const timeSlots = [
+    "09:00", "10:00", "11:00", "14:00", "15:00", "16:00"
+  ];
+
+  const handleBooking = () => {
+    if (!selectedDate || !selectedTimeSlot) return;
+    
+    navigate('/mentorship/payment', {
+      state: {
+        mentor,
+        selectedDate,
+        selectedTimeSlot
+      }
+    });
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto p-6 space-y-6">
-        <Skeleton className="h-12 w-3/4" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   if (!mentor) {
-    return (
-      <div className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold">Mentor not found</h1>
-      </div>
-    );
+    return <div>Mentor not found</div>;
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center space-x-4">
-            {mentor.profile_image_url && (
-              <img
-                src={mentor.profile_image_url}
-                alt={mentor.profile?.name}
-                className="w-16 h-16 rounded-full object-cover"
-              />
-            )}
-            <div>
-              <CardTitle className="text-2xl">{mentor.profile?.name}</CardTitle>
-              <p className="text-muted-foreground flex items-center">
-                <MapPin className="w-4 h-4 mr-1" />
-                {mentor.profile?.company_name}
-              </p>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-semibold mb-2">About</h3>
-              <p className="text-muted-foreground">{mentor.bio}</p>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Star className="w-5 h-5 text-yellow-500" />
-                <span>{mentor.rating} / 5 ({mentor.total_sessions} sessions)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Users className="w-5 h-5" />
-                <span>Max group size: {mentor.max_group_size}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Calendar className="w-5 h-5" />
-                <span>{mentor.availability}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Mail className="w-5 h-5" />
-                <span>{mentor.profile?.email}</span>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-2">Expertise</h3>
-            <div className="flex flex-wrap gap-2">
-              {mentor.expertise.map((skill, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Left Column - Mentor Info */}
+          <div className="md:w-2/3">
             <Card>
-              <CardHeader>
-                <CardTitle>1-on-1 Sessions</CardTitle>
+              <CardHeader className="flex flex-row items-center space-x-4">
+                <img
+                  src={mentor.profile_image_url || '/placeholder.svg'}
+                  alt={mentor.profiles?.name || 'Mentor'}
+                  className="w-24 h-24 rounded-full object-cover"
+                />
+                <div>
+                  <CardTitle className="text-2xl">{mentor.profiles?.name}</CardTitle>
+                  <div className="flex items-center text-yellow-500 mt-2">
+                    <Star className="w-5 h-5 fill-current" />
+                    <span className="ml-1 text-lg">{mentor.rating.toFixed(1)}</span>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">${mentor.one_on_one_price}/hr</p>
-                <Button className="w-full mt-4">Book 1-on-1 Session</Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Group Sessions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">${mentor.group_price}/hr</p>
-                <Button className="w-full mt-4">Join Group Session</Button>
+                <Tabs defaultValue="about">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="about">About</TabsTrigger>
+                    <TabsTrigger value="expertise">Expertise</TabsTrigger>
+                    <TabsTrigger value="experience">Experience</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="about" className="mt-4">
+                    <p className="text-gray-600 dark:text-gray-400">{mentor.bio}</p>
+                    <div className="flex items-center mt-4 space-x-6 text-gray-500">
+                      <div className="flex items-center">
+                        <Users className="w-5 h-5 mr-2" />
+                        <span>{mentor.total_sessions} sessions completed</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="w-5 h-5 mr-2" />
+                        <span>${mentor.hourly_rate}/hour</span>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="expertise" className="mt-4">
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="font-medium mb-2">Skills</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {mentor.skills.map((skill, index) => (
+                            <Badge key={index} variant="secondary">
+                              {skill}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="font-medium mb-2">Areas of Expertise</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {mentor.expertise.map((exp, index) => (
+                            <Badge key={index} variant="secondary">
+                              {exp}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="experience" className="mt-4">
+                    <div className="space-y-4">
+                      <div className="flex items-start space-x-3">
+                        <Briefcase className="w-5 h-5 mt-1" />
+                        <div>
+                          <h3 className="font-medium">Current Position</h3>
+                          <p className="text-gray-600">{mentor.profiles?.company_name || 'Independent Mentor'}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start space-x-3">
+                        <GraduationCap className="w-5 h-5 mt-1" />
+                        <div>
+                          <h3 className="font-medium">Mentoring Goals</h3>
+                          <ul className="list-disc list-inside text-gray-600">
+                            {mentor.mentoring_goals.map((goal, index) => (
+                              <li key={index}>{goal}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Right Column - Booking */}
+          <div className="md:w-1/3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Book a Session</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium mb-2">Select Date</h3>
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                      className="rounded-md border"
+                      disabled={(date) =>
+                        date < new Date() || date > new Date(Date.now() + 12096e5)
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium mb-2">Select Time Slot</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      {timeSlots.map((slot) => (
+                        <Button
+                          key={slot}
+                          variant={selectedTimeSlot === slot ? "default" : "outline"}
+                          onClick={() => setSelectedTimeSlot(slot)}
+                          className="w-full"
+                        >
+                          {slot}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Button
+                    className="w-full"
+                    size="lg"
+                    onClick={handleBooking}
+                    disabled={!selectedDate || !selectedTimeSlot}
+                  >
+                    Book Session
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
+
+export default MentorDetails;
