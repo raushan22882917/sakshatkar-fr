@@ -8,63 +8,117 @@ interface Profile {
 
 interface VideoFeedProps {
   isAI?: boolean;
-  apiKey: string; // Groq API key for fetching responses (from .env file)
 }
 
-export function VideoFeed({ isAI = false, apiKey }: VideoFeedProps) {
+export function VideoFeed({ isAI = false }: VideoFeedProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [response, setResponse] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Function to make AI speak
-  const speak = (text: string) => {
-    const speech = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
-    speech.voice = voices[0]; // Set voice (default first voice)
-    speech.rate = 1;
-    speech.pitch = 1;
-    window.speechSynthesis.speak(speech);
-
-    // Lip-sync with DeepMotion API (optional, if you have integration)
-    animateAvatar(text);
-  };
-
-  // Function to trigger DeepMotion API for lip sync animation
-  const animateAvatar = async (text: string) => {
+  // Function to get AI response using Groq
+  const getAIResponse = async (question: string) => {
     try {
-      const response = await fetch("YOUR_DEEPMOTION_API_URL", {
-        method: "POST",
+      const response = await fetch('https://api.groq.com/v1/chat/completions', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer YOUR_DEEPMOTION_API_KEY`,
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
         },
-        body: JSON.stringify({ text }), // Send the text to DeepMotion for lip-syncing
+        body: JSON.stringify({
+          model: 'mixtral-8x7b-32768',
+          messages: [{ role: 'user', content: question }],
+          max_tokens: 150,
+          temperature: 0.7
+        })
       });
+      
       const data = await response.json();
-      console.log("Avatar animation response:", data);
-      // Use the data to trigger animations for your avatar
-    } catch (err) {
-      console.error("Error in avatar animation:", err);
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      return 'Sorry, I encountered an error processing your request.';
     }
   };
 
-  // Fetch AI response from Groq API
-  const fetchAIResponse = async (query: string) => {
+  // Function to animate avatar using D-ID
+  const animateAvatar = async (text: string) => {
     try {
-      const response = await fetch(process.env.VITE_GROQ_API_KEY || "", {
-        method: "POST",
+      setIsProcessing(true);
+      const response = await fetch('https://api.d-id.com/talks', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`,
+          'Authorization': `Basic ${import.meta.env.VITE_DID_API}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({
+          script: {
+            type: 'text',
+            input: text,
+          },
+          source_url: 'https://create-images-results.d-id.com/DefaultPresenters/Emma_f/image.png',
+          config: {
+            stitch: true,
+          },
+        }),
       });
-      const data = await response.json();
-      setResponse(data.answer); // Assuming the API response contains an 'answer' field
-      speak(data.answer); // Speak the AI's response
-    } catch (err) {
-      console.error("Error fetching AI response:", err);
+
+      const { id } = await response.json();
+      
+      // Poll for the result
+      const result = await pollForResult(id);
+      if (result?.result_url) {
+        if (videoRef.current) {
+          videoRef.current.src = result.result_url;
+          videoRef.current.play();
+        }
+      }
+    } catch (error) {
+      console.error('Error in avatar animation:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Helper function to poll for D-ID result
+  const pollForResult = async (id: string) => {
+    const maxAttempts = 30;
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      const response = await fetch(`https://api.d-id.com/talks/${id}`, {
+        headers: {
+          'Authorization': `Basic ${import.meta.env.VITE_DID_API}`,
+        },
+      });
+      
+      const result = await response.json();
+      
+      if (result.status === 'done') {
+        return result;
+      } else if (result.status === 'error') {
+        throw new Error('D-ID processing failed');
+      }
+
+      attempts++;
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    throw new Error('Polling timeout');
+  };
+
+  // Function to handle user question
+  const handleUserQuestion = async (question: string) => {
+    try {
+      setIsProcessing(true);
+      const aiResponse = await getAIResponse(question);
+      setResponse(aiResponse);
+      await animateAvatar(aiResponse);
+    } catch (error) {
+      console.error('Error processing question:', error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -78,7 +132,7 @@ export function VideoFeed({ isAI = false, apiKey }: VideoFeedProps) {
     recognition.onresult = (event) => {
       const query = event.results[0][0].transcript;
       console.log("User said:", query);
-      fetchAIResponse(query); // Fetch response from AI based on the user's query
+      handleUserQuestion(query); // Handle user question
     };
 
     recognition.onend = () => {
@@ -115,7 +169,7 @@ export function VideoFeed({ isAI = false, apiKey }: VideoFeedProps) {
     fetchUserName();
 
     if (isAI && userName) {
-      speak(`Hello, ${userName}! I am your AI Interviewer. How can I assist you today?`);
+      handleUserQuestion(`Hello, ${userName}! I am your AI Interviewer. How can I assist you today?`);
     } else {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
