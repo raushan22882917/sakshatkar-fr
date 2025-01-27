@@ -7,11 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Navbar } from "@/components/Navbar";
-import { Search, Star, Users, Clock } from 'lucide-react';
+import { Search, Star, Users, Clock, Target } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Mentor } from '@/types/mentorship';
 
-export function MentorList() {
+export default function MentorList() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showWelcome, setShowWelcome] = useState(true);
@@ -77,30 +77,6 @@ export function MentorList() {
                 Set and reach your personal and professional goals with the guidance of a mentor.
               </p>
             </div>
-            {/* Card 4 */}
-            <div className="border rounded-lg shadow-lg p-4">
-              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
-              <h3 className="text-xl font-bold mb-2">Receive Feedback</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Get constructive feedback to improve your skills and performance.
-              </p>
-            </div>
-            {/* Card 5 */}
-            <div className="border rounded-lg shadow-lg p-4">
-              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
-              <h3 className="text-xl font-bold mb-2">Develop Skills</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Enhance your skills and knowledge through tailored mentorship sessions.
-              </p>
-            </div>
-            {/* Card 6 */}
-            <div className="border rounded-lg shadow-lg p-4">
-              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
-              <h3 className="text-xl font-bold mb-2">Boost Confidence</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Gain the confidence to take on new challenges and pursue your passions.
-              </p>
-            </div>
           </div>
 
           {/* Explore Mentors Button */}
@@ -110,34 +86,34 @@ export function MentorList() {
 
           {/* Why Choose Us Section */}
           <div className="flex flex-col-reverse lg:flex-row items-center lg:items-start lg:justify-between gap-8 mt-12">
-  <div className="text-left max-w-xl space-y-8 ">
-    <div className="flex items-center gap-3 text-align:center">
-      <Users className="w-8 h-8 text-blue-500" />
-      <div>
-        <h2 className="text-2xl font-bold mb-4 ">What We Offer</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          Personalized mentorship programs, flexible schedules, and guidance to achieve your career goals.
-        </p>
-      </div>
-    </div>
-    <div className="flex items-center gap-3">
-      <Target className="w-8 h-8 text-green-500" />
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Why Choose Us?</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          We connect you with top industry experts to gain the skills and insights needed to succeed.
-        </p>
-      </div>
-    </div>
-  </div>
-  <div className="flex-shrink-0">
-    <img
-      src="mentor.png"
-      alt="Why Choose Us"
-      className="w-full max-w-md rounded-lg shadow-md"
-    />
-  </div>
-</div>
+            <div className="text-left max-w-xl space-y-8">
+              <div className="flex items-center gap-3 text-align:center">
+                <Users className="w-8 h-8 text-blue-500" />
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">What We Offer</h2>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Personalized mentorship programs, flexible schedules, and guidance to achieve your career goals.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Target className="w-8 h-8 text-green-500" />
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">Why Choose Us?</h2>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    We connect you with top industry experts to gain the skills and insights needed to succeed.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              <img
+                src="mentor.png"
+                alt="Why Choose Us"
+                className="w-full max-w-md rounded-lg shadow-md"
+              />
+            </div>
+          </div>
         </div>
       ) : (
         <div>
@@ -230,5 +206,3 @@ export function MentorList() {
     </div>
   );
 }
-
-export default MentorList;
