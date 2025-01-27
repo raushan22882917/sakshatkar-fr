@@ -1,4 +1,3 @@
-```tsx
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
@@ -44,7 +43,7 @@ export default function MentorshipPayment() {
     };
 
     fetchMentor();
-  }, [id]);
+  }, [id, toast]);
 
   const createOrder = (data: any, actions: any) => {
     return actions.order.create({
@@ -106,7 +105,7 @@ export default function MentorshipPayment() {
           </div>
 
           <PayPalScriptProvider options={{ 
-            "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "" 
+            "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || ""
           }}>
             <PayPalButtons 
               createOrder={createOrder}
@@ -119,4 +118,3 @@ export default function MentorshipPayment() {
     </div>
   );
 }
-```
