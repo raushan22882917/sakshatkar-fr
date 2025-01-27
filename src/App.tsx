@@ -57,10 +57,10 @@ import { CustomCursor } from '@/components/ui/custom-cursor';
 import PeerSolvePage from "./pages/PeerSolvePage";
 import CompanyPractice from "./pages/CompanyPractice";
 import CompanyTopic from "./pages/CompanyTopic";
-import MentorList from "@/pages/mentorship/MentorList";
-import MentorDetails from "@/pages/mentorship/MentorDetails";
-import MentorshipPayment from "@/pages/mentorship/MentorshipPayment";
-import MentorshipSuccess from "@/pages/mentorship/MentorshipSuccess";
+import { MentorList } from "@/pages/mentorship/MentorList";
+import { MentorDetails } from "@/pages/mentorship/MentorDetails";
+import { MentorshipPayment } from "@/pages/mentorship/MentorshipPayment";
+import { MentorshipSuccess } from "@/pages/mentorship/MentorshipSuccess";
 import { 
   ContestHome,
   ContestPage,
