@@ -1,6 +1,0 @@
-fastapi==0.109.0
-uvicorn
-python-dotenv
-judge0api
-pydantic
-langchain
