@@ -7,13 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Navbar } from "@/components/Navbar";
-import { Search, Star, Users, Clock,Target, Lightbulb } from 'lucide-react'; // Only lucide-react icons
+import { Search, Star, Users, Clock, Target, Lightbulb } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function MentorList() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [showWelcome, setShowWelcome] = useState(true); // State for Welcome Page
+  const [showWelcome, setShowWelcome] = useState(true);
 
   // Fetch mentors from Supabase
   const { data: mentors, isLoading } = useQuery({
@@ -22,16 +22,11 @@ export function MentorList() {
       const { data, error } = await supabase
         .from('mentor_profiles')
         .select(`
-          id,
-          profile_image_url,
-          bio,
-          rating,
-          hourly_rate,
-          total_sessions,
-          expertise,
+          *,
           profiles:user_id (
             name,
-            email
+            email,
+            company_name
           )
         `);
 
@@ -48,7 +43,7 @@ export function MentorList() {
   );
 
   return (
-    <div className="containers ">
+    <div className="containers">
       <Navbar />
 
       {showWelcome ? (
@@ -145,7 +140,6 @@ export function MentorList() {
         </div>
       ) : (
         <div>
-          {/* Mentor List */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
               Find Your Perfect Mentor
@@ -153,20 +147,6 @@ export function MentorList() {
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Connect with industry experts who can guide you through your tech journey.
             </p>
-          </div>
-
-          <div className="mb-12">
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl font-bold">Why You Need a Mentor</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center">
-                <img src="/mentor-importance.jpg" alt="Importance of Mentorship" className="w-full h-48 object-cover rounded-lg mb-4" />
-                <p className="text-gray-600 dark:text-gray-400 text-center">
-                  Having a mentor can provide you with invaluable insights, guidance, and support as you navigate your career path. They can help you identify your strengths, set goals, and connect you with opportunities that align with your aspirations.
-                </p>
-              </CardContent>
-            </Card>
           </div>
 
           <div className="relative mb-8 max-w-lg mx-auto">
@@ -207,10 +187,11 @@ export function MentorList() {
                     <img
                       src={mentor.profile_image_url || '/placeholder.svg'}
                       alt={mentor.profiles?.name || 'Mentor'}
-                      className="w-12 h-12 rounded-full object-cover"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-purple-500"
                     />
                     <div>
                       <CardTitle className="text-lg">{mentor.profiles?.name}</CardTitle>
+                      <div className="text-sm text-gray-500">{mentor.company}</div>
                       <div className="flex items-center text-yellow-500">
                         <Star className="w-4 h-4 fill-current" />
                         <span className="ml-1">{mentor.rating.toFixed(1)}</span>
@@ -219,10 +200,10 @@ export function MentorList() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      {mentor.bio.substring(0, 150)}...
+                      {mentor.bio?.substring(0, 150)}...
                     </p>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {mentor.expertise.slice(0, 3).map((skill, index) => (
+                      {mentor.expertise?.slice(0, 3).map((skill, index) => (
                         <Badge key={index} variant="secondary">
                           {skill}
                         </Badge>
@@ -231,11 +212,11 @@ export function MentorList() {
                     <div className="flex justify-between items-center text-sm text-gray-500">
                       <div className="flex items-center">
                         <Users className="w-4 h-4 mr-1" />
-                        <span>{mentor.total_sessions} sessions</span>
+                        <span>{mentor.total_sessions || 0} sessions</span>
                       </div>
                       <div className="flex items-center">
                         <Clock className="w-4 h-4 mr-1" />
-                        <span>${mentor.hourly_rate}/hour</span>
+                        <span>${mentor.one_on_one_price}/hour</span>
                       </div>
                     </div>
                   </CardContent>

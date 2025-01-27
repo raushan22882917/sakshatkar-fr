@@ -718,6 +718,38 @@ export type Database = {
         }
         Relationships: []
       }
+      mentor_availability: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          mentor_id: string | null
+          time_slots: string[]
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          mentor_id?: string | null
+          time_slots: string[]
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          mentor_id?: string | null
+          time_slots?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentor_availability_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "mentor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mentor_bookings: {
         Row: {
           booking_date: string
@@ -769,11 +801,17 @@ export type Database = {
         Row: {
           availability: string | null
           bio: string | null
+          company: string | null
           created_at: string
+          experience: number | null
           expertise: string[]
+          group_price: number | null
           hourly_rate: number | null
           id: string
+          max_group_size: number | null
           mentoring_goals: string[] | null
+          one_on_one_price: number | null
+          payment_options: string[] | null
           profile_image_url: string | null
           rating: number | null
           skills: string[] | null
@@ -783,11 +821,17 @@ export type Database = {
         Insert: {
           availability?: string | null
           bio?: string | null
+          company?: string | null
           created_at?: string
+          experience?: number | null
           expertise: string[]
+          group_price?: number | null
           hourly_rate?: number | null
           id?: string
+          max_group_size?: number | null
           mentoring_goals?: string[] | null
+          one_on_one_price?: number | null
+          payment_options?: string[] | null
           profile_image_url?: string | null
           rating?: number | null
           skills?: string[] | null
@@ -797,11 +841,17 @@ export type Database = {
         Update: {
           availability?: string | null
           bio?: string | null
+          company?: string | null
           created_at?: string
+          experience?: number | null
           expertise?: string[]
+          group_price?: number | null
           hourly_rate?: number | null
           id?: string
+          max_group_size?: number | null
           mentoring_goals?: string[] | null
+          one_on_one_price?: number | null
+          payment_options?: string[] | null
           profile_image_url?: string | null
           rating?: number | null
           skills?: string[] | null
@@ -850,6 +900,41 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "user_statistics"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      mentor_reviews: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          mentor_id: string | null
+          rating: number
+          user_id: string | null
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          id?: string
+          mentor_id?: string | null
+          rating: number
+          user_id?: string | null
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          mentor_id?: string | null
+          rating?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentor_reviews_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "mentor_profiles"
+            referencedColumns: ["id"]
           },
         ]
       }
