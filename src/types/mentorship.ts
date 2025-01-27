@@ -7,7 +7,8 @@ export interface Mentor {
   bio: string;
   rating: number;
   total_sessions: number;
-  profile_image_url: string;
+  created_at: string;
+  profile_image_url: string | null;
   skills: string[];
   mentoring_goals: string[];
   company: string;
@@ -16,8 +17,18 @@ export interface Mentor {
   group_price: number;
   max_group_size: number;
   payment_options: string[];
-  profiles?: {
+  profile?: {
     name: string;
     email: string;
+    company_name: string;
   };
+}
+
+export interface TestCase {
+  id: string;
+  input: string;
+  output: string;
+  expectedOutput: string;
+  explanation?: string;
+  passed?: boolean;
 }
