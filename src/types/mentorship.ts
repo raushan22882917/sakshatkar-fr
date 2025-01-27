@@ -35,18 +35,3 @@ export interface MentorshipSession {
   payment_status: 'pending' | 'completed';
   amount: number;
 }
-
-export interface TestCase {
-  input: string;
-  expectedOutput: string;
-  actualOutput?: string;
-  passed?: boolean;
-}
-
-export interface EvaluationResponse {
-  isCorrect: boolean;
-  feedback: string;
-  explanation: string;
-  passed?: boolean;
-  message?: string;
-}
