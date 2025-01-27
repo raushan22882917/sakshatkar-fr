@@ -15,24 +15,24 @@ import Signup from "@/pages/Signup";
 import Dashboard from "@/pages/Dashboard";
 import AuthCallback from "@/pages/AuthCallback";
 import Admin from "@/pages/Admin";
-import AdminRoute from "@/components/AdminRoute";
+import { AdminRoute } from "@/components/AdminRoute";
 import Coding from "@/pages/Coding";
 import SolvePage from "@/pages/SolvePage";
 import PeerSolvePage from "@/pages/PeerSolvePage";
 import TopicQuestions from "@/pages/TopicQuestions";
-import ArticleDetail from "@/pages/ArticleDetail";
+import { ArticleDetail } from "@/pages/ArticleDetail";
 import MentorList from "@/pages/mentorship/MentorList";
 import MentorshipPayment from "@/pages/mentorship/MentorshipPayment";
 import ContestPage from "@/pages/contests/ContestPage";
 import ContestDetails from "@/pages/contests/ContestDetails";
 import ContestProblem from "@/pages/contests/ContestProblem";
 import ContestLeaderboard from "@/pages/contests/ContestLeaderboard";
-import ReNewJob from "@/pages/re/jobs/new";
-import ReApplications from "@/pages/re/applications";
-import ReJobs from "@/pages/re/jobs";
-import ReInterviews from "@/pages/re/interviews";
+import { ReNewJob } from "@/pages/re/jobs/new";
+import { ReApplications } from "@/pages/re/applications";
+import { ReJobs } from "@/pages/re/jobs";
+import { ReInterviews } from "@/pages/re/interviews";
 
-function App() {
+export function App() {
   const [customCursor, setCustomCursor] = useState({ x: 0, y: 0 });
   const [cursorDot, setCursorDot] = useState({ x: 0, y: 0, scale: 1 });
 
@@ -122,3 +122,5 @@ function App() {
     </ThemeProvider>
   );
 }
+
+export default App;
