@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Navbar } from "@/components/Navbar";
-import { Search, Star, Users, Clock, Target } from 'lucide-react';
+import { Search, Star, Users, Clock, Target as TargetIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Mentor } from '@/types/mentorship';
 
@@ -97,7 +97,7 @@ export default function MentorList() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Target className="w-8 h-8 text-green-500" />
+                <TargetIcon className="w-8 h-8 text-green-500" />
                 <div>
                   <h2 className="text-2xl font-bold mb-4">Why Choose Us?</h2>
                   <p className="text-gray-600 dark:text-gray-400">
