@@ -1,92 +1,79 @@
-import { createBrowserRouter } from "react-router-dom";
-import App from "@/App";
-import MentorList from "@/pages/mentorship/MentorList";
-import Interviews from "@/pages/recruiter/Interviews";
-import Jobs from "@/pages/recruiter/Jobs";
-import Applications from "@/pages/recruiter/Applications";
-import ReNewJob from "@/pages/re/jobs/new";
-import ReApplications from "@/pages/recruiter/Applications";
-import Services from "@/pages/Services";
-import Community from "@/pages/Community";
-import About from "@/pages/About";
-import Signup from "@/pages/Signup";
-import Coding from "@/pages/Coding";
-import AuthCallback from "@/pages/AuthCallback";
-import Admin from "@/pages/Admin";
-import PeerSolvePage from "@/pages/PeerSolvePage";
-import SolvePage from "@/pages/SolvePage";
-import Pricing from "@/pages/Pricing";
-import ContestDetails from "@/pages/contests/ContestDetails";
+import { createBrowserRouter } from 'react-router-dom';
+import Login from '@/pages/auth/Login';
+import PostJob from '@/pages/recruiter/PostJob';
+import Jobs from '@/pages/recruiter/Jobs';
+import Messages from '@/pages/recruiter/Messages';
+import Settings from '@/pages/recruiter/Settings';
+import RecruiterDashboard from '@/pages/recruiter/RecruiterDashboard';
+import Applications from '@/pages/recruiter/Applications';
+import ViewProfile from '@/pages/recruiter/ViewProfile';
+import Interviews from '@/pages/recruiter/Interviews';
+import JobsPost from '@/pages/JobsPost';
+import { MentorList } from '@/pages/mentorship/MentorList';
+import { MentorDetails } from '@/pages/mentorship/MentorDetails';
+import { MentorshipPayment } from '@/pages/mentorship/MentorshipPayment';
+import { MentorshipSuccess } from '@/pages/mentorship/MentorshipSuccess';
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <App />,
+    path: '/login',
+    element: <Login />,
   },
   {
-    path: "/mentorship",
+    path: '/mentorship',
     element: <MentorList />,
   },
   {
-    path: "/recruiter/interviews",
-    element: <Interviews />,
+    path: '/mentorship/:id',
+    element: <MentorDetails />,
   },
   {
-    path: "/recruiter/jobs",
+    path: '/mentorship/payment',
+    element: <MentorshipPayment />,
+  },
+  {
+    path: '/mentorship/success',
+    element: <MentorshipSuccess />,
+  },
+  // Recruiter Routes
+  {
+    path: '/recruiter',
+    element: <RecruiterDashboard />,
+  },
+  {
+    path: '/recruiter/dashboard',
+    element: <RecruiterDashboard />,
+  },
+  {
+    path: '/recruiter/jobs/post',
+    element: <PostJob />,
+  },
+  {
+    path: '/recruiter/jobs',
     element: <Jobs />,
   },
   {
-    path: "/recruiter/applications",
+    path: '/recruiter/messages',
+    element: <Messages />,
+  },
+  {
+    path: '/recruiter/settings',
+    element: <Settings />,
+  },
+  {
+    path: '/recruiter/applications',
     element: <Applications />,
   },
   {
-    path: "/re/jobs/new",
-    element: <ReNewJob />,
+    path: '/recruiter/applications/:applicationId/profile',
+    element: <ViewProfile />,
   },
   {
-    path: "/services",
-    element: <Services />,
+    path: '/recruiter/interviews/:applicationId',
+    element: <Interviews />,
   },
   {
-    path: "/community",
-    element: <Community />,
-  },
-  {
-    path: "/about",
-    element: <About />,
-  },
-  {
-    path: "/signup",
-    element: <Signup />,
-  },
-  {
-    path: "/coding",
-    element: <Coding />,
-  },
-  {
-    path: "/auth/callback",
-    element: <AuthCallback />,
-  },
-  {
-    path: "/admin",
-    element: <Admin />,
-  },
-  {
-    path: "/peer-solve/:id",
-    element: <PeerSolvePage />,
-  },
-  {
-    path: "/solve/:id",
-    element: <SolvePage />,
-  },
-  {
-    path: "/pricing",
-    element: <Pricing />,
-  },
-  {
-    path: "/contests/:id",
-    element: <ContestDetails />,
+    path: '/jobpost',
+    element: <JobsPost />,
   },
 ]);
-
-export default router;

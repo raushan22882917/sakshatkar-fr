@@ -7,11 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Navbar } from "@/components/Navbar";
-import { Search, Star, Users, Clock, Target } from 'lucide-react';
+import { Search, Star, Users, Clock, Target, Lightbulb } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Mentor } from '@/types/mentorship';
 
-export default function MentorList() {
+export function MentorList() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showWelcome, setShowWelcome] = useState(true);
@@ -32,7 +31,7 @@ export default function MentorList() {
         `);
 
       if (error) throw error;
-      return data as Mentor[];
+      return data;
     },
   });
 
@@ -44,41 +43,100 @@ export default function MentorList() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="containers">
       <Navbar />
 
       {showWelcome ? (
         <div className="text-center mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold mb-4">Why You Need A Mentor</h1>
-          <p className="text-lg mb-4">Mentorship is the key to success in any career. By connecting with a mentor, you can gain valuable insights and guidance to help you achieve your goals.</p>
-          
+          <h1 className="text-4xl font-bold mb-4">Why You Need To Mentor</h1>
+          <p className="text-lg mb-4">Mentorship is the key to success in any career. By becoming a mentor, you can provide valuable insights, support, and guidance to your mentee, helping them achieve their goals and grow as a developer.</p>
+          {/* Cards Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+            {/* Card 1 */}
             <div className="border rounded-lg shadow-lg p-4">
               <Search className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
               <h3 className="text-xl font-bold mb-2">Gain Knowledge</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Learn from experienced professionals who have walked the path before you.
+                Learn from the experiences and insights of those who have walked the path before you.
               </p>
             </div>
+            {/* Card 2 */}
             <div className="border rounded-lg shadow-lg p-4">
               <Users className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
               <h3 className="text-xl font-bold mb-2">Build Connections</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Expand your network and open doors to new opportunities.
+                Expand your network and open doors to new opportunities through mentorship.
               </p>
             </div>
+            {/* Card 3 */}
             <div className="border rounded-lg shadow-lg p-4">
-              <Target className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
               <h3 className="text-xl font-bold mb-2">Achieve Goals</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Set and reach your career goals with expert guidance.
+                Set and reach your personal and professional goals with the guidance of a mentor.
+              </p>
+            </div>
+            {/* Card 4 */}
+            <div className="border rounded-lg shadow-lg p-4">
+              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <h3 className="text-xl font-bold mb-2">Receive Feedback</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Get constructive feedback to improve your skills and performance.
+              </p>
+            </div>
+            {/* Card 5 */}
+            <div className="border rounded-lg shadow-lg p-4">
+              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <h3 className="text-xl font-bold mb-2">Develop Skills</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Enhance your skills and knowledge through tailored mentorship sessions.
+              </p>
+            </div>
+            {/* Card 6 */}
+            <div className="border rounded-lg shadow-lg p-4">
+              <Clock className="w-12 h-12 text-blue-500 mb-4 mx-auto" />
+              <h3 className="text-xl font-bold mb-2">Boost Confidence</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Gain the confidence to take on new challenges and pursue your passions.
               </p>
             </div>
           </div>
 
+          {/* Explore Mentors Button */}
           <Button className="mt-8" onClick={() => setShowWelcome(false)}>
             Explore Mentors
           </Button>
+
+          {/* Why Choose Us Section */}
+          <div className="flex flex-col-reverse lg:flex-row items-center lg:items-start lg:justify-between gap-8 mt-12">
+  <div className="text-left max-w-xl space-y-8 ">
+    <div className="flex items-center gap-3 text-align:center">
+      <Users className="w-8 h-8 text-blue-500" />
+      <div>
+        <h2 className="text-2xl font-bold mb-4 ">What We Offer</h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          Personalized mentorship programs, flexible schedules, and guidance to achieve your career goals.
+        </p>
+      </div>
+    </div>
+    <div className="flex items-center gap-3">
+      <Target className="w-8 h-8 text-green-500" />
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Why Choose Us?</h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          We connect you with top industry experts to gain the skills and insights needed to succeed.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div className="flex-shrink-0">
+    <img
+      src="mentor.png"
+      alt="Why Choose Us"
+      className="w-full max-w-md rounded-lg shadow-md"
+    />
+  </div>
+</div>
         </div>
       ) : (
         <div>
@@ -171,3 +229,5 @@ export default function MentorList() {
     </div>
   );
 }
+
+export default MentorList;

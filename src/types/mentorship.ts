@@ -10,12 +10,6 @@ export interface Mentor {
   profile_image_url?: string;
   skills: string[];
   mentoring_goals: string[];
-  company?: string;
-  experience?: number;
-  one_on_one_price?: number;
-  group_price?: number;
-  max_group_size?: number;
-  payment_options?: string[];
   profiles?: {
     name: string | null;
     email: string | null;
