@@ -1,36 +1,36 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Pricing } from "@/pages/Pricing";
-import { Community } from "@/pages/Community";
-import { Services } from "@/pages/Services";
-import { About } from "@/pages/About";
-import { Login } from "@/pages/Login";
-import { Signup } from "@/pages/Signup";
-import { Dashboard } from "@/pages/Dashboard";
-import { AuthCallback } from "@/pages/AuthCallback";
-import { Admin } from "@/pages/Admin";
-import { AdminRoute } from "@/components/AdminRoute";
-import { Coding } from "@/pages/Coding";
-import { SolvePage } from "@/pages/SolvePage";
-import { PeerSolvePage } from "@/pages/PeerSolvePage";
-import { TopicQuestions } from "@/pages/TopicQuestions";
-import { ArticleDetail } from "@/pages/ArticleDetail";
+import Pricing from "@/pages/Pricing";
+import Community from "@/pages/Community";
+import Services from "@/pages/Services";
+import About from "@/pages/About";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
+import Dashboard from "@/pages/Dashboard";
+import AuthCallback from "@/pages/AuthCallback";
+import Admin from "@/pages/Admin";
+import AdminRoute from "@/components/AdminRoute";
+import Coding from "@/pages/Coding";
+import SolvePage from "@/pages/SolvePage";
+import PeerSolvePage from "@/pages/PeerSolvePage";
+import TopicQuestions from "@/pages/TopicQuestions";
+import ArticleDetail from "@/pages/ArticleDetail";
 import MentorList from "@/pages/mentorship/MentorList";
-import { MentorshipPayment } from "@/pages/mentorship/MentorshipPayment";
-import { ContestPage } from "@/pages/contests/ContestPage";
-import { ContestDetails } from "@/pages/contests/ContestDetails";
-import { ContestProblem } from "@/pages/contests/ContestProblem";
-import { ContestLeaderboard } from "@/pages/contests/ContestLeaderboard";
-import { ReNewJob } from "@/pages/re/jobs/new";
-import { ReApplications } from "@/pages/re/applications";
-import { ReJobs } from "@/pages/re/jobs";
-import { ReInterviews } from "@/pages/re/interviews";
+import MentorshipPayment from "@/pages/mentorship/MentorshipPayment";
+import ContestPage from "@/pages/contests/ContestPage";
+import ContestDetails from "@/pages/contests/ContestDetails";
+import ContestProblem from "@/pages/contests/ContestProblem";
+import ContestLeaderboard from "@/pages/contests/ContestLeaderboard";
+import ReNewJob from "@/pages/re/jobs/new";
+import ReApplications from "@/pages/re/applications";
+import ReJobs from "@/pages/re/jobs";
+import ReInterviews from "@/pages/re/interviews";
 
 function App() {
   const [customCursor, setCustomCursor] = useState({ x: 0, y: 0 });
@@ -122,5 +122,3 @@ function App() {
     </ThemeProvider>
   );
 }
-
-export default App;

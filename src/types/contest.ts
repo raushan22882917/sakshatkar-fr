@@ -52,3 +52,13 @@ export interface Problem {
   memory_limit?: number;
   points?: number;
 }
+
+export interface TestCase {
+  id: string;
+  input: string;
+  output: string;
+  explanation?: string;
+  is_hidden?: boolean;
+  passed?: boolean;
+  actualOutput?: string;
+}

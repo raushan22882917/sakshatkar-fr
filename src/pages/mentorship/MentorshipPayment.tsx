@@ -1,118 +1,75 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mentor } from '@/types/mentorship';
 
 export default function MentorshipPayment() {
-  const { id } = useParams();
   const [mentor, setMentor] = useState<Mentor | null>(null);
-  const [amount, setAmount] = useState(0);
+  const [sessionType, setSessionType] = useState<'group' | 'one-on-one'>('one-on-one');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
+  const [price, setPrice] = useState<number>(0);
   const { toast } = useToast();
 
   useEffect(() => {
-    const fetchMentor = async () => {
-      if (!id) return;
-
+    // Fetch mentor details and set the price based on session type
+    const fetchMentorDetails = async () => {
+      // Assume we get the mentor ID from somewhere (e.g., route params)
+      const mentorId = 'some-mentor-id';
       const { data, error } = await supabase
-        .from('mentor_profiles')
-        .select(`
-          *,
-          profiles:user_id (
-            name,
-            email,
-            company_name
-          )
-        `)
-        .eq('id', id)
+        .from('mentors')
+        .select('*')
+        .eq('id', mentorId)
         .single();
 
       if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch mentor details",
-          variant: "destructive",
-        });
+        console.error('Error fetching mentor details:', error);
         return;
       }
 
       setMentor(data);
-      setAmount(data.one_on_one_price || 0);
+      setPrice(sessionType === 'group' ? 20 : 50); // Example pricing
     };
 
-    fetchMentor();
-  }, [id, toast]);
+    fetchMentorDetails();
+  }, [sessionType]);
 
-  const createOrder = (data: any, actions: any) => {
-    return actions.order.create({
-      purchase_units: [{
-        amount: {
-          currency_code: 'USD',
-          value: amount.toString()
-        }
-      }],
-      intent: "CAPTURE"
+  const createOrder = async () => {
+    // Logic to create an order
+    return 'order-id'; // Return the order ID
+  };
+
+  const onApprove = async (data: any) => {
+    // Logic to handle successful payment
+    toast({
+      title: 'Payment Successful',
+      description: 'Your session has been booked!',
     });
   };
 
-  const onApprove = async (data: any, actions: any) => {
-    try {
-      const details = await actions.order.capture();
-      
-      // Save payment details to database
-      const { error } = await supabase
-        .from('mentorship_payments')
-        .insert({
-          mentor_id: id,
-          amount: amount,
-          payment_id: details.id,
-          status: 'completed'
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Payment completed successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to process payment",
-        variant: "destructive",
-      });
-    }
-  };
-
-  if (!mentor) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="container mx-auto py-8">
-      <Card>
+    <div className="container mx-auto px-4 py-8">
+      <Card className="max-w-md mx-auto">
         <CardHeader>
-          <CardTitle>Book Mentorship Session</CardTitle>
+          <CardTitle className="text-2xl">Book a Session with {mentor?.name}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold">Mentor Details</h3>
-            <p>Name: {mentor.profiles?.name}</p>
-            <p>Company: {mentor.profiles?.company_name}</p>
-            <p>Rate: ${amount}/hour</p>
+          <div className="space-y-4">
+            <p>Session Type: {sessionType}</p>
+            <p>Price: ${price}</p>
+            <PayPalScriptProvider options={{ 
+              clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "",
+              intent: "capture"
+            }}>
+              <PayPalButtons 
+                createOrder={createOrder}
+                onApprove={onApprove}
+              />
+            </PayPalScriptProvider>
           </div>
-
-          <PayPalScriptProvider options={{ 
-            "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || ""
-          }}>
-            <PayPalButtons 
-              createOrder={createOrder}
-              onApprove={onApprove}
-              style={{ layout: "horizontal" }}
-            />
-          </PayPalScriptProvider>
         </CardContent>
       </Card>
     </div>

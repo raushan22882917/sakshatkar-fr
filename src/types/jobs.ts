@@ -1,3 +1,19 @@
+export interface Job {
+  id: string;
+  title: string;
+  description: string;
+  company_name: string;
+  location: string;
+  salary_range?: string;
+  created_at: string;
+  recruiter_id: string;
+  profiles?: {
+    name: string;
+    profile_image_url: string;
+    company_name: string;
+  };
+}
+
 export interface Application {
   id: string;
   job_id: string;
