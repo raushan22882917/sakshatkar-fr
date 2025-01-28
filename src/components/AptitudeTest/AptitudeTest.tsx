@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
+import { Loader } from '../ui/loader';
 
 interface Company {
   id: string;
@@ -77,6 +78,8 @@ export function AptitudeTest() {
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [timer, setTimer] = useState<number>(1800);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCompaniesLoading, setIsCompaniesLoading] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -88,10 +91,24 @@ export function AptitudeTest() {
     return () => clearInterval(interval);
   }, [currentStep, timer]);
 
+  useEffect(() => {
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setSelectedCompany('');
     setCurrentStep(1);
+    setIsCompaniesLoading(true);
+    // Simulate loading companies data
+    setTimeout(() => {
+      setIsCompaniesLoading(false);
+    }, 1000);
   };
 
   const handleCompanySelect = (companyId: string) => {
@@ -109,21 +126,29 @@ export function AptitudeTest() {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+        <Loader 
+          type="dots" 
+          size="large" 
+          message="Loading aptitude test platform..." 
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen  from-purple-50 via-white to-blue-50">
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h1 className="text-4xl font-bold text-center mb-2 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
             Aptitude Test Platform
           </h1>
-          <p className="text-center text-gray-600 mb-8">
+          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Test your skills and prepare for your dream company
           </p>
-        </motion.div>
+        </div>
 
         {/* Progress Steps */}
         <div className="mb-8">
@@ -176,42 +201,53 @@ export function AptitudeTest() {
             <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">
               Select Company
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {companies[categories.find((cat) => cat.id === selectedCategory)?.name as keyof typeof companies].map((company) => (
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  key={company.id}
-                >
-                  <Card
-                    className={`p-6 cursor-pointer transition-all ${
-                      selectedCompany === company.id
-                        ? 'ring-2 ring-purple-500 shadow-lg'
-                        : 'hover:shadow-md'
-                    }`}
+            {isCompaniesLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader 
+                  type="spinner" 
+                  size="medium" 
+                  message="Loading companies..." 
+                />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {companies[categories.find((cat) => cat.id === selectedCategory)?.name as keyof typeof companies].map((company) => (
+                  <motion.div
+                    key={company.id}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="cursor-pointer"
                     onClick={() => handleCompanySelect(company.id)}
                   >
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 flex-shrink-0">
-                        <img
-                          src={company.logo}
-                          alt={company.name}
-                          className="w-full h-full object-contain"
-                        />
+                    <Card
+                      className={`p-6 cursor-pointer transition-colors ${
+                        selectedCompany === company.id
+                          ? 'bg-purple-100 dark:bg-purple-900/20 border-2 border-purple-500'
+                          : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 flex-shrink-0">
+                          <img
+                            src={company.logo}
+                            alt={company.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-lg text-gray-900 dark:text-white">
+                            {company.name}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-300">
+                            Click to view tests
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-medium text-lg text-gray-900">
-                          {company.name}
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          Click to view tests
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -234,7 +270,7 @@ export function AptitudeTest() {
                 >
                   <Card className="p-6 hover:shadow-lg transition-shadow">
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-xl font-medium text-gray-900">
+                      <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                         Quantitative Test {index + 1}
                       </h3>
                       <Badge
@@ -244,10 +280,10 @@ export function AptitudeTest() {
                         {difficulty}
                       </Badge>
                     </div>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
                       10 questions covering arithmetic and basic math skills.
                     </p>
-                    <div className="flex justify-between items-center text-sm text-gray-500 mb-4">
+                    <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-300 mb-4">
                       <span className="flex items-center">
                         <svg
                           className="w-4 h-4 mr-1"
@@ -304,7 +340,7 @@ export function AptitudeTest() {
             <Card className="p-8 shadow-lg">
               <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center space-x-2">
-                  <span className="text-lg font-medium text-gray-900">
+                  <span className="text-lg font-medium text-gray-900 dark:text-white">
                     Question {currentQuestion + 1}/10
                   </span>
                   <Progress
@@ -312,7 +348,7 @@ export function AptitudeTest() {
                     className="w-32 h-2"
                   />
                 </div>
-                <div className="flex items-center space-x-2 text-gray-600">
+                <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -331,7 +367,7 @@ export function AptitudeTest() {
               </div>
 
               <div className="mb-8">
-                <h3 className="text-xl font-medium text-gray-900 mb-6">
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-6">
                   What is the sum of first 100 natural numbers?
                 </h3>
                 <div className="space-y-4">
@@ -344,8 +380,8 @@ export function AptitudeTest() {
                       <div
                         className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
                           selectedAnswer === option
-                            ? 'border-purple-500 bg-purple-50'
-                            : 'border-gray-200 hover:border-purple-200'
+                            ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                            : 'border-gray-200 hover:border-purple-200 dark:border-gray-600 dark:hover:border-purple-600'
                         }`}
                         onClick={() => setSelectedAnswer(option)}
                       >
@@ -353,14 +389,14 @@ export function AptitudeTest() {
                           className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${
                             selectedAnswer === option
                               ? 'border-purple-500 bg-purple-500'
-                              : 'border-gray-300'
+                              : 'border-gray-300 dark:border-gray-600'
                           }`}
                         >
                           {selectedAnswer === option && (
-                            <div className="w-2 h-2 bg-white rounded-full" />
+                            <div className="w-2 h-2 bg-white rounded-full dark:bg-gray-900" />
                           )}
                         </div>
-                        <span className="text-gray-800">{option}</span>
+                        <span className="text-gray-800 dark:text-white">{option}</span>
                       </div>
                     </motion.div>
                   ))}
@@ -369,7 +405,7 @@ export function AptitudeTest() {
 
               <div className="flex justify-between">
                 <button
-                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                  className="px-6 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors font-medium"
                   onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
                   disabled={currentQuestion === 0}
                 >

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/Navbar";
 import { Search, Star, Users, Clock, Building, Linkedin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 export function MentorList() {
   const navigate = useNavigate();
@@ -162,10 +163,21 @@ export function MentorList() {
                       <Clock className="w-4 h-4 mr-1" />
                       <span>${mentor.one_on_one_price || mentor.hourly_rate}/Month</span>
                     </div>
-                    <div className="flex items-center">
-                      <Building className="w-4 h-4 mr-1" />
-                      <span>{mentor.company || "Freelancer"}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center text-yellow-500">
+                      <Star className="w-4 h-4 fill-current" />
+                      <span className="ml-1">
+                        {mentor.rating ? mentor.rating.toFixed(1) : "N/A"}
+                      </span>
                     </div>
+                    <Button
+                      onClick={() => navigate(`/mentorship/${mentor.id}`)}
+                      variant="outline"
+                      className="hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                    >
+                      See Details
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
