@@ -1,22 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Progress } from "@/components/ui/progress";
 
 export interface QuestionTimerProps {
-  duration?: number;
+  duration: number;
   onTimeUpdate: (time: number) => void;
+  maxTime: number;
 }
 
-export function QuestionTimer({ duration = 300, onTimeUpdate }: QuestionTimerProps) {
-  const [timeLeft, setTimeLeft] = useState(duration);
-  const progress = (timeLeft / duration) * 100;
+export function QuestionTimer({ duration, onTimeUpdate, maxTime }: QuestionTimerProps) {
+  const progress = (duration / maxTime) * 100;
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        const newTime = Math.max(0, prev - 1);
-        onTimeUpdate(newTime);
-        return newTime;
-      });
+      onTimeUpdate(duration - 1);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -26,7 +22,7 @@ export function QuestionTimer({ duration = 300, onTimeUpdate }: QuestionTimerPro
     <div className="w-full space-y-2">
       <Progress value={progress} className="w-full" />
       <p className="text-sm text-center">
-        Time remaining: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+        Time remaining: {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
       </p>
     </div>
   );
