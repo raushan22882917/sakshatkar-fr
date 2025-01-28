@@ -36,6 +36,104 @@ export type Database = {
         }
         Relationships: []
       }
+      coding_contests: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          end_time: string
+          id: string
+          is_public: boolean | null
+          participant_count: number | null
+          start_time: string
+          status: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_time: string
+          id?: string
+          is_public?: boolean | null
+          participant_count?: number | null
+          start_time: string
+          status?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_time?: string
+          id?: string
+          is_public?: boolean | null
+          participant_count?: number | null
+          start_time?: string
+          status?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      coding_problems: {
+        Row: {
+          attempted_count: number | null
+          constraints: string | null
+          contest_id: string | null
+          description: string
+          difficulty: string | null
+          id: string
+          input_format: string | null
+          memory_limit: number
+          output_format: string | null
+          points: number
+          solved_count: number | null
+          test_cases: Json
+          time_limit: number
+          title: string
+        }
+        Insert: {
+          attempted_count?: number | null
+          constraints?: string | null
+          contest_id?: string | null
+          description: string
+          difficulty?: string | null
+          id?: string
+          input_format?: string | null
+          memory_limit?: number
+          output_format?: string | null
+          points: number
+          solved_count?: number | null
+          test_cases?: Json
+          time_limit?: number
+          title: string
+        }
+        Update: {
+          attempted_count?: number | null
+          constraints?: string | null
+          contest_id?: string | null
+          description?: string
+          difficulty?: string | null
+          id?: string
+          input_format?: string | null
+          memory_limit?: number
+          output_format?: string | null
+          points?: number
+          solved_count?: number | null
+          test_cases?: Json
+          time_limit?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coding_problems_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "coding_contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_questions: {
         Row: {
           category: string
@@ -101,6 +199,101 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      contest_participants: {
+        Row: {
+          contest_id: string | null
+          id: string
+          joined_at: string | null
+          rank: number | null
+          score: number | null
+          solved_problems: number | null
+          user_id: string | null
+        }
+        Insert: {
+          contest_id?: string | null
+          id?: string
+          joined_at?: string | null
+          rank?: number | null
+          score?: number | null
+          solved_problems?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          contest_id?: string | null
+          id?: string
+          joined_at?: string | null
+          rank?: number | null
+          score?: number | null
+          solved_problems?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_participants_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "coding_contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contest_submissions: {
+        Row: {
+          code: string
+          contest_id: string | null
+          execution_time: number | null
+          id: string
+          language: string
+          memory_used: number | null
+          problem_id: string | null
+          score: number | null
+          status: string | null
+          submitted_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          code: string
+          contest_id?: string | null
+          execution_time?: number | null
+          id?: string
+          language: string
+          memory_used?: number | null
+          problem_id?: string | null
+          score?: number | null
+          status?: string | null
+          submitted_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          code?: string
+          contest_id?: string | null
+          execution_time?: number | null
+          id?: string
+          language?: string
+          memory_used?: number | null
+          problem_id?: string | null
+          score?: number | null
+          status?: string | null
+          submitted_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_submissions_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "coding_contests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_submissions_problem_id_fkey"
+            columns: ["problem_id"]
+            isOneToOne: false
+            referencedRelation: "coding_problems"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       evaluations: {
         Row: {
