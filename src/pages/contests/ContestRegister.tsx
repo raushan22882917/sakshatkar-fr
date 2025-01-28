@@ -17,7 +17,9 @@ export default function ContestRegister() {
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-    if (!id) {
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!id || !uuidRegex.test(id)) {
       toast({
         title: "Error",
         description: "Invalid contest ID",
@@ -59,7 +61,7 @@ export default function ContestRegister() {
 
   const checkUserSession = async () => {
     const { data: { session }, error } = await supabase.auth.getSession();
-    if (error) {
+    if (error || !session) {
       toast({
         title: "Error",
         description: "Please login to continue",
@@ -69,17 +71,12 @@ export default function ContestRegister() {
       return;
     }
 
-    if (!session) {
-      navigate('/login');
-      return;
-    }
-
     // Fetch user profile data
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', session.user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) {
       console.error('Error fetching profile:', profileError);
@@ -95,11 +92,31 @@ export default function ContestRegister() {
 
       const { data, error } = await supabase
         .from('coding_contests')
-        .select('*')
+        .select(`
+          *,
+          coding_problems (
+            id,
+            title,
+            difficulty,
+            points,
+            solved_count,
+            attempted_count
+          )
+        `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) {
+        toast({
+          title: "Error",
+          description: "Contest not found",
+          variant: "destructive"
+        });
+        navigate('/contests');
+        return;
+      }
+      
       setContest(data);
     } catch (error) {
       console.error('Error fetching contest:', error);
@@ -125,7 +142,7 @@ export default function ContestRegister() {
         .eq('user_id', session.session.user.id)
         .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) throw error;
       setIsRegistered(!!data);
     } catch (error) {
       console.error('Error checking registration:', error);
