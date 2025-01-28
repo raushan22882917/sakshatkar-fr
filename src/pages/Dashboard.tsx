@@ -22,6 +22,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { Loader } from '@/components/ui/loader';
+import { Clock, DollarSign, Calendar, User, CreditCard, CheckCircle } from 'lucide-react';
 
 interface CodingScore {
   id: number;
@@ -50,6 +52,28 @@ interface HRScore {
 interface UserScores {
   coding_scores: CodingScore[];
   hr_scores: HRScore[];
+}
+
+interface MentorshipPayment {
+  id: string;
+  mentor_name: string;
+  amount: number;
+  payment_method: string;
+  payment_id: string;
+  status: string;
+  booking_date: string;
+  mentor_expertise: string[];
+}
+
+interface SubscriptionPayment {
+  id: string;
+  plan_type: string;
+  amount: number;
+  payment_method: string;
+  payment_id: string;
+  status: string;
+  start_date: string;
+  end_date: string;
 }
 
 const codingFeatures = [
@@ -197,6 +221,9 @@ export function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
   const [scores, setScores] = useState<UserScores | null>(null);
   const [activeTab, setActiveTab] = useState('solo');
+  const [mentorshipPayments, setMentorshipPayments] = useState<MentorshipPayment[]>([]);
+  const [subscriptionPayments, setSubscriptionPayments] = useState<SubscriptionPayment[]>([]);
+  const [paymentLoading, setPaymentLoading] = useState(true);
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -221,6 +248,7 @@ export function Dashboard() {
     }
     fetchProfile();
     fetchScores();
+    fetchPaymentHistory();
   }, [user, navigate]);
 
   const fetchProfile = async () => {
@@ -266,6 +294,32 @@ export function Dashboard() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPaymentHistory = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) return;
+
+      // Fetch mentorship payments
+      const mentorshipResponse = await fetch(`/api/payments/mentorship/${session.user.id}`);
+      const mentorshipData = await mentorshipResponse.json();
+      setMentorshipPayments(mentorshipData.payments);
+
+      // Fetch subscription payments
+      const subscriptionResponse = await fetch(`/api/payments/subscription/${session.user.id}`);
+      const subscriptionData = await subscriptionResponse.json();
+      setSubscriptionPayments(subscriptionData.payments);
+    } catch (error) {
+      console.error('Error fetching payment history:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load payment history",
+        variant: "destructive"
+      });
+    } finally {
+      setPaymentLoading(false);
     }
   };
 
@@ -392,6 +446,104 @@ export function Dashboard() {
           </div>
           <div className="md:col-span-2">
             <RecentActivity />
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-8">Payment History</h1>
+
+          {/* Mentorship Payments Section */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">Booked Mentorship Sessions</h2>
+            {paymentLoading ? (
+              <div className="flex items-center justify-center min-h-screen">
+                <Loader type="spinner" size="large" message="Loading payment history..." />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {mentorshipPayments.map((payment) => (
+                  <Card key={payment.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-lg font-semibold">
+                        Session with {payment.mentor_name}
+                      </CardTitle>
+                      <div className="flex items-center text-green-600">
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        {payment.status}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Clock className="w-4 h-4 mr-2" />
+                          {new Date(payment.booking_date).toLocaleDateString()}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <DollarSign className="w-4 h-4 mr-2" />
+                          ${payment.amount}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          {payment.payment_method}
+                        </div>
+                        <div className="mt-4 text-sm">
+                          <span className="font-medium">Expertise:</span>{' '}
+                          {payment.mentor_expertise.join(', ')}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                {mentorshipPayments.length === 0 && (
+                  <p className="text-gray-500">No mentorship sessions booked yet.</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Subscription Payments Section */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Subscription History</h2>
+            {paymentLoading ? (
+              <div className="flex items-center justify-center min-h-screen">
+                <Loader type="spinner" size="large" message="Loading payment history..." />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {subscriptionPayments.map((payment) => (
+                  <Card key={payment.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-lg font-semibold">
+                        {payment.plan_type} Plan
+                      </CardTitle>
+                      <div className="flex items-center text-green-600">
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        {payment.status}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          {new Date(payment.start_date).toLocaleDateString()} - {new Date(payment.end_date).toLocaleDateString()}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <DollarSign className="w-4 h-4 mr-2" />
+                          ${payment.amount}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          {payment.payment_method}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                {subscriptionPayments.length === 0 && (
+                  <p className="text-gray-500">No subscription history found.</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

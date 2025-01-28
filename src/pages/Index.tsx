@@ -17,7 +17,8 @@ import {
   BrainCircuit,
   BrainCog,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ChevronDown
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -29,6 +30,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LearningPathCards } from "@/components/learning/LearningPathCards";
+import { Loader } from "@/components/ui/loader";
 import aiNewsData from '../../api/Interview_news/scraped_data.json';
 
 const feedbacks = [
@@ -195,19 +197,23 @@ const fetchUserCount = async () => {
   return count || 0;
 };
 
-export default function Index() {
-  const navigate = useNavigate();
-  const [showWelcome, setShowWelcome] = useState(true);
+export function Index() {
   const [currentText, setCurrentText] = useState("");
   const [currentFeedbackIndex, setCurrentFeedbackIndex] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const textArray = ["Master Every Interview, Land Your Dream Job!"];
   const [showLearningPaths, setShowLearningPaths] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isNewsLoading, setIsNewsLoading] = useState(true);
+  const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([]);
 
   const { data: userCount = 0, isLoading: isLoadingUserCount } = useQuery({
     queryKey: ['userCount'],
     queryFn: fetchUserCount,
   });
+
+  const navigate = useNavigate();
+  const textArray = ["Master Every Interview, Land Your Dream Job!"];
 
   useEffect(() => {
     let index = 0;
@@ -225,6 +231,23 @@ export default function Index() {
       setCurrentFeedbackIndex((prevIndex) => (prevIndex + 3) % feedbacks.length);
     }, 3000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Simulate loading time for initial content
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    // Simulate loading time for news content
+    const newsTimer = setTimeout(() => {
+      setIsNewsLoading(false);
+    }, 2000);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(newsTimer);
+    };
   }, []);
 
   const handleGetStarted = () => {
@@ -246,6 +269,26 @@ export default function Index() {
   const handleNewsClick = (link: string) => {
     window.open(link, '_blank');
   };
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndices(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index)
+        : [...prev, index]
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#fdfcfb] to-[#e2d1c3] dark:from-gray-900 dark:to-gray-800">
+        <Loader 
+          type="dots" 
+          size="large" 
+          message="Welcome to Sakshatkar! Loading amazing features for you..." 
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#fdfcfb] to-[#e2d1c3] dark:from-gray-900 dark:to-gray-800">
@@ -323,10 +366,14 @@ export default function Index() {
               </h2>
               <div className="flex flex-col md:flex-row justify-center space-y-6 md:space-y-0 md:space-x-12">
                 <div className="text-center">
-                  <p className="text-4xl font-bold text-purple-600">
-                    {isLoadingUserCount ? "..." : `${userCount}+`}
-                  </p>
-                  <p className="text-lg text-gray-600 dark:text-gray-400">Trusted Users</p>
+                  {isLoadingUserCount ? (
+                    <Loader type="pulse" size="small" message="Loading user count..." />
+                  ) : (
+                    <>
+                      <p className="text-4xl font-bold text-purple-600">{userCount}+</p>
+                      <p className="text-lg text-gray-600 dark:text-gray-400">Trusted Users</p>
+                    </>
+                  )}
                 </div>
                 <div className="text-center">
                   <p className="text-4xl font-bold text-purple-600">200k+</p>
@@ -435,22 +482,32 @@ export default function Index() {
 
 
               <div className="relative h-[500px] w-full">
-                <div
-                  className="absolute w-full h-full cursor-pointer transition-transform duration-500 transform hover:scale-105"
-                  onClick={() => handleNewsClick(carouselImages[currentImageIndex].link)}
-                >
-                  <img
-                    src={carouselImages[currentImageIndex].url}
-                    alt={carouselImages[currentImageIndex].title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <h3 className="text-2xl font-bold mb-2">{carouselImages[currentImageIndex].title}</h3>
-                      <p className="text-sm opacity-90">{carouselImages[currentImageIndex].description}</p>
+                {isNewsLoading ? (
+                  <div className="h-[400px] flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                    <Loader 
+                      type="spinner" 
+                      size="medium" 
+                      message="Loading latest AI news..." 
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="absolute w-full h-full cursor-pointer transition-transform duration-500 transform hover:scale-105"
+                    onClick={() => handleNewsClick(carouselImages[currentImageIndex].link)}
+                  >
+                    <img
+                      src={carouselImages[currentImageIndex].url}
+                      alt={carouselImages[currentImageIndex].title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
+                      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                        <h3 className="text-2xl font-bold mb-2">{carouselImages[currentImageIndex].title}</h3>
+                        <p className="text-sm opacity-90">{carouselImages[currentImageIndex].description}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
               
               <button
@@ -521,18 +578,6 @@ export default function Index() {
               <div className="max-w-3xl mx-auto space-y-4">
                 {[
                   {
-                    question: "How does the AI teaching assistant work?",
-                    answer: "Our AI teaching assistant uses advanced language models to provide personalized explanations, generate practice questions, and adapt to your learning style. It can explain concepts in multiple ways and create custom exercises based on your needs."
-                  },
-                  {
-                    question: "What types of questions can I practice with?",
-                    answer: "You can practice with multiple types of questions including Multiple Choice (MCQ), subjective questions, debugging exercises, coding challenges, and fill-in-the-blank questions. The AI generates questions based on your specific topic of interest."
-                  },
-                  {
-                    question: "How does the platform adapt to my understanding?",
-                    answer: "After each explanation, you can indicate if you understood the concept. If you need more clarity, the AI will provide a simpler explanation. Once you understand, it will generate practice questions to reinforce your learning."
-                  },
-                  {
                     question: "Can I get feedback on my answers?",
                     answer: "Yes! The platform provides immediate, detailed feedback on your answers. For coding questions, it checks your solution against test cases. For subjective questions, it evaluates your understanding of key concepts."
                   },
@@ -544,34 +589,29 @@ export default function Index() {
                     question: "What subjects are covered?",
                     answer: "You can ask questions about any programming or technical topic. The AI is trained on a wide range of subjects and can provide explanations, examples, and practice questions across different domains."
                   }
-                ].map((faq, index) => {
-                  const [isOpen, setIsOpen] = useState(false);
-                  return (
-                    <div 
-                      key={index} 
-                      className="border-b border-purple-200 last:border-0"
+                ].map((faq, index) => (
+                  <div 
+                    key={index} 
+                    className="border-b border-purple-200 last:border-0"
+                  >
+                    <button
+                      className="w-full py-6 flex justify-between items-center text-left focus:outline-none"
+                      onClick={() => toggleFaq(index)}
                     >
-                      <button
-                        className="w-full py-6 flex justify-between items-center text-left focus:outline-none"
-                        onClick={() => setIsOpen(!isOpen)}
-                      >
-                        <h3 className="text-lg font-semibold text-gradient">{faq.question}</h3>
-                        <span className="ml-4 flex-shrink-0">
-                          {isOpen ? (
-                            <Minus className="h-6 w-6 text-purple-500" />
-                          ) : (
-                            <Plus className="h-6 w-6 text-purple-500" />
-                          )}
-                        </span>
-                      </button>
-                      {isOpen && (
-                        <div className="pb-6">
-                          <p className="text-gray-600">{faq.answer}</p>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                      <span className="font-medium text-gray-900 dark:text-white">{faq.question}</span>
+                      <ChevronDown 
+                        className={`w-5 h-5 text-gray-500 transition-transform ${
+                          openFaqIndices.includes(index) ? 'transform rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+                    {openFaqIndices.includes(index) && (
+                      <div className="pb-6 text-gray-600 dark:text-gray-300">
+                        {faq.answer}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </section>
 

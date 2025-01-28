@@ -12,7 +12,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import StudyMateAI from "@/pages/StudyMateAI";
 import DevOpsFlow from "@/components/DevOpsFlow";
 import MLFlow from './components/MLFlow/MLFlow';
-import Index from "./pages/Index";
+import { Index } from "@/pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
@@ -58,7 +58,7 @@ import PeerSolvePage from "./pages/PeerSolvePage";
 import CompanyPractice from "./pages/CompanyPractice";
 import CompanyTopic from "./pages/CompanyTopic";
 import { MentorList } from "@/pages/mentorship/MentorList";
-import { MentorDetails } from "@/pages/mentorship/MentorDetails";
+import MentorDetail from "@/pages/mentorship/MentorDetail";
 import { MentorshipPayment } from "@/pages/mentorship/MentorshipPayment";
 import { MentorshipSuccess } from "@/pages/mentorship/MentorshipSuccess";
 import { 
@@ -91,23 +91,21 @@ const queryClient = new QueryClient({
   },
 });
 
-const paypalOptions = {
-  clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
-  currency: "USD",
-  intent: "capture",
-};
-
-const App = () => {
+function App() {
   return (
     <HelmetProvider>
-      <BrowserRouter>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-              <SubscriptionProvider>
-                <TooltipProvider>
-                  <SidebarProvider>
-                    <PayPalScriptProvider options={paypalOptions}>
+      <PayPalScriptProvider options={{ 
+        clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
+        currency: "USD",
+        intent: "capture"
+      }}>
+        <BrowserRouter>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <QueryClientProvider client={queryClient}>
+              <AuthProvider>
+                <SubscriptionProvider>
+                  <TooltipProvider>
+                    <SidebarProvider>
                       <div className="flex min-h-screen w-full">
                         <CustomCursor />
                         <AppSidebar />
@@ -115,7 +113,7 @@ const App = () => {
                           <Routes>
                             {/* Add Mentorship Routes */}
                             <Route path="/mentorship" element={<MentorList />} />
-                            <Route path="/mentorship/:id" element={<MentorDetails />} />
+                            <Route path="/mentorship/:id" element={<MentorDetail />} />
                             <Route path="/mentorship/payment" element={<MentorshipPayment />} />
                             <Route path="/mentorship/success" element={<MentorshipSuccess />} />
 
@@ -429,19 +427,19 @@ const App = () => {
                           </Routes>
                         </main>
                       </div>
-                    </PayPalScriptProvider>
+                    </SidebarProvider>
                     <CustomCursor />
                     <Toaster />
                     <Sonner />
-                  </SidebarProvider>
-                </TooltipProvider>
-              </SubscriptionProvider>
-            </AuthProvider>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </BrowserRouter>
+                  </TooltipProvider>
+                </SubscriptionProvider>
+              </AuthProvider>
+            </QueryClientProvider>
+          </ThemeProvider>
+        </BrowserRouter>
+      </PayPalScriptProvider>
     </HelmetProvider>
   );
-};
+}
 
 export default App;
