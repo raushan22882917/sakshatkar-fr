@@ -14,6 +14,7 @@ export default function ContestRegister() {
   const [isRegistered, setIsRegistered] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
     if (!id) {
@@ -26,6 +27,7 @@ export default function ContestRegister() {
       return;
     }
     
+    checkUserSession();
     fetchContestDetails();
     checkRegistrationStatus();
   }, [id]);
@@ -54,6 +56,38 @@ export default function ContestRegister() {
       return () => clearInterval(timer);
     }
   }, [contest]);
+
+  const checkUserSession = async () => {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Please login to continue",
+        variant: "destructive"
+      });
+      navigate('/login');
+      return;
+    }
+
+    if (!session) {
+      navigate('/login');
+      return;
+    }
+
+    // Fetch user profile data
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+
+    if (profileError) {
+      console.error('Error fetching profile:', profileError);
+      return;
+    }
+
+    setUserData(profileData);
+  };
 
   const fetchContestDetails = async () => {
     try {
@@ -108,27 +142,23 @@ export default function ContestRegister() {
           description: "Please login to register for the contest",
           variant: "destructive"
         });
+        navigate('/login');
         return;
       }
 
-      // Get user's profile ID
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', session.session.user.id)
-        .single();
-
-      if (profileError) throw profileError;
-
-      const { error } = await supabase
+      // Insert participant data
+      const { error: participantError } = await supabase
         .from('contest_participants')
         .insert({
           contest_id: id,
           user_id: session.session.user.id,
-          profile_id: profileData.id
+          profile_id: session.session.user.id,
+          score: 0,
+          solved_problems: 0,
+          rank: 0
         });
 
-      if (error) throw error;
+      if (participantError) throw participantError;
 
       setIsRegistered(true);
       toast({
