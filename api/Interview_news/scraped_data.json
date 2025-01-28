@@ -1,0 +1,82 @@
+[
+    {
+        "title": "Snyk: AI-powered vulnerability remediations and protecting shadow IT",
+        "link": "https://www.developer-tech.com/news/snyk-ai-powered-vulnerability-remediations-and-protecting-shadow-it/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2025/01/rene-bohmer-kGQSE4rUakg-unsplash-350x233.jpg",
+        "date": "24 January 2025",
+        "category": "Approaches",
+        "description": ""
+    },
+    {
+        "title": "JetBrains Junie: An AI coding agent to enhance developer productivity",
+        "link": "https://www.developer-tech.com/news/jetbrains-junie-ai-coding-agent-enhance-productivity/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2025/01/jetbrains-junie-agentic-ai-coding-assistant-ide-development-coding-programming-artificial-intelligence-350x230.jpg",
+        "date": "23 January 2025",
+        "category": "Artificial Intelligence",
+        "description": ""
+    },
+    {
+        "title": "10 best AI coding tools in 2025",
+        "link": "https://www.developer-tech.com/news/10-best-ai-coding-tools-in-2025/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2025/01/jackson-sophat-TQ3SgrW9lkM-unsplash-350x197.jpg",
+        "date": "21 January 2025",
+        "category": "Artificial Intelligence",
+        "description": ""
+    },
+    {
+        "title": "Alibaba introduces new AI models and tools at developer summit",
+        "link": "https://www.developer-tech.com/news/alibaba-introduces-ai-models-tools-developer-summit/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2025/01/alibaba-cloud-developer-summit-ai-artificial-intelligence-qwen-llm-models-development-tools-coding-programming-350x242.jpg",
+        "date": "21 January 2025",
+        "category": "Artificial Intelligence",
+        "description": ""
+    },
+    {
+        "title": "Mistral AI sets code generation benchmark with Codestral 25.01",
+        "link": "https://www.developer-tech.com/news/mistral-ai-code-generation-benchmark-codestral-25-01/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2025/01/mistral-ai-code-generation-model-codestral-25.01-artificial-intelligence-development-coding-programming-350x230.jpg",
+        "date": "14 January 2025",
+        "category": "Artificial Intelligence",
+        "description": ""
+    },
+    {
+        "title": "Software development trends and predictions for 2025",
+        "link": "https://www.developer-tech.com/news/software-development-trends-and-predictions-for-2025/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2024/12/software-development-2025-predictions-developer-coding-programming-trends-339x250.jpeg",
+        "date": "19 December 2024",
+        "category": "Android",
+        "description": ""
+    },
+    {
+        "title": "PostgreSQL becomes developers\u2019 choice for AI and real-time apps",
+        "link": "https://www.developer-tech.com/news/postgresql-becomes-developers-choice-ai-real-time-apps/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2024/12/postgresql-database-open-source-ai-real-time-apps-artificial-intelligence-development-coding-programming-research-report-study-350x233.jpg",
+        "date": "18 December 2024",
+        "category": "Artificial Intelligence",
+        "description": ""
+    },
+    {
+        "title": "2024 Developer Ecosystem: Shedding AI fears, improving DevEx",
+        "link": "https://www.developer-tech.com/news/2024-developer-ecosystem-shedding-ai-fears-improving-devex/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2024/12/state-of-developer-ecosystem-report-2024-software-research-study-coding-programming-languages-ai-artificial-intelligence-350x233.jpg",
+        "date": "11 December 2024",
+        "category": "Artificial Intelligence",
+        "description": ""
+    },
+    {
+        "title": "Michel Isnard, GitLab: Transforming software development with AI",
+        "link": "https://www.developer-tech.com/news/michel-isnard-gitlab-transforming-software-development-ai/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2024/12/michel-isnard-gitlab-ai-software-development-coding-programming-artificial-intelligence-350x230.jpg",
+        "date": "5 December 2024",
+        "category": "Approaches",
+        "description": ""
+    },
+    {
+        "title": "Couchbase tackles agentic AI development challenges",
+        "link": "https://www.developer-tech.com/news/couchbase-tackles-agentic-ai-development-challenges/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2024/12/couchbase-capella-ai-services-agentic-agents-artificial-intelligence-development-llm-350x242.jpg",
+        "date": "2 December 2024",
+        "category": "Artificial Intelligence",
+        "description": ""
+    }
+]

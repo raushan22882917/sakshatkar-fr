@@ -29,6 +29,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LearningPathCards } from "@/components/learning/LearningPathCards";
+import aiNewsData from '../../api/Interview_news/scraped_data.json';
 
 const feedbacks = [
   {
@@ -174,28 +175,12 @@ const services = [
   }
 ];
 
-const carouselImages = [
-  {
-    url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80",
-    title: "Collaborative Workspace",
-    description: "Connect with professionals and grow together"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80",
-    title: "Learning Environment",
-    description: "Learn from industry experts and enhance your skills"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1513258496099-48168024aec0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80",
-    title: "Tech Innovation",
-    description: "Stay updated with the latest technology trends"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80",
-    title: "Career Growth",
-    description: "Build your career with our comprehensive resources"
-  }
-];
+const carouselImages = aiNewsData.map(news => ({
+  url: news.image,
+  title: news.title,
+  description: news.date,
+  link: news.link
+}));
 
 const fetchUserCount = async () => {
   const { count, error } = await supabase
@@ -256,6 +241,10 @@ export default function Index() {
 
   const previousImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+  };
+
+  const handleNewsClick = (link: string) => {
+    window.open(link, '_blank');
   };
 
   return (
@@ -420,66 +409,81 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Image Carousel Section */}
-            <section className="py-16 bg-muted/50">
-              <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold text-center mb-8">Featured Highlights</h2>
-                <div className="relative max-w-5xl mx-auto">
-                  <div className="relative h-[400px] rounded-xl overflow-hidden">
-                    <img
-                      src={carouselImages[currentImageIndex].url}
-                      alt={carouselImages[currentImageIndex].title}
-                      className="w-full h-full object-cover transition-opacity duration-500"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                      <h3 className="text-2xl font-bold text-white mb-2">
-                        {carouselImages[currentImageIndex].title}
-                      </h3>
-                      <p className="text-white/90">
-                        {carouselImages[currentImageIndex].description}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Navigation Buttons */}
-                  <button
-                    onClick={previousImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all duration-200"
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all duration-200"
-                    aria-label="Next image"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
+            {/* News Carousel Section */}
+            <div className="relative overflow-hidden rounded-xl shadow-lg my-12">
+            <h2 className="text-3xl font-bold text-gradient relative flex items-center justify-center space-x-2 mb-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-8 h-8 text-blue-500 animate-bounce"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5l7.5 7.5-7.5 7.5M4.5 12l7.5 7.5-7.5-7.5z"
+                />
+              </svg>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+                Latest AI News
+              </span>
+              <span className="absolute bottom-[-10px] left-0 w-full border-t-4 border-t-transparent border-b-4 border-b-purple-600"></span>
+            </h2>
 
-                  {/* Indicators */}
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                    {carouselImages.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                          index === currentImageIndex 
-                            ? 'bg-white w-4' 
-                            : 'bg-white/50 hover:bg-white/80'
-                        }`}
-                        aria-label={`Go to image ${index + 1}`}
-                      />
-                    ))}
+
+
+              <div className="relative h-[500px] w-full">
+                <div
+                  className="absolute w-full h-full cursor-pointer transition-transform duration-500 transform hover:scale-105"
+                  onClick={() => handleNewsClick(carouselImages[currentImageIndex].link)}
+                >
+                  <img
+                    src={carouselImages[currentImageIndex].url}
+                    alt={carouselImages[currentImageIndex].title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
+                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                      <h3 className="text-2xl font-bold mb-2">{carouselImages[currentImageIndex].title}</h3>
+                      <p className="text-sm opacity-90">{carouselImages[currentImageIndex].description}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </section>
+              
+              <button
+                onClick={previousImage}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-colors"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              
+              <button
+                onClick={nextImage}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-colors"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {carouselImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
 
             {/* Services Section */}
             <section className="container mx-auto px-4 py-16">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">Our Services</h2>
+                <h2 className="text-3xl font-bold text-gradient relative mb-4">Our Services</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   Comprehensive tools and resources to help you succeed in your interviews
                 </p>
