@@ -205,6 +205,7 @@ export type Database = {
           contest_id: string | null
           id: string
           joined_at: string | null
+          profile_id: string | null
           rank: number | null
           score: number | null
           solved_problems: number | null
@@ -214,6 +215,7 @@ export type Database = {
           contest_id?: string | null
           id?: string
           joined_at?: string | null
+          profile_id?: string | null
           rank?: number | null
           score?: number | null
           solved_problems?: number | null
@@ -223,6 +225,7 @@ export type Database = {
           contest_id?: string | null
           id?: string
           joined_at?: string | null
+          profile_id?: string | null
           rank?: number | null
           score?: number | null
           solved_problems?: number | null
@@ -235,6 +238,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "coding_contests"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_activity_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_statistics"
+            referencedColumns: ["user_id"]
           },
         ]
       }

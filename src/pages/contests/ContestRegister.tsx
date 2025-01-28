@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Contest } from '@/types/contest';
 
 export default function ContestRegister() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [contest, setContest] = useState<Contest | null>(null);
@@ -16,9 +16,19 @@ export default function ContestRegister() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!id) {
+      toast({
+        title: "Error",
+        description: "Invalid contest ID",
+        variant: "destructive"
+      });
+      navigate('/contests');
+      return;
+    }
+    
     fetchContestDetails();
     checkRegistrationStatus();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (contest) {
@@ -47,6 +57,8 @@ export default function ContestRegister() {
 
   const fetchContestDetails = async () => {
     try {
+      if (!id) return;
+
       const { data, error } = await supabase
         .from('coding_contests')
         .select('*')
@@ -67,6 +79,8 @@ export default function ContestRegister() {
 
   const checkRegistrationStatus = async () => {
     try {
+      if (!id) return;
+      
       const { data: session } = await supabase.auth.getSession();
       if (!session?.session?.user?.id) return;
 
@@ -75,7 +89,7 @@ export default function ContestRegister() {
         .select('*')
         .eq('contest_id', id)
         .eq('user_id', session.session.user.id)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
       setIsRegistered(!!data);
@@ -97,11 +111,21 @@ export default function ContestRegister() {
         return;
       }
 
+      // Get user's profile ID
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', session.session.user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
       const { error } = await supabase
         .from('contest_participants')
         .insert({
           contest_id: id,
-          user_id: session.session.user.id
+          user_id: session.session.user.id,
+          profile_id: profileData.id
         });
 
       if (error) throw error;
@@ -124,6 +148,7 @@ export default function ContestRegister() {
   };
 
   const handleStart = () => {
+    if (!id) return;
     navigate(`/contest/${id}/problems`);
   };
 
