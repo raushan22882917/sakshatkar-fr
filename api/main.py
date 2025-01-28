@@ -44,10 +44,11 @@ app.add_middleware(
 
 # Database connection parameters
 DB_PARAMS = {
-    'dbname': 'Sakshatkar',
-    'user': 'postgres',
-    'password': '22882288',
-    'host': 'localhost',
+    'dbname': 'sakshatkar',
+    'user': 'sakshatkar_user',
+    'password': 'ytJGgWCPlj8MfB5HfvT1XAuSjaSa5dF5',
+    'host': 'dpg-cuc7rijqf0us73c6vg00-a.oregon-postgres.render.com',
+    'port': '5432',
     'cursor_factory': RealDictCursor
 }
 
