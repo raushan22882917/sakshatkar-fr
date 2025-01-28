@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { validatePassword } from "@/utils/auth";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 
 interface SignupFormProps {
-  onGoogleSignup: () => Promise<void>;
+  onGoogleSignup?: () => Promise<void>;
 }
 
 export function SignupForm({ onGoogleSignup }: SignupFormProps) {
@@ -85,7 +86,7 @@ export function SignupForm({ onGoogleSignup }: SignupFormProps) {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'github') => {
+  const handleSocialSignup = async (provider: 'google' | 'github') => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -106,62 +107,76 @@ export function SignupForm({ onGoogleSignup }: SignupFormProps) {
 
   return (
     <form onSubmit={handleSignup} className="space-y-4">
-      <Input
-        type="text"
-        placeholder="Full Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-        className="bg-white/50 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400 placeholder-gray-600 border border-gray-300 dark:border-gray-600 rounded-md"
-      />
-      <Input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className="bg-white/50 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400 placeholder-gray-600 border border-gray-300 dark:border-gray-600 rounded-md"
-      />
-      <Input
-        type="password"
-        placeholder="Password (min. 6 characters)"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        minLength={6}
-        className="bg-white/50 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400 placeholder-gray-600 border border-gray-300 dark:border-gray-600 rounded-md"
-      />
-      <Input
-        type="text"
-        placeholder="College/University"
-        value={college}
-        onChange={(e) => setCollege(e.target.value)}
-        required
-        className="bg-white/50 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400 placeholder-gray-600 border border-gray-300 dark:border-gray-600 rounded-md"
-      />
+      <div className="space-y-2">
+        <Label htmlFor="name">Full Name</Label>
+        <Input
+          id="name"
+          type="text"
+          placeholder="Enter your full name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          placeholder="Create a password (min. 6 characters)"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={6}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="college">College/University</Label>
+        <Input
+          id="college"
+          type="text"
+          placeholder="Enter your college/university"
+          value={college}
+          onChange={(e) => setCollege(e.target.value)}
+          required
+        />
+      </div>
       <Button 
         type="submit" 
-        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+        className="w-full"
         disabled={loading}
       >
         {loading ? "Creating account..." : "Sign Up"}
       </Button>
-      <div className="relative w-full">
+
+      <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white/50 px-2 text-gray-600">
+          <span className="bg-background px-2 text-muted-foreground">
             Or continue with
           </span>
         </div>
       </div>
+
       <div className="grid grid-cols-2 gap-4">
         <Button
           type="button"
           variant="outline"
-          onClick={() => handleSocialLogin('google')}
-          className="w-full bg-white/50 hover:bg-white/80"
+          onClick={() => handleSocialSignup('google')}
+          className="w-full"
         >
           <FaGoogle className="mr-2 h-4 w-4" />
           Google
@@ -169,18 +184,19 @@ export function SignupForm({ onGoogleSignup }: SignupFormProps) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => handleSocialLogin('github')}
-          className="w-full bg-white/50 hover:bg-white/80"
+          onClick={() => handleSocialSignup('github')}
+          className="w-full"
         >
           <FaGithub className="mr-2 h-4 w-4" />
           GitHub
         </Button>
       </div>
+
       <Button
         type="button"
-        variant="ghost"
+        variant="link"
         onClick={() => navigate("/login")}
-        className="w-full hover:bg-white/20"
+        className="w-full text-sm text-muted-foreground"
       >
         Already have an account? Login
       </Button>

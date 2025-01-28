@@ -808,8 +808,10 @@ export type Database = {
           group_price: number | null
           hourly_rate: number | null
           id: string
+          Linkedin_url: string | null
           max_group_size: number | null
           mentoring_goals: string[] | null
+          Name: string | null
           one_on_one_price: number | null
           payment_options: string[] | null
           profile_image_url: string | null
@@ -828,8 +830,10 @@ export type Database = {
           group_price?: number | null
           hourly_rate?: number | null
           id?: string
+          Linkedin_url?: string | null
           max_group_size?: number | null
           mentoring_goals?: string[] | null
+          Name?: string | null
           one_on_one_price?: number | null
           payment_options?: string[] | null
           profile_image_url?: string | null
@@ -848,8 +852,10 @@ export type Database = {
           group_price?: number | null
           hourly_rate?: number | null
           id?: string
+          Linkedin_url?: string | null
           max_group_size?: number | null
           mentoring_goals?: string[] | null
+          Name?: string | null
           one_on_one_price?: number | null
           payment_options?: string[] | null
           profile_image_url?: string | null
