@@ -1,4 +1,5 @@
 import ContestHome from './ContestHome';
+import ContestList from './ContestList';
 import ContestDetails from './ContestDetails';
 import ContestProblem from './ContestProblem';
 import ContestCreate from './ContestCreate';
@@ -7,6 +8,7 @@ import ContestPractice from './ContestPractice';
 
 // Export the components individually
 export { ContestHome };
+export { ContestList };
 export { ContestDetails };
 export { ContestProblem };
 export { ContestCreate };
@@ -18,6 +20,10 @@ export const contestRoutes = [
   {
     path: '/contests',
     element: <ContestHome />
+  },
+  {
+    path: '/contests/list',
+    element: <ContestList />
   },
   {
     path: '/contests/:contestId',
