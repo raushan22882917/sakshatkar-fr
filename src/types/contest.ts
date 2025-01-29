@@ -9,7 +9,10 @@ export interface ContestProblem {
   points: number;
   solved_count: number;
   attempted_count: number;
-  user_status: UserStatus;
+  user_status?: UserStatus;
+  output?: string;
+  passed?: boolean;
+  actualOutput?: string;
 }
 
 export interface Contest {
@@ -18,9 +21,14 @@ export interface Contest {
   description: string;
   start_time: string;
   end_time: string;
-  problems: ContestProblem[];
+  problems?: ContestProblem[];
   total_participants: number;
   coding_problems?: ContestProblem[];
+  status?: ContestStatus;
+  user_rank?: number;
+  created_at?: string;
+  is_public?: boolean;
+  participant_count?: number;
 }
 
 export interface ContestParticipant {
@@ -37,5 +45,32 @@ export interface ContestParticipant {
 export interface TestCase {
   input: string;
   expectedOutput: string;
+  output?: string;
+  passed?: boolean;
+  actualOutput?: string;
   explanation?: string;
+}
+
+export interface Problem {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: Difficulty;
+  points: number;
+  constraints?: string;
+  input_format?: string;
+  output_format?: string;
+  time_limit: number;
+  memory_limit: number;
+  test_cases: TestCase[];
+  solved_count?: number;
+  attempted_count?: number;
+}
+
+export interface EvaluationResponse {
+  passed: boolean;
+  message: string;
+  score?: number;
+  executionTime?: number;
+  memoryUsed?: number;
 }

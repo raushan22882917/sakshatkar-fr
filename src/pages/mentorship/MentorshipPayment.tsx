@@ -21,25 +21,25 @@ export function MentorshipPayment() {
 
   const price = sessionType === 'group' ? mentor.hourly_rate * 0.6 : mentor.hourly_rate;
 
-  const handlePaymentSuccess = () => {
-    navigate('/mentorship/success', {
-      state: {
-        mentor,
-        sessionType,
-        selectedDate,
-        selectedTimeSlot,
-        price
-      }
-    });
-  };
+const handlePaymentSuccess = () => {
+  navigate('/mentorship/success', {
+    state: {
+      mentor,
+      sessionType,
+      selectedDate,
+      selectedTimeSlot,
+      price
+    }
+  });
+};
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-2xl">Session Payment</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+return (
+  <div className="container mx-auto px-4 py-8">
+    <Card className="max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle className="text-2xl">Session Payment</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
           <div className="space-y-4">
             <h3 className="font-medium">Select Session Type</h3>
             <RadioGroup
@@ -64,38 +64,36 @@ export function MentorshipPayment() {
               <span>${price}</span>
             </div>
           </div>
-
-          <div className="space-y-4">
-            <PayPalButtons
-              createOrder={(data, actions) => {
-                return actions.order.create({
-                  purchase_units: [
-                    {
-                      amount: {
-                        value: price.toString(),
-                      },
+        
+        <div className="space-y-4">
+          <PayPalButtons
+            createOrder={(data, actions) => {
+              return actions.order.create({
+                purchase_units: [
+                  {
+                    amount: {
+                      currency_code: 'USD',
+                      value: price.toString(),
                     },
-                  ],
-                });
-              }}
-              onApprove={(data, actions) => {
-                return actions.order!.capture().then(() => {
-                  handlePaymentSuccess();
-                });
-              }}
-              onError={() => {
-                toast({
-                  title: "Payment Error",
-                  description: "There was an error processing your payment. Please try again.",
-                  variant: "destructive",
-                });
-              }}
-            />
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-export default MentorshipPayment;
+                  },
+                ],
+              });
+            }}
+            onApprove={(data, actions) => {
+              return actions.order!.capture().then(() => {
+                handlePaymentSuccess();
+              });
+            }}
+            onError={() => {
+              toast({
+                title: "Payment Error",
+                description: "There was an error processing your payment. Please try again.",
+                variant: "destructive",
+              });
+            }}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+);
