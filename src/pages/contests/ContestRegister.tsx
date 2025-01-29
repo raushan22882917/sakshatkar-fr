@@ -1,35 +1,74 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Loader } from '@/components/ui/loader';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
+import type { Contest } from '@/types/contest';
 
 export default function ContestRegister() {
+  const { contestId } = useParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [contest, setContest] = useState<Contest | null>(null);
+
+  useEffect(() => {
+    if (contestId) {
+      fetchContestDetails();
+    }
+  }, [contestId]);
+
+  const fetchContestDetails = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('coding_contests')
+        .select(`
+          id,
+          title,
+          description,
+          start_time,
+          end_time
+        `)
+        .eq('id', contestId)
+        .single();
+
+      if (error) throw error;
+      setContest(data);
+    } catch (error) {
+      console.error('Error fetching contest:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load contest details",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="p-6 space-y-6 bg-gray-900 text-white">
         <div className="space-y-4">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Weekly Coding Challenge
+            {contest?.title || 'Weekly Coding Challenge'}
           </h1>
           
           <div className="text-lg text-gray-300">
-            Join our weekly coding challenge to test your skills and compete with other developers.
+            {contest?.description || 'Join our weekly coding challenge to test your skills and compete with other developers.'}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             <div className="bg-gray-800 p-4 rounded-lg">
               <h3 className="text-lg font-semibold text-blue-400">Start Time</h3>
               <p className="text-gray-300">
-                {new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString()}
+                {contest?.start_time ? new Date(contest.start_time).toLocaleString() : 'Loading...'}
               </p>
             </div>
             <div className="bg-gray-800 p-4 rounded-lg">
               <h3 className="text-lg font-semibold text-blue-400">End Time</h3>
               <p className="text-gray-300">
-                {new Date(Date.now() + 48 * 60 * 60 * 1000).toLocaleString()}
+                {contest?.end_time ? new Date(contest.end_time).toLocaleString() : 'Loading...'}
               </p>
             </div>
           </div>
