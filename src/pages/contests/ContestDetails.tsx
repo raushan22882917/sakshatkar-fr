@@ -7,34 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader } from "@/components/ui/loader";
+import { Contest, ContestProblem, ContestParticipant } from "@/types/contest";
 import {
   AiOutlineClockCircle,
   AiOutlineTeam,
   AiOutlineTrophy,
-  AiOutlineCheck,
-  AiOutlineClose,
 } from "react-icons/ai";
-
-interface ContestProblem {
-  id: string;
-  title: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  points: number;
-  solved_count: number;
-  attempted_count: number;
-  user_status?: "Solved" | "Attempted";
-}
-
-interface Contest {
-  id: string;
-  title: string;
-  description: string;
-  start_time: string;
-  end_time: string;
-  problems: ContestProblem[];
-  total_participants: number;
-  status: "UPCOMING" | "ONGOING" | "ENDED";
-}
 
 export default function ContestDetails() {
   const { contestId } = useParams();
@@ -78,10 +56,16 @@ export default function ContestDetails() {
 
       if (error) throw error;
 
+      const problems = data.coding_problems?.map(problem => ({
+        ...problem,
+        user_status: "Not Attempted" as const
+      })) || [];
+
       setContest({
         ...data,
-        problems: data.coding_problems || [],
-        total_participants: data.participant_count || 0
+        problems,
+        total_participants: data.participant_count || 0,
+        coding_problems: problems
       });
     } catch (error) {
       console.error("Error fetching contest:", error);

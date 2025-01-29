@@ -1,5 +1,5 @@
 export type ContestStatus = 'UPCOMING' | 'ONGOING' | 'ENDED';
-export type UserStatus = 'Solved' | 'Attempted';
+export type UserStatus = 'Solved' | 'Attempted' | 'Not Attempted';
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
 export interface ContestProblem {
