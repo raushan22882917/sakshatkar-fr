@@ -1,7 +1,33 @@
-export { default as ContestHome } from './ContestHome';
-export { default as ContestPage } from './ContestPage';
-export { default as ContestDetails } from './ContestDetails';
-export { default as ContestProblem } from './ContestProblem';
-export { default as ContestLeaderboard } from './ContestLeaderboard';
-export { default as ContestCreate } from './ContestCreate';
-export { default as ContestPractice } from './ContestPractice';
+import ContestHome from './ContestHome';
+import ContestDetails from './ContestDetails';
+import ContestProblem from './ContestProblem';
+import ContestCreate from './ContestCreate';
+import ContestLeaderboard from './ContestLeaderboard';
+import ContestPractice from './ContestPractice';
+
+export const contestRoutes = [
+  {
+    path: '/contests',
+    element: <ContestHome />
+  },
+  {
+    path: '/contests/:contestId',
+    element: <ContestDetails />
+  },
+  {
+    path: '/contest/:contestId/problem/:problemId',
+    element: <ContestProblem />
+  },
+  {
+    path: '/contests/create',
+    element: <ContestCreate />
+  },
+  {
+    path: '/contests/:contestId/leaderboard',
+    element: <ContestLeaderboard />
+  },
+  {
+    path: '/contests/practice',
+    element: <ContestPractice />
+  }
+];

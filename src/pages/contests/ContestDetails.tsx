@@ -25,7 +25,15 @@ export default function ContestDetails() {
   const [joining, setJoining] = useState(false);
 
   useEffect(() => {
-    if (!contestId) return;
+    if (!contestId) {
+      toast({
+        title: "Error",
+        description: "Contest ID is required",
+        variant: "destructive"
+      });
+      navigate('/contests');
+      return;
+    }
     fetchContestDetails();
     checkParticipation();
   }, [contestId]);
@@ -88,9 +96,9 @@ export default function ContestDetails() {
         .select("id")
         .eq("contest_id", contestId)
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== "PGRST116") throw error;
+      if (error) throw error;
       setIsParticipating(!!data);
     } catch (error) {
       console.error("Error checking participation:", error);
