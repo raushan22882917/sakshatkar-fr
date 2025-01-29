@@ -63,7 +63,6 @@ import { MentorshipPayment } from "@/pages/mentorship/MentorshipPayment";
 import { MentorshipSuccess } from "@/pages/mentorship/MentorshipSuccess";
 import { 
   ContestHome,
-  ContestPage,
   ContestDetails,
   ContestProblem,
   ContestLeaderboard,
@@ -241,7 +240,6 @@ function App() {
                             {/* Contest Routes */}
                             <Route path="contest">
                               <Route index element={<ContestHome />} />
-                              <Route path="list" element={<ContestPage />} />
                               <Route path="leaderboard" element={<ContestLeaderboard />} />
                               <Route path="practice" element={<ContestPractice />} />
                               <Route path="create" element={
@@ -358,14 +356,6 @@ function App() {
                             />
                             <Route 
                               path="/hr-interview/:id" 
-                              element={
-                                <ProtectedRoute>
-                                  <HRInterviewSession />
-                                </ProtectedRoute>
-                              } 
-                            />
-                            <Route 
-                              path="/hr-interview-session/:id" 
                               element={
                                 <ProtectedRoute>
                                   <HRInterviewSession />

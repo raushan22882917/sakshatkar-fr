@@ -5,6 +5,15 @@ import ContestCreate from './ContestCreate';
 import ContestLeaderboard from './ContestLeaderboard';
 import ContestPractice from './ContestPractice';
 
+// Export the components individually
+export { ContestHome };
+export { ContestDetails };
+export { ContestProblem };
+export { ContestCreate };
+export { ContestLeaderboard };
+export { ContestPractice };
+
+// Export the routes configuration
 export const contestRoutes = [
   {
     path: '/contests',
