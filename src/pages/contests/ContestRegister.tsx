@@ -11,18 +11,21 @@ export default function ContestRegister() {
   const { contestId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [contest, setContest] = useState<Contest | null>(null);
   const [registering, setRegistering] = useState(false);
 
   useEffect(() => {
-    if (contestId) {
-      fetchContestDetails();
+    if (!contestId) {
+      navigate('/contests');
+      return;
     }
+    fetchContestDetails();
   }, [contestId]);
 
   const fetchContestDetails = async () => {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('coding_contests')
         .select(`
@@ -51,6 +54,9 @@ export default function ContestRegister() {
         description: "Failed to load contest details",
         variant: "destructive"
       });
+      navigate('/contests');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,11 +65,21 @@ export default function ContestRegister() {
     
     setRegistering(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Please login to register for contests",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('contest_participants')
         .insert({
           contest_id: contestId,
-          user_id: (await supabase.auth.getUser()).data.user?.id,
+          user_id: user.id,
           score: 0,
           solved_problems: 0,
           rank: 0
@@ -88,10 +104,23 @@ export default function ContestRegister() {
     }
   };
 
-  if (!contest) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader size="large" />
+      </div>
+    );
+  }
+
+  if (!contest) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold">Contest not found</h2>
+          <Button onClick={() => navigate('/contests')} className="mt-4">
+            Back to Contests
+          </Button>
+        </div>
       </div>
     );
   }

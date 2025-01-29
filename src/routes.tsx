@@ -1,58 +1,36 @@
 import { createBrowserRouter } from "react-router-dom";
-import Layout from "@/components/layout/Layout";
-import Home from "@/pages/Home";
-import ContestPage from "@/pages/contests/ContestPage";
-import ContestDetails from "@/pages/contests/ContestDetails";
-import ContestRegister from "@/pages/contests/ContestRegister";
-import ContestLeaderboard from "@/pages/contests/ContestLeaderboard";
-import ProblemPage from "@/pages/ProblemPage";
-import PeerSolvePage from "@/pages/PeerSolvePage";
-import PeerGroupPage from "@/pages/PeerGroupPage";
-import PeerSessionPage from "@/pages/PeerSessionPage";
-import ProfilePage from "@/pages/ProfilePage";
-import SettingsPage from "@/pages/SettingsPage";
-import NotFoundPage from "@/pages/NotFoundPage";
-import HRInterviewPage from "@/pages/HRInterviewPage";
-import TechnicalInterviewPage from "@/pages/TechnicalInterviewPage";
-import InterviewFeedbackPage from "@/pages/InterviewFeedbackPage";
-import InterviewHistoryPage from "@/pages/InterviewHistoryPage";
-import MentorshipPage from "@/pages/mentorship/MentorshipPage";
-import MentorDetails from "@/pages/mentorship/MentorDetails";
-import MentorshipPayment from "@/pages/mentorship/MentorshipPayment";
-import MentorshipSuccess from "@/pages/mentorship/MentorshipSuccess";
-import MentorshipDashboard from "@/pages/mentorship/MentorshipDashboard";
-import MentorshipBookings from "@/pages/mentorship/MentorshipBookings";
-import MentorshipAvailability from "@/pages/mentorship/MentorshipAvailability";
-import MentorshipProfile from "@/pages/mentorship/MentorshipProfile";
-import CommunityPage from "@/pages/community/CommunityPage";
-import QuestionPage from "@/pages/community/QuestionPage";
-import AskQuestionPage from "@/pages/community/AskQuestionPage";
-import ResourcesPage from "@/pages/resources/ResourcesPage";
-import ResourceDetails from "@/pages/resources/ResourceDetails";
-import JobsPage from "@/pages/jobs/JobsPage";
-import JobDetails from "@/pages/jobs/JobDetails";
-import PostJob from "@/pages/jobs/PostJob";
-import Applications from "@/pages/jobs/Applications";
-import ApplicationDetails from "@/pages/jobs/ApplicationDetails";
-import RecruiterDashboard from "@/pages/jobs/RecruiterDashboard";
-import RecruiterSettings from "@/pages/jobs/RecruiterSettings";
-import Pricing from "@/pages/Pricing";
-import ContactPage from "@/pages/ContactPage";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import AdminUsers from "@/pages/admin/AdminUsers";
-import AdminContests from "@/pages/admin/AdminContests";
-import AdminMentors from "@/pages/admin/AdminMentors";
-import AdminJobs from "@/pages/admin/AdminJobs";
-import AdminSettings from "@/pages/admin/AdminSettings";
+import ContestPage from "./pages/contests/ContestPage";
+import ContestDetails from "./pages/contests/ContestDetails";
+import ContestRegister from "./pages/contests/ContestRegister";
+import ContestLeaderboard from "./pages/contests/ContestLeaderboard";
+import ContestProblem from "./pages/contests/ContestProblem";
+import ContestSubmissions from "./pages/contests/ContestSubmissions";
+import Layout from "./components/layout";
+import ErrorPage from "./error-page";
+import HomePage from "./pages/home/HomePage";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import ProfilePage from "./pages/profile/ProfilePage";
+import EditProfilePage from "./pages/profile/EditProfilePage";
+import SettingsPage from "./pages/settings/SettingsPage";
+import NotificationsPage from "./pages/notifications/NotificationsPage";
+import MessagesPage from "./pages/messages/MessagesPage";
+import SearchPage from "./pages/search/SearchPage";
+import AboutPage from "./pages/about/AboutPage";
+import ContactPage from "./pages/contact/ContactPage";
+import PrivacyPage from "./pages/legal/PrivacyPage";
+import TermsPage from "./pages/legal/TermsPage";
+import HelpPage from "./pages/help/HelpPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <HomePage />,
       },
       {
         path: "/contests",
@@ -72,159 +50,63 @@ export const router = createBrowserRouter([
       },
       {
         path: "/contest/:contestId/problem/:problemId",
-        element: <ProblemPage />,
+        element: <ContestProblem />,
       },
       {
-        path: "/peer-solve",
-        element: <PeerSolvePage />,
+        path: "/contest/:contestId/submissions",
+        element: <ContestSubmissions />,
       },
       {
-        path: "/peer-groups",
-        element: <PeerGroupPage />,
+        path: "/login",
+        element: <LoginPage />,
       },
       {
-        path: "/peer-session/:sessionId",
-        element: <PeerSessionPage />,
+        path: "/register",
+        element: <RegisterPage />,
       },
       {
         path: "/profile",
         element: <ProfilePage />,
       },
       {
+        path: "/profile/edit",
+        element: <EditProfilePage />,
+      },
+      {
         path: "/settings",
         element: <SettingsPage />,
       },
       {
-        path: "/hr-interview",
-        element: <HRInterviewPage />,
+        path: "/notifications",
+        element: <NotificationsPage />,
       },
       {
-        path: "/technical-interview",
-        element: <TechnicalInterviewPage />,
+        path: "/messages",
+        element: <MessagesPage />,
       },
       {
-        path: "/interview-feedback/:interviewId",
-        element: <InterviewFeedbackPage />,
+        path: "/search",
+        element: <SearchPage />,
       },
       {
-        path: "/interview-history",
-        element: <InterviewHistoryPage />,
-      },
-      {
-        path: "/mentorship",
-        element: <MentorshipPage />,
-      },
-      {
-        path: "/mentor/:mentorId",
-        element: <MentorDetails />,
-      },
-      {
-        path: "/mentorship/payment",
-        element: <MentorshipPayment />,
-      },
-      {
-        path: "/mentorship/success",
-        element: <MentorshipSuccess />,
-      },
-      {
-        path: "/mentorship/dashboard",
-        element: <MentorshipDashboard />,
-      },
-      {
-        path: "/mentorship/bookings",
-        element: <MentorshipBookings />,
-      },
-      {
-        path: "/mentorship/availability",
-        element: <MentorshipAvailability />,
-      },
-      {
-        path: "/mentorship/profile",
-        element: <MentorshipProfile />,
-      },
-      {
-        path: "/community",
-        element: <CommunityPage />,
-      },
-      {
-        path: "/community/question/:questionId",
-        element: <QuestionPage />,
-      },
-      {
-        path: "/community/ask",
-        element: <AskQuestionPage />,
-      },
-      {
-        path: "/resources",
-        element: <ResourcesPage />,
-      },
-      {
-        path: "/resources/:resourceId",
-        element: <ResourceDetails />,
-      },
-      {
-        path: "/jobs",
-        element: <JobsPage />,
-      },
-      {
-        path: "/jobs/:jobId",
-        element: <JobDetails />,
-      },
-      {
-        path: "/jobs/post",
-        element: <PostJob />,
-      },
-      {
-        path: "/jobs/applications",
-        element: <Applications />,
-      },
-      {
-        path: "/jobs/applications/:applicationId",
-        element: <ApplicationDetails />,
-      },
-      {
-        path: "/recruiter/dashboard",
-        element: <RecruiterDashboard />,
-      },
-      {
-        path: "/recruiter/settings",
-        element: <RecruiterSettings />,
-      },
-      {
-        path: "/pricing",
-        element: <Pricing />,
+        path: "/about",
+        element: <AboutPage />,
       },
       {
         path: "/contact",
         element: <ContactPage />,
       },
       {
-        path: "/admin",
-        element: <AdminDashboard />,
+        path: "/privacy",
+        element: <PrivacyPage />,
       },
       {
-        path: "/admin/users",
-        element: <AdminUsers />,
+        path: "/terms",
+        element: <TermsPage />,
       },
       {
-        path: "/admin/contests",
-        element: <AdminContests />,
-      },
-      {
-        path: "/admin/mentors",
-        element: <AdminMentors />,
-      },
-      {
-        path: "/admin/jobs",
-        element: <AdminJobs />,
-      },
-      {
-        path: "/admin/settings",
-        element: <AdminSettings />,
-      },
-      {
-        path: "*",
-        element: <NotFoundPage />,
+        path: "/help",
+        element: <HelpPage />,
       },
     ],
   },
