@@ -4,17 +4,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader } from "@/components/ui/loader";
 import {
   AiOutlineClockCircle,
   AiOutlineTeam,
   AiOutlineTrophy,
   AiOutlineCheck,
   AiOutlineClose,
-  AiOutlineUser,
 } from "react-icons/ai";
-import type { Contest, Problem, ContestParticipant } from "@/types/contest";
 
 interface ContestProblem {
   id: string;
@@ -23,7 +22,7 @@ interface ContestProblem {
   points: number;
   solved_count: number;
   attempted_count: number;
-  user_status?: "Solved" | "Attempted" | null;
+  user_status?: "Solved" | "Attempted";
 }
 
 interface Contest {
@@ -34,56 +33,28 @@ interface Contest {
   end_time: string;
   problems: ContestProblem[];
   total_participants: number;
-  user_rank?: number;
-  user_score?: number;
-}
-
-interface Participant {
-  user_id: string;
-  name: string;
-  score: number;
-  solved_problems: number;
-  rank: number;
+  status: "UPCOMING" | "ONGOING" | "ENDED";
 }
 
 export default function ContestDetails() {
   const { contestId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [contest, setContest] = useState<Contest | null>(null);
-  const [timeLeft, setTimeLeft] = useState<string>("");
-  const [participants, setParticipants] = useState<ContestParticipant[]>([]);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [isParticipating, setIsParticipating] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [joining, setJoining] = useState(false);
 
   useEffect(() => {
     if (!contestId) return;
     fetchContestDetails();
-    fetchParticipants();
-
-    const timer = setInterval(() => {
-      if (contest) {
-        const now = new Date().getTime();
-        const end = new Date(contest.end_time).getTime();
-        const distance = end - now;
-
-        if (distance < 0) {
-          setTimeLeft("Contest Ended");
-          clearInterval(timer);
-        } else {
-          const hours = Math.floor(distance / (1000 * 60 * 60));
-          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-          setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
-        }
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [contestId, contest?.end_time]);
+    checkParticipation();
+  }, [contestId]);
 
   const fetchContestDetails = async () => {
     try {
-      const { data: contestData, error: contestError } = await supabase
+      const { data, error } = await supabase
         .from("coding_contests")
         .select(`
           id,
@@ -91,6 +62,8 @@ export default function ContestDetails() {
           description,
           start_time,
           end_time,
+          status,
+          participant_count,
           coding_problems (
             id,
             title,
@@ -103,191 +76,183 @@ export default function ContestDetails() {
         .eq("id", contestId)
         .single();
 
-      if (contestError) throw contestError;
+      if (error) throw error;
 
-      if (user) {
-        // Fetch user's progress for each problem
-        const { data: userProgress } = await supabase
-          .from("contest_submissions")
-          .select("problem_id, status")
-          .eq("contest_id", contestId)
-          .eq("user_id", user.id);
-
-        const problems = contestData.coding_problems.map((problem: ContestProblem) => ({
-          ...problem,
-          user_status: getUserProblemStatus(problem.id, userProgress || []),
-        }));
-
-        setContest({ ...contestData, problems });
-      } else {
-        setContest({ ...contestData, problems: contestData.coding_problems });
-      }
+      setContest({
+        ...data,
+        problems: data.coding_problems || [],
+        total_participants: data.participant_count || 0
+      });
     } catch (error) {
-      console.error("Error fetching contest details:", error);
+      console.error("Error fetching contest:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load contest details",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const fetchParticipants = async () => {
+  const checkParticipation = async () => {
+    if (!user || !contestId) return;
+
     try {
       const { data, error } = await supabase
         .from("contest_participants")
-        .select(`
-          user_id,
-          profiles (name),
-          score,
-          solved_problems
-        `)
+        .select("id")
         .eq("contest_id", contestId)
-        .order("score", { ascending: false });
+        .eq("user_id", user.id)
+        .single();
+
+      if (error && error.code !== "PGRST116") throw error;
+      setIsParticipating(!!data);
+    } catch (error) {
+      console.error("Error checking participation:", error);
+    }
+  };
+
+  const handleParticipate = async () => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to participate in contests",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setJoining(true);
+    try {
+      const { error } = await supabase
+        .from("contest_participants")
+        .insert({
+          contest_id: contestId,
+          user_id: user.id,
+          score: 0,
+          solved_problems: 0,
+          rank: 0
+        });
 
       if (error) throw error;
 
-      const participantsWithRank = data.map((p, index) => ({
-        user_id: p.user_id,
-        name: p.profiles.name,
-        score: p.score,
-        solved_problems: p.solved_problems,
-        rank: index + 1,
-      }));
-
-      setParticipants(participantsWithRank);
+      setIsParticipating(true);
+      toast({
+        title: "Success",
+        description: "You've successfully joined the contest",
+      });
     } catch (error) {
-      console.error("Error fetching participants:", error);
+      console.error("Error joining contest:", error);
+      toast({
+        title: "Error",
+        description: "Failed to join the contest",
+        variant: "destructive"
+      });
+    } finally {
+      setJoining(false);
     }
   };
 
-  const getUserProblemStatus = (problemId: string, userProgress: any[]) => {
-    const submission = userProgress?.find((p) => p.problem_id === problemId);
-    if (!submission) return null;
-    return submission.status === "ACCEPTED" ? "Solved" : "Attempted";
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty.toLowerCase()) {
-      case "easy":
-        return "bg-green-500/10 text-green-500 border-green-500/20";
-      case "medium":
-        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
-      case "hard":
-        return "bg-red-500/10 text-red-500 border-red-500/20";
-      default:
-        return "";
+  const handleStartContest = () => {
+    if (contest?.problems[0]) {
+      navigate(`/contest/${contestId}/problem/${contest.problems[0].id}`);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader size="large" />
+      </div>
+    );
+  }
 
   if (!contest) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold">Contest not found</h2>
+          <Button onClick={() => navigate('/contests')} className="mt-4">
+            Back to Contests
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container py-6">
-      {/* Contest Header */}
-      <div className="flex justify-between items-start mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">{contest.title}</h1>
-          <p className="text-muted-foreground mt-2">{contest.description}</p>
-          <div className="flex items-center gap-4 mt-4">
-            <div className="flex items-center gap-2 text-sm">
-              <AiOutlineClockCircle className="h-4 w-4" />
-              {timeLeft}
+    <div className="container mx-auto px-4 py-8">
+      <Card className="p-6 space-y-6 bg-gray-900 text-white">
+        <div className="space-y-4">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            {contest.title}
+          </h1>
+          
+          <div className="text-lg text-gray-300">
+            {contest.description}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div className="bg-gray-800 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-blue-400">Start Time</h3>
+              <p className="text-gray-300">
+                {new Date(contest.start_time).toLocaleString()}
+              </p>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <AiOutlineTeam className="h-4 w-4" />
-              {contest.total_participants} participants
+            <div className="bg-gray-800 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-blue-400">End Time</h3>
+              <p className="text-gray-300">
+                {new Date(contest.end_time).toLocaleString()}
+              </p>
             </div>
-            {contest.user_rank && (
-              <div className="flex items-center gap-2 text-sm">
-                <AiOutlineTrophy className="h-4 w-4" />
-                Rank: #{contest.user_rank}
-              </div>
+            <div className="bg-gray-800 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-blue-400">Status</h3>
+              <Badge variant="outline" className="mt-1">
+                {contest.status}
+              </Badge>
+            </div>
+          </div>
+
+          <div className="bg-gray-800 p-4 rounded-lg mt-6">
+            <h2 className="text-xl font-semibold text-purple-400 mb-4">Contest Rules</h2>
+            <ul className="list-disc pl-5 space-y-2 text-gray-300">
+              <li>Read all problems carefully before starting</li>
+              <li>Each problem has its own scoring criteria</li>
+              <li>You can submit multiple times for each problem</li>
+              <li>Your highest score for each problem will be considered</li>
+              <li>Time limit and memory constraints are strictly enforced</li>
+            </ul>
+          </div>
+
+          <div className="pt-6 flex gap-4">
+            {!isParticipating ? (
+              <Button
+                onClick={handleParticipate}
+                disabled={joining || contest.status === "ENDED"}
+                className="w-full h-12 text-lg"
+              >
+                {joining ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <Loader type="spinner" size="small" />
+                    <span>Joining...</span>
+                  </div>
+                ) : (
+                  'Participate in Contest'
+                )}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleStartContest}
+                disabled={contest.status !== "ONGOING"}
+                className="w-full h-12 text-lg bg-green-600 hover:bg-green-700"
+              >
+                Start Contest
+              </Button>
             )}
           </div>
         </div>
-        <Button
-          onClick={() => setShowLeaderboard(!showLeaderboard)}
-          variant="outline"
-          className="gap-2"
-        >
-          <AiOutlineTrophy className="h-5 w-5" />
-          {showLeaderboard ? "Show Problems" : "Show Leaderboard"}
-        </Button>
-      </div>
-
-      {/* Problems List */}
-      {!showLeaderboard ? (
-        <div className="space-y-4">
-          {contest.problems?.map((problem) => (
-            <Card
-              key={problem.id}
-              className="p-4 hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => navigate(`/contest/${contestId}/problem/${problem.id}`)}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-6 h-6 flex items-center justify-center">
-                    {problem.user_status === "Solved" ? (
-                      <AiOutlineCheck className="h-5 w-5 text-green-500" />
-                    ) : problem.user_status === "Attempted" ? (
-                      <AiOutlineClose className="h-5 w-5 text-red-500" />
-                    ) : null}
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{problem.title}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className={getDifficultyColor(problem.difficulty)}>
-                        {problem.difficulty}
-                      </Badge>
-                      <span className="text-sm text-muted-foreground">
-                        {problem.points} points
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {((problem.solved_count / (problem.attempted_count || 1)) * 100).toFixed(1)}% success
-                  rate
-                </div>
-              </div>
-              <Progress
-                value={(problem.solved_count / (problem.attempted_count || 1)) * 100}
-                className="h-1 mt-4"
-              />
-            </Card>
-          ))}
-        </div>
-      ) : (
-        // Leaderboard
-        <div className="space-y-4">
-          {participants.map((participant) => (
-            <Card
-              key={participant.user_id}
-              className={`p-4 ${
-                participant.user_id === user?.id ? "bg-primary/5" : ""
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 text-center font-medium">#{participant.rank}</div>
-                  <div className="flex items-center gap-2">
-                    <AiOutlineUser className="h-5 w-5" />
-                    <span>{participant.name}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-8">
-                  <div className="text-sm">
-                    <span className="font-medium">{participant.solved_problems}</span> solved
-                  </div>
-                  <div className="w-20 text-right font-medium">{participant.score} points</div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
+      </Card>
     </div>
   );
 }

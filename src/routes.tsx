@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import ContestPage from "./pages/contests/ContestPage";
 import ContestDetails from "./pages/contests/ContestDetails";
-import ContestRegister from "./pages/contests/ContestRegister";
 import ContestLeaderboard from "./pages/contests/ContestLeaderboard";
 import ContestProblem from "./pages/contests/ContestProblem";
 import Layout from "./components/Layout";
@@ -20,10 +19,6 @@ export const router = createBrowserRouter([
       {
         path: "/contest/:contestId",
         element: <ContestDetails />,
-      },
-      {
-        path: "/contest/:contestId/register",
-        element: <ContestRegister />,
       },
       {
         path: "/contest/:contestId/leaderboard",
