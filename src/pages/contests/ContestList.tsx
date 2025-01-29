@@ -104,7 +104,7 @@ export default function ContestList() {
 
             <Button 
               className="w-full"
-              onClick={() => navigate(`/contests/${contest.id}`)}
+              onClick={() => navigate(`/contest/${contest.id}`)}
             >
               View Details
             </Button>
