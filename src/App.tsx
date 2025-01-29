@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ContestHome from './pages/contests/ContestHome';
 import ContestList from './pages/contests/ContestList';
 import ContestDetails from './pages/contests/ContestDetails';
@@ -10,16 +10,16 @@ import ContestPractice from './pages/contests/ContestPractice';
 function App() {
   return (
     <Router>
-      {/* Contest Routes */}
-      <Route path="contests">
-        <Route index element={<ContestHome />} />
-        <Route path="list" element={<ContestList />} />
-        <Route path=":contestId" element={<ContestDetails />} />
-        <Route path="create" element={<ContestCreate />} />
-        <Route path=":contestId/leaderboard" element={<ContestLeaderboard />} />
-        <Route path="practice" element={<ContestPractice />} />
-      </Route>
-      <Route path="contest/:contestId/problem/:problemId" element={<ContestProblem />} />
+      <Routes>
+        {/* Contest Routes */}
+        <Route path="/contests" element={<ContestHome />} />
+        <Route path="/contests/list" element={<ContestList />} />
+        <Route path="/contests/:contestId" element={<ContestDetails />} />
+        <Route path="/contests/create" element={<ContestCreate />} />
+        <Route path="/contests/:contestId/leaderboard" element={<ContestLeaderboard />} />
+        <Route path="/contests/practice" element={<ContestPractice />} />
+        <Route path="/contest/:contestId/problem/:problemId" element={<ContestProblem />} />
+      </Routes>
     </Router>
   );
 }
