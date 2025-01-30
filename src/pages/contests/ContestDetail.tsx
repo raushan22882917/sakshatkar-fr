@@ -74,7 +74,6 @@ export default function ContestDetail() {
         description: "You have successfully joined the contest!",
       });
       
-      // Navigate to the first problem
       if (contest?.coding_problems?.[0]) {
         navigate(`/contests/${id}/problem/${contest.coding_problems[0].id}`);
       }
@@ -89,11 +88,11 @@ export default function ContestDetail() {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center min-h-screen text-white">Loading...</div>;
   }
 
   if (!contest) {
-    return <div className="text-center py-12">Contest not found</div>;
+    return <div className="text-center py-12 text-white">Contest not found</div>;
   }
 
   const isContestActive = new Date() >= new Date(contest.start_time) && 
