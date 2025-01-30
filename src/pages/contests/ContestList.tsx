@@ -87,7 +87,15 @@ export default function ContestList() {
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Coding Contests</h1>
-        <Button onClick={() => navigate("/contest/create")}>Create Contest</Button>
+        <div className="space-x-4">
+          <Button 
+            variant="outline"
+            onClick={() => navigate("/contests/live")}
+          >
+            Join Live Contest
+          </Button>
+          <Button onClick={() => navigate("/contest/create")}>Create Contest</Button>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
