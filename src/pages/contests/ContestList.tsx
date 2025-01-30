@@ -44,7 +44,7 @@ export default function ContestList() {
         const formattedContests: Contest[] = data.map(contest => ({
           id: contest.id,
           title: contest.title,
-          description: contest.description,
+          description: contest.description || "",
           start_time: contest.start_time,
           end_time: contest.end_time,
           status: contest.status?.toLowerCase() as Contest['status'],
@@ -79,6 +79,10 @@ export default function ContestList() {
     navigate(`/contest/${contestId}`);
   };
 
+  const handleJoinLiveContest = () => {
+    navigate("/contests/live");
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center min-h-screen">Loading contests...</div>;
   }
@@ -90,7 +94,7 @@ export default function ContestList() {
         <div className="space-x-4">
           <Button 
             variant="outline"
-            onClick={() => navigate("/contests/live")}
+            onClick={handleJoinLiveContest}
           >
             Join Live Contest
           </Button>
