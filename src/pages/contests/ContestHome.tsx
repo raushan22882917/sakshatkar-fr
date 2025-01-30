@@ -31,7 +31,16 @@ export default function ContestHome() {
         .order('start_time', { ascending: true });
 
       if (error) throw error;
-      setContests(data || []);
+
+      // Transform the data to match our Contest type
+      const transformedContests = data.map(contest => ({
+        ...contest,
+        problems: contest.coding_problems,
+        total_participants: contest.participant_count,
+      }));
+
+      setContests(transformedContests);
+      console.log("Fetched contests:", transformedContests);
     } catch (error) {
       console.error("Error fetching contests:", error);
       toast({
@@ -66,7 +75,11 @@ export default function ContestHome() {
   ];
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen text-white">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen text-white">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+      </div>
+    );
   }
 
   return (
@@ -87,7 +100,7 @@ export default function ContestHome() {
           ))}
         </div>
 
-        <UpcomingContests contests={contests} />
+        <UpcomingContests contests={contests.filter(c => c.status === 'UPCOMING')} />
       </div>
     </div>
   );

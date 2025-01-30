@@ -41,7 +41,16 @@ export default function ContestDetail() {
         .single();
 
       if (error) throw error;
-      setContest(data);
+
+      // Transform the data to match our Contest type
+      const transformedContest = {
+        ...data,
+        problems: data.coding_problems,
+        total_participants: data.participant_count,
+      };
+
+      setContest(transformedContest);
+      console.log("Fetched contest details:", transformedContest);
     } catch (error) {
       console.error("Error fetching contest details:", error);
       toast({
@@ -55,6 +64,8 @@ export default function ContestDetail() {
   };
 
   const handleStart = async () => {
+    if (!contest) return;
+
     try {
       const { data, error } = await supabase
         .from("contest_participants")
@@ -74,7 +85,7 @@ export default function ContestDetail() {
         description: "You have successfully joined the contest!",
       });
       
-      if (contest?.coding_problems?.[0]) {
+      if (contest.coding_problems?.[0]) {
         navigate(`/contests/${id}/problem/${contest.coding_problems[0].id}`);
       }
     } catch (error) {
@@ -88,7 +99,11 @@ export default function ContestDetail() {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen text-white">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen text-white">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+      </div>
+    );
   }
 
   if (!contest) {
