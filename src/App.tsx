@@ -61,14 +61,7 @@ import { MentorList } from "@/pages/mentorship/MentorList";
 import MentorDetail from "@/pages/mentorship/MentorDetail";
 import { MentorshipPayment } from "@/pages/mentorship/MentorshipPayment";
 import { MentorshipSuccess } from "@/pages/mentorship/MentorshipSuccess";
-import { 
-  ContestHome,
-  ContestDetails,
-  ContestProblem,
-  ContestLeaderboard,
-  ContestCreate,
-  ContestPractice
-} from "@/pages/contests";
+import { ContestHome } from "@/pages/contests";
 import { InterviewPractice } from "@/pages/InterviewPractice";
 import { DevOpsQuestions } from "@/pages/interview/DevOpsQuestions";
 import { ArticleDetail } from "@/pages/ArticleDetail";
@@ -198,6 +191,9 @@ function App() {
                               } 
                             />
                             
+                            {/* Contest Route */}
+                            <Route path="/contests" element={<ContestHome />} />
+                            
                             {/* Recruiter routes */}
                             <Route path="/recruiter" element={<RecruiterHome />} />
                             <Route path="/recruiter/dashboard" element={<RecruiterDashboard />} />
@@ -236,20 +232,6 @@ function App() {
                                 </ProtectedRoute>
                               } 
                             />
-                            
-                            {/* Contest Routes */}
-                            <Route path="contest">
-                              <Route index element={<ContestHome />} />
-                              <Route path="leaderboard" element={<ContestLeaderboard />} />
-                              <Route path="practice" element={<ContestPractice />} />
-                              <Route path="create" element={
-                                <ProtectedRoute>
-                                  <ContestCreate />
-                                </ProtectedRoute>
-                              } />
-                              <Route path=":contestId" element={<ContestDetails />} />
-                              <Route path=":contestId/problem/:problemId" element={<ContestProblem />} />
-                            </Route>
                             
                             {/* Existing routes */}
                             <Route path="/" element={<Index />} />
@@ -409,6 +391,8 @@ function App() {
                             <Route path="/interview-practice" element={<InterviewPractice />} />
                             <Route path="/interview/devops-questions" element={<DevOpsQuestions />} />
                             <Route path="/video-interview" element={<VideoInterview />} />
+                            
+                            {/* Aptitude Test Routes */}
                             <Route path="/aptitude-test">
                               <Route index element={<AptitudeTest />} />
                               <Route path="company/:companyId" element={<CompanyDetail />} />
