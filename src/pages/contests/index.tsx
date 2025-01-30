@@ -1,12 +1,15 @@
 import ContestHome from './ContestHome';
+import ContestDetail from './ContestDetail';
 
-// Export the component individually
-export { ContestHome };
+export { ContestHome, ContestDetail };
 
-// Export the routes configuration
 export const contestRoutes = [
   {
     path: '/contests',
     element: <ContestHome />
+  },
+  {
+    path: '/contests/:id',
+    element: <ContestDetail />
   }
 ];
