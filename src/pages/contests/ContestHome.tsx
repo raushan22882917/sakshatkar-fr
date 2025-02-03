@@ -43,7 +43,6 @@ export default function ContestHome() {
 
       setContests(transformedContests);
 
-      // Fetch participated contests if user is logged in
       if (user) {
         const { data: participations, error: participationError } = await supabase
           .from("contest_participants")
@@ -70,38 +69,6 @@ export default function ContestHome() {
     }
   };
 
-  const ContestSection = ({ 
-    title, 
-    contests, 
-    bgGradient 
-  }: { 
-    title: string; 
-    contests: Contest[]; 
-    bgGradient: string; 
-  }) => (
-    <div className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-white">{title}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {contests.map((contest) => (
-          <div key={contest.id} className="flex flex-col gap-4">
-            <ContestCard contest={contest} bgColor={bgGradient} />
-            {new Date() < new Date(contest.start_time) && (
-              <ContestCountdown 
-                startTime={contest.start_time} 
-                endTime={contest.end_time} 
-              />
-            )}
-          </div>
-        ))}
-        {contests.length === 0 && (
-          <p className="text-gray-400 col-span-full text-center py-4">
-            No {title.toLowerCase()} contests available at the moment.
-          </p>
-        )}
-      </div>
-    </div>
-  );
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -110,9 +77,8 @@ export default function ContestHome() {
     );
   }
 
-  const weeklyContests = contests.filter(c => c.title.toLowerCase().includes("weekly"));
-  const biWeeklyContests = contests.filter(c => c.title.toLowerCase().includes("bi-weekly"));
-  const monthlyContests = contests.filter(c => c.title.toLowerCase().includes("monthly"));
+  const activeContests = contests.filter(c => c.status !== 'ENDED');
+  const pastContests = contests.filter(c => c.status === 'ENDED');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white py-12 px-4 sm:px-6 lg:px-8">
@@ -126,31 +92,61 @@ export default function ContestHome() {
           </p>
         </div>
 
+        {/* User's Joined Contests */}
         {user && participatedContests.length > 0 && (
-          <ContestSection 
-            title="Your Contests" 
-            contests={participatedContests} 
-            bgGradient="from-green-600 to-green-800"
-          />
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold mb-6 text-white">Your Contests</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {participatedContests.map((contest) => (
+                <div key={contest.id} className="flex flex-col gap-4">
+                  <ContestCard contest={contest} bgColor="from-green-600 to-green-800" />
+                  {new Date() < new Date(contest.start_time) && (
+                    <ContestCountdown startTime={contest.start_time} endTime={contest.end_time} />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
-        <ContestSection 
-          title="Weekly Contests" 
-          contests={weeklyContests} 
-          bgGradient="from-blue-600 to-blue-800"
-        />
+        {/* Active Contests */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-6 text-white">Active Contests</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {activeContests.map((contest) => (
+              <div key={contest.id} className="flex flex-col gap-4">
+                <ContestCard contest={contest} bgColor="from-blue-600 to-blue-800" />
+                {new Date() < new Date(contest.start_time) && (
+                  <ContestCountdown startTime={contest.start_time} endTime={contest.end_time} />
+                )}
+              </div>
+            ))}
+            {activeContests.length === 0 && (
+              <p className="text-gray-400 col-span-full text-center py-4">
+                No active contests available at the moment.
+              </p>
+            )}
+          </div>
+        </div>
 
-        <ContestSection 
-          title="Bi-Weekly Contests" 
-          contests={biWeeklyContests} 
-          bgGradient="from-indigo-600 to-indigo-800"
-        />
-
-        <ContestSection 
-          title="Monthly Contests" 
-          contests={monthlyContests} 
-          bgGradient="from-purple-600 to-purple-800"
-        />
+        {/* Past Contests */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-6 text-white">Past Contests</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {pastContests.map((contest) => (
+              <ContestCard 
+                key={contest.id} 
+                contest={contest} 
+                bgColor="from-gray-600 to-gray-800" 
+              />
+            ))}
+            {pastContests.length === 0 && (
+              <p className="text-gray-400 col-span-full text-center py-4">
+                No past contests available.
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
