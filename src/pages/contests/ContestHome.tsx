@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import type { Contest } from "@/types/contest";
-import { ContestTypeSection } from "./components/ContestTypeSection";
-import { UpcomingContests } from "./components/UpcomingContests";
+import { ContestCard } from "./components/ContestCard";
 
 export default function ContestHome() {
   const [contests, setContests] = useState<Contest[]>([]);
@@ -32,7 +31,6 @@ export default function ContestHome() {
 
       if (error) throw error;
 
-      // Transform the data to match our Contest type
       const transformedContests = data.map(contest => ({
         ...contest,
         problems: contest.coding_problems,
@@ -40,7 +38,6 @@ export default function ContestHome() {
       }));
 
       setContests(transformedContests);
-      console.log("Fetched contests:", transformedContests);
     } catch (error) {
       console.error("Error fetching contests:", error);
       toast({
@@ -53,34 +50,33 @@ export default function ContestHome() {
     }
   };
 
-  const contestTypes = [
-    {
-      title: "Weekly Contest",
-      schedule: "Every Monday",
-      bgColor: "from-blue-600 to-blue-800",
-      contests: contests.filter(c => c.title.toLowerCase().includes("weekly")),
-    },
-    {
-      title: "Bi-Weekly Contest",
-      schedule: "Every Other Wednesday",
-      bgColor: "from-indigo-600 to-indigo-800",
-      contests: contests.filter(c => c.title.toLowerCase().includes("bi-weekly")),
-    },
-    {
-      title: "Monthly Contest",
-      schedule: "First Saturday",
-      bgColor: "from-purple-600 to-purple-800",
-      contests: contests.filter(c => c.title.toLowerCase().includes("monthly")),
-    },
-  ];
+  const weeklyContests = contests.filter(c => c.title.toLowerCase().includes("weekly"));
+  const biWeeklyContests = contests.filter(c => c.title.toLowerCase().includes("bi-weekly"));
+  const monthlyContests = contests.filter(c => c.title.toLowerCase().includes("monthly"));
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen text-white">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
+
+  const ContestSection = ({ title, contests, bgGradient }: { title: string; contests: Contest[]; bgGradient: string }) => (
+    <div className="mb-12">
+      <h2 className="text-2xl font-bold mb-6 text-white">{title}</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {contests.map((contest) => (
+          <ContestCard key={contest.id} contest={contest} bgColor={bgGradient} />
+        ))}
+        {contests.length === 0 && (
+          <p className="text-gray-400 col-span-full text-center py-4">
+            No {title.toLowerCase()} contests available at the moment.
+          </p>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white py-12 px-4 sm:px-6 lg:px-8">
@@ -94,13 +90,23 @@ export default function ContestHome() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {contestTypes.map((type, index) => (
-            <ContestTypeSection key={index} {...type} />
-          ))}
-        </div>
+        <ContestSection 
+          title="Weekly Contests" 
+          contests={weeklyContests} 
+          bgGradient="from-blue-600 to-blue-800"
+        />
 
-        <UpcomingContests contests={contests.filter(c => c.status === 'UPCOMING')} />
+        <ContestSection 
+          title="Bi-Weekly Contests" 
+          contests={biWeeklyContests} 
+          bgGradient="from-indigo-600 to-indigo-800"
+        />
+
+        <ContestSection 
+          title="Monthly Contests" 
+          contests={monthlyContests} 
+          bgGradient="from-purple-600 to-purple-800"
+        />
       </div>
     </div>
   );
