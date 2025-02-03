@@ -24,7 +24,7 @@ export function ContestLeaderboard({ contestId }: ContestLeaderboardProps) {
         .from("contest_participants")
         .select(`
           *,
-          profiles:user_id (
+          profile:profile_id (
             name,
             avatar_url
           )
@@ -37,8 +37,8 @@ export function ContestLeaderboard({ contestId }: ContestLeaderboardProps) {
 
       const transformedData = data.map((participant: any) => ({
         ...participant,
-        name: participant.profiles?.name || "Anonymous",
-        avatar_url: participant.profiles?.avatar_url
+        name: participant.profile?.name || "Anonymous",
+        avatar_url: participant.profile?.avatar_url
       }));
 
       setParticipants(transformedData);
