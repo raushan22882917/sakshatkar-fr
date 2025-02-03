@@ -17,9 +17,11 @@ export default function ContestDetail() {
   const navigate = useNavigate();
   const [contest, setContest] = useState<Contest | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isParticipant, setIsParticipant] = useState(false);
 
   useEffect(() => {
     fetchContestDetails();
+    checkParticipation();
   }, [id]);
 
   const fetchContestDetails = async () => {
@@ -42,7 +44,6 @@ export default function ContestDetail() {
 
       if (error) throw error;
 
-      // Transform the data to match our Contest type
       const transformedContest = {
         ...data,
         problems: data.coding_problems,
@@ -50,7 +51,6 @@ export default function ContestDetail() {
       };
 
       setContest(transformedContest);
-      console.log("Fetched contest details:", transformedContest);
     } catch (error) {
       console.error("Error fetching contest details:", error);
       toast({
@@ -63,27 +63,57 @@ export default function ContestDetail() {
     }
   };
 
+  const checkParticipation = async () => {
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      const { data, error } = await supabase
+        .from("contest_participants")
+        .select("id")
+        .eq("contest_id", id)
+        .eq("user_id", user.user.id)
+        .single();
+
+      if (error && error.code !== "PGRST116") throw error;
+      setIsParticipant(!!data);
+    } catch (error) {
+      console.error("Error checking participation:", error);
+    }
+  };
+
   const handleStart = async () => {
     if (!contest) return;
 
     try {
-      const { data, error } = await supabase
-        .from("contest_participants")
-        .insert([
-          {
-            contest_id: id,
-            user_id: (await supabase.auth.getUser()).data.user?.id,
-          },
-        ])
-        .select()
-        .single();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Please log in to join the contest.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-      if (error) throw error;
+      // Check if user is already a participant
+      if (!isParticipant) {
+        const { error: participationError } = await supabase
+          .from("contest_participants")
+          .insert([
+            {
+              contest_id: id,
+              user_id: user.id,
+            },
+          ]);
 
-      toast({
-        title: "Success",
-        description: "You have successfully joined the contest!",
-      });
+        if (participationError) throw participationError;
+
+        toast({
+          title: "Success",
+          description: "You have successfully joined the contest!",
+        });
+      }
       
       if (contest.coding_problems?.[0]) {
         navigate(`/contests/${id}/problem/${contest.coding_problems[0].id}`);
@@ -150,7 +180,11 @@ export default function ContestDetail() {
               disabled={!isContestActive}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
             >
-              {isContestActive ? "Start Contest" : "Contest not active"}
+              {!isContestActive 
+                ? "Contest not active" 
+                : isParticipant 
+                  ? "Continue Contest" 
+                  : "Start Contest"}
             </Button>
           </div>
 
