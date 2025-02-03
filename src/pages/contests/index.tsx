@@ -1,7 +1,8 @@
 import ContestHome from './ContestHome';
 import ContestDetail from './ContestDetail';
+import ContestProblem from './ContestProblem';
 
-export { ContestHome, ContestDetail };
+export { ContestHome, ContestDetail, ContestProblem };
 
 export const contestRoutes = [
   {
@@ -11,5 +12,9 @@ export const contestRoutes = [
   {
     path: '/contests/:id',
     element: <ContestDetail />
+  },
+  {
+    path: '/contests/:id/problem/:problemId',
+    element: <ContestProblem />
   }
 ];
