@@ -35,6 +35,7 @@ export function SolutionForm({
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
+  const maxTime = 3600; // 1 hour in seconds
   const [submissionCount, setSubmissionCount] = useState(0);
   const [editorTestCases, setEditorTestCases] = useState<TestCase[]>(
     examples.map(ex => ({
@@ -149,7 +150,11 @@ export function SolutionForm({
 
   return (
     <div className="space-y-4">
-      <QuestionTimer timeSpent={timeSpent} maxTime={3600} />
+      <QuestionTimer 
+        duration={maxTime - timeSpent}
+        maxTime={maxTime}
+        onTimeUpdate={(time) => setTimeSpent(maxTime - time)}
+      />
       
       {submissionCount >= 10 && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">

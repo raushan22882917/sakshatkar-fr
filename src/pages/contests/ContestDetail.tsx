@@ -40,9 +40,17 @@ export default function ContestDetail() {
           )
         `)
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) {
+        toast({
+          title: "Error",
+          description: "Contest not found",
+          variant: "destructive",
+        });
+        return;
+      }
 
       const transformedContest = {
         ...data,
@@ -65,15 +73,15 @@ export default function ContestDetail() {
 
   const checkParticipation = async () => {
     try {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       const { data, error } = await supabase
         .from("contest_participants")
         .select("id")
         .eq("contest_id", id)
-        .eq("user_id", user.user.id)
-        .single();
+        .eq("user_id", user.id)
+        .maybeSingle();
 
       if (error && error.code !== "PGRST116") throw error;
       setIsParticipant(!!data);
@@ -96,7 +104,6 @@ export default function ContestDetail() {
         return;
       }
 
-      // Check if user is already a participant
       if (!isParticipant) {
         const { error: participationError } = await supabase
           .from("contest_participants")
@@ -113,6 +120,7 @@ export default function ContestDetail() {
           title: "Success",
           description: "You have successfully joined the contest!",
         });
+        setIsParticipant(true);
       }
       
       if (contest.coding_problems?.[0]) {
@@ -130,14 +138,14 @@ export default function ContestDetail() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen text-white">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (!contest) {
-    return <div className="text-center py-12 text-white">Contest not found</div>;
+    return <div className="text-center py-12">Contest not found</div>;
   }
 
   const isContestActive = new Date() >= new Date(contest.start_time) && 
