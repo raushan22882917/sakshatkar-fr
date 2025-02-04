@@ -4,19 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CodeEditor from "@/components/CodeEditor";
 import { StepProgress } from "@/components/StepProgress";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Navbar } from "@/components/Navbar";
-import { questions } from "@/data/questions";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { evaluationService } from "@/services/evaluationService";
 import { useSubscription } from "@/contexts/SubscriptionContext";
-import { TestCase } from "@/types/contest";
+import { TestCase, Problem, AIDetectionResult } from "@/types/global";
 import { codeExecutionService } from "@/services/codeExecutionService";
 import { saplingService } from "@/services/saplingService";
-import { SaplingEditor } from "@/components/SaplingEditor";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
@@ -96,6 +93,7 @@ export default function SolvePage() {
   const [isRunningTests, setIsRunningTests] = useState(false);
   const [aiDetectionResult, setAiDetectionResult] = useState<AIDetectionResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [problem, setProblem] = useState<Problem | null>(null);
 
   const fetchProblemDetails = async () => {
     try {
@@ -294,10 +292,10 @@ ${testCase.explanation ? `Explanation: ${testCase.explanation}` : ''}
                   <div className="flex gap-4">
                     <Button 
                       onClick={handleRunCode} 
-                      disabled={isRunning || !code.trim()}
+                      disabled={isRunningTests || !code.trim()}
                       className="w-full"
                     >
-                      {isRunning ? (
+                      {isRunningTests ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Running...

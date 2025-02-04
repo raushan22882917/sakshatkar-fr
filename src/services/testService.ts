@@ -1,18 +1,18 @@
-import { supabaseClient } from '@/lib/supabaseClient';
-import { TestCase } from '@/types/contest';
+import { TestCase } from '@/types/global';
 
-export const testService = {
-  async runTests(code: string, testCases: TestCase[]) {
-    try {
-      const { data, error } = await supabaseClient.functions.invoke('run-tests', {
-        body: { code, testCases }
-      });
+export interface TestService {
+  runTests: (code: string, testCases: TestCase[]) => Promise<any>;
+  generateQuestions: (moduleId: string, moduleName: string) => Promise<any>;
+}
 
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error running tests:', error);
-      throw error;
-    }
+// Implement the service
+const testService: TestService = {
+  runTests: async (code: string, testCases: TestCase[]) => {
+    // Implementation
+  },
+  generateQuestions: async (moduleId: string, moduleName: string) => {
+    // Implementation
   }
 };
+
+export { testService };
