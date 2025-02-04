@@ -20,6 +20,8 @@ export interface TestCase {
   input: string;
   expectedOutput: string;
   explanation?: string;
+  actualOutput?: string;
+  passed?: boolean;
 }
 
 export interface Mentor {
