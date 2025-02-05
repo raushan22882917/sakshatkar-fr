@@ -59,7 +59,7 @@ import CompanyPractice from "./pages/CompanyPractice";
 import CompanyTopic from "./pages/CompanyTopic";
 import { MentorList } from "@/pages/mentorship/MentorList";
 import MentorDetail from "@/pages/mentorship/MentorDetail";
-import MentorshipPayment from "@/pages/mentorship/MentorshipPayment";
+import { MentorshipPayment } from "@/pages/mentorship/MentorshipPayment";
 import { MentorshipSuccess } from "@/pages/mentorship/MentorshipSuccess";
 import { ContestHome, ContestDetail } from "@/pages/contests";
 import { InterviewPractice } from "@/pages/InterviewPractice";
