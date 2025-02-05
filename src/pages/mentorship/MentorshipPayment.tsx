@@ -7,7 +7,7 @@ import type { PayPalButtonsComponentProps } from "@paypal/react-paypal-js";
 
 interface MentorshipPaymentProps {}
 
-export const MentorshipPayment: React.FC<MentorshipPaymentProps> = () => {
+const MentorshipPayment: React.FC<MentorshipPaymentProps> = () => {
   const { toast } = useToast();
 
   const createOrder: PayPalButtonsComponentProps['createOrder'] = async () => {
@@ -43,3 +43,4 @@ export const MentorshipPayment: React.FC<MentorshipPaymentProps> = () => {
   );
 };
 
+export default MentorshipPayment;
