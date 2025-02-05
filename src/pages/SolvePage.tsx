@@ -1,3 +1,6 @@
+```typescript
+import { useState, useEffect } from "react";
+import { useParamstypescript
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -113,7 +116,22 @@ const steps = [
   },
 ];
 
-export default function SolvePage() {
+// Add interfaces for better type safety
+interface EvaluationResult {
+  score: number;
+  feedback: string;
+  strengths: string[];
+  improvements: string[];
+}
+
+interface TestResult {
+  passed: boolean;
+  executionTime: number;
+  memoryUsage: number;
+  output: string;
+}
+
+const SolvePage: React.FC = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -154,6 +172,8 @@ export default function SolvePage() {
   const [editorTestCases, setEditorTestCases] = useState<TestCase[]>([]);
   const [isRunningTests, setIsRunningTests] = useState(false);
   const [aiDetectionResult, setAiDetectionResult] = useState<AIDetectionResult | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showPerformance, setShowPerformance] = useState(false);
 
   // Get the current path to determine which practice mode we're in
   const path = window.location.pathname.split("/")[1];
@@ -624,6 +644,92 @@ ${JSON.stringify(stepData.examples)}`;
     analyzeSolution();
   };
 
+  const handleFinalSubmission = async () => {
+    if (!question) return;
+    
+    setIsAnalyzing(true);
+    try {
+      // Call evaluation service
+      const evaluation = await evaluationService.evaluateAnswer(
+        { ...question, type: 'dsa', evaluationCriteria: ['correctness', 'efficiency', 'style'] },
+        code,
+        selectedLanguage
+      );
+
+      // Save submission with status and feedback
+      const submissionData = {
+        question_id: question.id?.toString(),
+        title: question.title,
+        approach,
+        code,
+        time_complexity: "O(n)", // You might want to make these dynamic
+        space_complexity: "O(1)",
+        execution_time: 0,
+        memory_usage: 0,
+        score: evaluation.score,
+        status: evaluation.score >= 6 ? 'solved' : 'attempted',
+        feedback: evaluation.feedback
+      };
+
+      // Save to Supabase
+      const { error } = await supabase
+        .from('blind75_submissions')
+        .upsert([submissionData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setAnalysisResult(evaluation);
+      setShowPerformance(true);
+
+      // Show appropriate feedback toast based on score
+      const feedbackMessage = getFeedbackMessage(evaluation.score);
+      toast({
+        title: feedbackMessage.title,
+        description: feedbackMessage.description,
+        variant: feedbackMessage.variant,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Submission Error",
+        description: error.message || "Failed to submit solution",
+        variant: "destructive"
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  // Helper function to get feedback message
+  const getFeedbackMessage = (score: number) => {
+    if (score === 10) {
+      return {
+        title: "Excellent! 🎉",
+        description: "Perfect score! Your solution is outstanding.",
+        variant: "default" as const
+      };
+    } else if (score >= 8) {
+      return {
+        title: "Very Good! 👏",
+        description: "Great job! Just a few minor improvements needed.",
+        variant: "default" as const
+      };
+    } else if (score >= 6) {
+      return {
+        title: "Good Work! 👍",
+        description: "You're on the right track. Keep practicing to improve.",
+        variant: "default" as const
+      };
+    } else {
+      return {
+        title: "Keep Practicing 💪",
+        description: "Review the feedback and try again. You can do it!",
+        variant: "destructive" as const
+      };
+    }
+  };
+
   const handleSubmitSolution = async () => {
     if (!canSolveMoreQuestions) {
       toast({
@@ -649,7 +755,7 @@ ${JSON.stringify(stepData.examples)}`;
         description: "Please wait while we analyze your complete solution...",
       });
 
-      await handleShowFeedback();
+      await handleFinalSubmission();
 
     } catch (error) {
       console.error("Submission error:", error);
@@ -882,38 +988,4 @@ ${JSON.stringify(stepData.examples)}`;
                       <p className="text-sm">{approach}</p>
                       <h4 className="font-medium">Your Test Cases:</h4>
                       <p className="text-sm">{JSON.stringify(testCases)}</p>
-                      <h4 className="font-medium">Your Code:</h4>
-                      <pre className="text-sm bg-muted p-4 rounded-md">{code}</pre>
-                    </div>
-                    <Button onClick={handleSubmitSolution}>Submit Solution</Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Progress</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <StepProgress steps={updatedSteps} />
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-
-      
-
-      <FeedbackDialog
-        isOpen={isFeedbackOpen}
-        onClose={() => setIsFeedbackOpen(false)}
-        feedback={feedback}
-        title={question?.title || ""}
-        description={question?.description || ""}
-      />
-    </div>
-  );
-}
+                      <h4 className="font-
