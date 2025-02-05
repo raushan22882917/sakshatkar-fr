@@ -1,29 +1,32 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { PayPalButtons } from "@paypal/react-paypal-js";
+import { PayPalButtons, OnApproveData, CreateOrderData } from "@paypal/react-paypal-js";
 
 const MentorshipPayment = () => {
   const { toast } = useToast();
 
-  const createOrder = {
-    intent: "CAPTURE",
-    purchase_units: [
-      {
-        amount: {
-          currency_code: "USD",
-          value: "100.00"
+  const createOrder = async () => {
+    return {
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          amount: {
+            currency_code: "USD",
+            value: "100.00"
+          }
         }
-      }
-    ]
+      ]
+    };
   };
 
-  const handleApprove = (data: any) => {
+  const handleApprove = async (data: OnApproveData) => {
     toast({
       title: "Payment Successful",
       description: "Thank you for your payment!",
       variant: "default",
     });
+    return Promise.resolve();
   };
 
   const handleError = (error: any) => {
@@ -38,7 +41,7 @@ const MentorshipPayment = () => {
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Mentorship Payment</h2>
       <PayPalButtons
-        createOrder={() => Promise.resolve(createOrder)}
+        createOrder={createOrder}
         onApprove={handleApprove}
         onError={handleError}
       />
