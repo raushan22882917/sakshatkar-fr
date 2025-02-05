@@ -278,9 +278,10 @@ export function PricingPlans() {
         {plans.map((plan) => (
           <Card key={plan.name} className={`relative ${plan.popular ? 'border-primary' : ''}`}>
             {plan.popular && (
-              <div className="absolute top-0 right-0 bg-primary text-white px-3 py-1 text-sm rounded-bl">
-                Popular
-              </div>
+              <div className="absolute top-0 right-0 text-white px-4 py-2 text-sm rounded-bl border-2 border-primary bg-gradient-to-r from-blue-600 to-blue-400 shadow-md transform hover:scale-105 transition-all">
+              Popular
+            </div>
+            
             )}
             <CardHeader>
               <CardTitle>

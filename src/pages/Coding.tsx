@@ -26,6 +26,14 @@ export default function Coding() {
       route: "/company-practice",
       image: "https://savvytokyo.scdn3.secure.raxcdn.com/app/uploads/2023/10/LINE_ALBUM_1-Monday_231016_4.jpg",
     },
+    {
+      title: "Blind 75 LeetCode",
+      description: "Master the most frequently asked coding questions with the Blind 75 list.",
+      icon: Building,
+      route: "/leetcode/blind-75",
+      image: "https://miro.medium.com/v2/resize:fit:1024/1*VGFY9kJ1l6G7v_6lcrLfkg.png",
+    }
+    
   ];
 
   return (
@@ -45,31 +53,7 @@ export default function Coding() {
           ))}
         </div>
 
-        {/* Instructions Section - Below Cards with Image on Left */}
-        <section className="mt-16 flex flex-col md:flex-row items-center  p-6 rounded-lg shadow-md">
-          {/* Image Section */}
-          <div className="w-full md:w-1/2">
-                    <video 
-            src="video.mp4" 
-            controls 
-            className="w-full h-auto rounded-lg"
-          >
-            Your browser does not support the video tag.
-          </video>
-          </div>
-
-          {/* Text Section */}
-          <div className="w-full md:w-1/2 md:pl-8 mt-6 md:mt-0">
-            <h2 className="text-2xl font-semibold mb-4">How to Use This Platform</h2>
-            <ul className="list-disc list-inside text-lg text-gray-700">
-              <li>Select a coding mode based on your experience level.</li>
-              <li>Follow the given problems and solve them in your preferred language.</li>
-              <li>Collaborate with peers for enhanced learning and discussion.</li>
-              <li>Company-wise questions help prepare for technical interviews.</li>
-              <li>Track your progress and revisit past problems for improvement.</li>
-            </ul>
-          </div>
-        </section>
+        
       </div>
 
       {/* Footer Section */}

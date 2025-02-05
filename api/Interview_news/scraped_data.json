@@ -1,5 +1,21 @@
 [
     {
+        "title": "The role of AI in streamlining workspace management processes",
+        "link": "https://www.developer-tech.com/news/the-role-of-ai-in-streamlining-workspace-management-processes/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2025/01/glenn-carstens-peters-npxXWgQ33ZQ-unsplash-350x233.jpg",
+        "date": "31 January 2025",
+        "category": "Artificial Intelligence",
+        "description": ""
+    },
+    {
+        "title": "Sourcegraph automates \u2018soul-crushing\u2019 tasks with AI coding agents",
+        "link": "https://www.developer-tech.com/news/sourcegraph-automates-soul-crushing-tasks-ai-coding-agents/",
+        "image": "https://www.developer-tech.com/wp-content/uploads/2025/01/sourcegraph-ai-coding-agents-assistant-software-development-programming-artificial-intelligence-agentic-350x233.jpg",
+        "date": "30 January 2025",
+        "category": "Artificial Intelligence",
+        "description": ""
+    },
+    {
         "title": "Snyk: AI-powered vulnerability remediations and protecting shadow IT",
         "link": "https://www.developer-tech.com/news/snyk-ai-powered-vulnerability-remediations-and-protecting-shadow-it/",
         "image": "https://www.developer-tech.com/wp-content/uploads/2025/01/rene-bohmer-kGQSE4rUakg-unsplash-350x233.jpg",
@@ -60,22 +76,6 @@
         "link": "https://www.developer-tech.com/news/2024-developer-ecosystem-shedding-ai-fears-improving-devex/",
         "image": "https://www.developer-tech.com/wp-content/uploads/2024/12/state-of-developer-ecosystem-report-2024-software-research-study-coding-programming-languages-ai-artificial-intelligence-350x233.jpg",
         "date": "11 December 2024",
-        "category": "Artificial Intelligence",
-        "description": ""
-    },
-    {
-        "title": "Michel Isnard, GitLab: Transforming software development with AI",
-        "link": "https://www.developer-tech.com/news/michel-isnard-gitlab-transforming-software-development-ai/",
-        "image": "https://www.developer-tech.com/wp-content/uploads/2024/12/michel-isnard-gitlab-ai-software-development-coding-programming-artificial-intelligence-350x230.jpg",
-        "date": "5 December 2024",
-        "category": "Approaches",
-        "description": ""
-    },
-    {
-        "title": "Couchbase tackles agentic AI development challenges",
-        "link": "https://www.developer-tech.com/news/couchbase-tackles-agentic-ai-development-challenges/",
-        "image": "https://www.developer-tech.com/wp-content/uploads/2024/12/couchbase-capella-ai-services-agentic-agents-artificial-intelligence-development-llm-350x242.jpg",
-        "date": "2 December 2024",
         "category": "Artificial Intelligence",
         "description": ""
     }

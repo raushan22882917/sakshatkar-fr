@@ -69,10 +69,13 @@ import VideoInterview from "./pages/VideoInterview";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import Editor from "./pages/Editor";
+import Blind75 from "./pages/leetcode/blind-75";
+import BlindEditor from "./pages/leetcode/blindeditor";
 import { AptitudeTest } from "./components/AptitudeTest/AptitudeTest";
 import { CompanyDetail } from "./components/AptitudeTest/CompanyDetail";
 import { Quiz } from "./components/AptitudeTest/Quiz";
 import { ThemeProvider } from "next-themes";
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -108,6 +111,24 @@ function App() {
                             <Route path="/mentorship/:id" element={<MentorDetail />} />
                             <Route path="/mentorship/payment" element={<MentorshipPayment />} />
                             <Route path="/mentorship/success" element={<MentorshipSuccess />} />
+
+                            {/* Blind 75 Routes */}
+                            <Route 
+                              path="/leetcode/blind-75" 
+                              element={
+                                <ProtectedRoute>
+                                  <Blind75 />
+                                </ProtectedRoute>
+                              } 
+                            />
+                            <Route 
+                              path="/leetcode/blindeditor" 
+                              element={
+                                <ProtectedRoute>
+                                  <BlindEditor />
+                                </ProtectedRoute>
+                              } 
+                            />
 
                             {/* Editor Route */}
                             <Route 
