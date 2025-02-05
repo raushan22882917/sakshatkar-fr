@@ -12,12 +12,7 @@ export const InterviewHeader = ({ onTimeUpdate }: InterviewHeaderProps) => {
         <Clock className="w-6 h-6 text-primary" />
         <h1 className="text-2xl font-bold">HR Interview Session</h1>
       </div>
-      <QuestionTimer 
-        onTimeUpdate={onTimeUpdate}
-        duration={3600}
-        maxTime={3600}
-        timeSpent={0}
-      />
+      <QuestionTimer onTimeUpdate={onTimeUpdate} />
     </div>
   );
 };

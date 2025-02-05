@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
-import { Contest, ContestProblem } from "@/types/contest";
-import { AiOutlineClockCircle, AiOutlineTeam, AiOutlineTrophy } from "react-icons/ai";
-import { ContestLeaderboard } from "./components/ContestLeaderboard";
+import {
+  AiOutlineClockCircle,
+  AiOutlineTeam,
+  AiOutlineTrophy,
+} from "react-icons/ai";
+import type { Contest } from "@/types/contest";
 
 export default function ContestDetail() {
   const { id } = useParams();
@@ -15,12 +18,10 @@ export default function ContestDetail() {
   const [contest, setContest] = useState<Contest | null>(null);
   const [loading, setLoading] = useState(true);
   const [isParticipant, setIsParticipant] = useState(false);
-  const [problemAttempts, setProblemAttempts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     fetchContestDetails();
     checkParticipation();
-    fetchProblemAttempts();
   }, [id]);
 
   const fetchContestDetails = async () => {
@@ -70,30 +71,6 @@ export default function ContestDetail() {
     }
   };
 
-  const fetchProblemAttempts = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: submissions, error } = await supabase
-        .from("contest_submissions")
-        .select("problem_id, count")
-        .eq("contest_id", id)
-        .eq("user_id", user.id)
-        .select("problem_id");
-
-      if (error) throw error;
-
-      const attempts: Record<string, number> = {};
-      submissions?.forEach(sub => {
-        attempts[sub.problem_id] = (attempts[sub.problem_id] || 0) + 1;
-      });
-      setProblemAttempts(attempts);
-    } catch (error) {
-      console.error("Error fetching attempts:", error);
-    }
-  };
-
   const checkParticipation = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -113,25 +90,51 @@ export default function ContestDetail() {
     }
   };
 
-  const handleSolveProblem = (problemId: string) => {
+  const handleStart = async () => {
     if (!contest) return;
-    
-    const attempts = problemAttempts[problemId] || 0;
-    if (attempts >= 2) {
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Please log in to join the contest.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!isParticipant) {
+        const { error: participationError } = await supabase
+          .from("contest_participants")
+          .insert([
+            {
+              contest_id: id,
+              user_id: user.id,
+            },
+          ]);
+
+        if (participationError) throw participationError;
+
+        toast({
+          title: "Success",
+          description: "You have successfully joined the contest!",
+        });
+        setIsParticipant(true);
+      }
+      
+      if (contest.coding_problems?.[0]) {
+        navigate(`/contests/${id}/problem/${contest.coding_problems[0].id}`);
+      }
+    } catch (error) {
+      console.error("Error joining contest:", error);
       toast({
-        title: "Attempt limit reached",
-        description: "You can only attempt each problem twice during the contest.",
+        title: "Error",
+        description: "Failed to join contest. Please try again.",
         variant: "destructive",
       });
-      return;
     }
-
-    navigate(`/contests/${id}/problem/${problemId}`);
   };
-
-  const isContestActive = contest && 
-    new Date() >= new Date(contest.start_time) && 
-    new Date() <= new Date(contest.end_time);
 
   if (loading) {
     return (
@@ -145,10 +148,13 @@ export default function ContestDetail() {
     return <div className="text-center py-12">Contest not found</div>;
   }
 
+  const isContestActive = new Date() >= new Date(contest.start_time) && 
+                         new Date() <= new Date(contest.end_time);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <Card className="p-8 bg-gray-800/50 mb-8">
+      <div className="max-w-4xl mx-auto">
+        <Card className="p-8 bg-gray-800/50">
           <div className="mb-8">
             <div className="flex justify-between items-start mb-4">
               <h1 className="text-3xl font-bold">{contest.title}</h1>
@@ -176,6 +182,18 @@ export default function ContestDetail() {
                 <span>{contest.coding_problems?.length || 0} Problems</span>
               </div>
             </div>
+
+            <Button
+              onClick={handleStart}
+              disabled={!isContestActive}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            >
+              {!isContestActive 
+                ? "Contest not active" 
+                : isParticipant 
+                  ? "Continue Contest" 
+                  : "Start Contest"}
+            </Button>
           </div>
 
           <div>
@@ -192,36 +210,15 @@ export default function ContestDetail() {
                       <div className="flex items-center gap-4 text-sm text-gray-300">
                         <span>{problem.points} points</span>
                         <span>{problem.solved_count} solved</span>
-                        {problemAttempts[problem.id] > 0 && (
-                          <span>Your attempts: {problemAttempts[problem.id]}/2</span>
-                        )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <Badge>{problem.difficulty}</Badge>
-                      {isContestActive && (
-                        <Button
-                          onClick={() => handleSolveProblem(problem.id)}
-                          disabled={problemAttempts[problem.id] >= 2}
-                          variant={problemAttempts[problem.id] >= 2 ? "secondary" : "default"}
-                        >
-                          {problemAttempts[problem.id] >= 2 ? "Max attempts" : "Solve"}
-                        </Button>
-                      )}
-                    </div>
+                    <Badge>{problem.difficulty}</Badge>
                   </div>
                 </Card>
               ))}
             </div>
           </div>
         </Card>
-
-        {isContestActive && (
-          <Card className="p-8 bg-gray-800/50">
-            <h2 className="text-2xl font-bold mb-6">Live Leaderboard</h2>
-            <ContestLeaderboard contestId={id!} />
-          </Card>
-        )}
       </div>
     </div>
   );
