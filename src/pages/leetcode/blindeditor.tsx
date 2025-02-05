@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
 import { Progress } from "@/components/ui/progress";
 import { codeExecutionService } from '@/services/codeExecutionService';
 import { evaluationService } from '@/services/evaluationService';
+import { blind75Service } from '@/services/blind75Service';
 
 interface Problem {
   id: string;
@@ -44,6 +44,9 @@ const BlindEditor: React.FC = () => {
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showPerformance, setShowPerformance] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -105,6 +108,11 @@ const BlindEditor: React.FC = () => {
   };
 
   const handleRunCode = async () => {
+    setIsLoading(true);
+    setIsExecuting(true);
+    setOutput(null);
+    setError(null);
+
     try {
       const result = await codeExecutionService.executeCode({
         code,
@@ -133,33 +141,52 @@ const BlindEditor: React.FC = () => {
         description: "Failed to execute code",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
+      setIsExecuting(false);
     }
   };
 
   const handleFinalSubmission = async () => {
+    if (!problem) return;
+    
     setIsAnalyzing(true);
     try {
-      const result = await evaluationService.evaluateAnswer(
-        { ...problem!, type: 'coding', evaluationCriteria: ['correctness', 'efficiency', 'style'] },
+      const evaluation = await evaluationService.evaluateAnswer(
+        { ...problem, type: 'coding', evaluationCriteria: ['correctness', 'efficiency', 'style'] },
         code,
         language
       );
 
-      setAnalysisResult(result);
+      await blind75Service.saveSubmission({
+        question_id: problem.id,
+        title: problem.title,
+        approach,
+        code,
+        time_complexity: "O(n)", // You might want to make these dynamic
+        space_complexity: "O(1)",
+        execution_time: testResults[testResults.length - 1]?.executionTime,
+        memory_usage: testResults[testResults.length - 1]?.memoryUsage,
+        score: evaluation.score,
+        feedback: evaluation.feedback
+      });
+
+      setAnalysisResult(evaluation);
       setShowPerformance(true);
 
       toast({
-        title: "Analysis Complete",
-        description: `Overall Score: ${result.score}/10`,
+        title: "Submission Successful",
+        description: `Overall Score: ${evaluation.score}/10. Your solution has been saved.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "Analysis Error",
-        description: "Failed to analyze submission",
-        variant: "destructive",
+        title: "Submission Error",
+        description: error.message || "Failed to submit solution",
+        variant: "destructive"
       });
+    } finally {
+      setIsAnalyzing(false);
     }
-    setIsAnalyzing(false);
   };
 
   const performanceData = testResults.map((result, index) => ({
@@ -261,71 +288,11 @@ const BlindEditor: React.FC = () => {
                   <Button
                     onClick={handleFinalSubmission}
                     className="flex-1 bg-blue-600 hover:bg-blue-700"
-                    disabled={isAnalyzing}
+                    disabled={isAnalyzing || !approach.trim() || !code.trim()}
                   >
                     <FaChartLine className="mr-2 h-4 w-4" />
                     {isAnalyzing ? 'Analyzing...' : 'Submit & Analyze'}
                   </Button>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      onClick={() => {
-                        navigator.clipboard.writeText(output);
-                        toast({ title: "Copied", description: "Output copied to clipboard" });
-                      }}
-                      className="bg-gray-700 hover:bg-gray-600"
-                    >
-                      <FaCopy className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      onClick={() => {
-                        navigator.clipboard.readText().then((text) => {
-                          setOutput(text);
-                          toast({
-                            title: "Pasted",
-                            description: "Output pasted from clipboard",
-                          });
-                        });
-                      }}
-                      className="bg-gray-700 hover:bg-gray-600"
-                    >
-                      <FaPaste className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      onClick={() => {
-                        setCode('');
-                        setOutput('');
-                        toast({
-                          title: "Cleaned",
-                          description: "Editor cleaned",
-                        });
-                      }}
-                      className="bg-gray-700 hover:bg-gray-600"
-                    >
-                      <FaTrash className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      onClick={() => {
-                        setTimer(300);
-                        setIsRunning(true);
-                        setOutput('');
-                        toast({
-                          title: "Restarted",
-                          description: "Timer restarted",
-                        });
-                      }}
-                      className="bg-gray-700 hover:bg-gray-600"
-                    >
-                      <FaRedo className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
 
                 {output && (

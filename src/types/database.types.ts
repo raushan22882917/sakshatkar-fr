@@ -206,6 +206,59 @@ export interface Database {
           submitted_at?: string;
         };
       };
+      blind75_submissions: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          question_id: string;
+          title: string;
+          approach: string;
+          code: string;
+          time_complexity: string | null;
+          space_complexity: string | null;
+          execution_time: number | null;
+          memory_usage: number | null;
+          score: number | null;
+          status: string | null;
+          feedback: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          question_id: string;
+          title: string;
+          approach: string;
+          code: string;
+          time_complexity?: string | null;
+          space_complexity?: string | null;
+          execution_time?: number | null;
+          memory_usage?: number | null;
+          score?: number | null;
+          status?: string | null;
+          feedback?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          question_id?: string;
+          title?: string;
+          approach?: string;
+          code?: string;
+          time_complexity?: string | null;
+          space_complexity?: string | null;
+          execution_time?: number | null;
+          memory_usage?: number | null;
+          score?: number | null;
+          status?: string | null;
+          feedback?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+      };
     };
   };
 }

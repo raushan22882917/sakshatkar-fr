@@ -36,6 +36,60 @@ export type Database = {
         }
         Relationships: []
       }
+      blind75_submissions: {
+        Row: {
+          approach: string
+          code: string
+          created_at: string | null
+          execution_time: number | null
+          feedback: string | null
+          id: string
+          memory_usage: number | null
+          question_id: string
+          score: number | null
+          space_complexity: string | null
+          status: string | null
+          time_complexity: string | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          approach: string
+          code: string
+          created_at?: string | null
+          execution_time?: number | null
+          feedback?: string | null
+          id?: string
+          memory_usage?: number | null
+          question_id: string
+          score?: number | null
+          space_complexity?: string | null
+          status?: string | null
+          time_complexity?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          approach?: string
+          code?: string
+          created_at?: string | null
+          execution_time?: number | null
+          feedback?: string | null
+          id?: string
+          memory_usage?: number | null
+          question_id?: string
+          score?: number | null
+          space_complexity?: string | null
+          status?: string | null
+          time_complexity?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       coding_contests: {
         Row: {
           created_at: string | null
