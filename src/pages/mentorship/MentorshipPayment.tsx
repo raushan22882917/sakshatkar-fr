@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +9,7 @@ import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useToast } from "@/components/ui/use-toast";
 import { Mentor } from '@/types/mentorship';
 
-export function MentorshipPayment() {
+export const MentorshipPayment = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -97,4 +98,5 @@ export function MentorshipPayment() {
       </Card>
     </div>
   );
-}
+};
+
