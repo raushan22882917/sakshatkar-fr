@@ -40,6 +40,8 @@ export interface ContestParticipant {
   solved_problems: number;
   rank: number;
   name?: string;
+  avatar_url?: string;
+  profile_id?: string;
 }
 
 export interface TestCase {
