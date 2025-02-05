@@ -1,13 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Layout, Input, Button, message, Select } from 'antd';
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 import { FaClock, FaCopy, FaPaste, FaRedo, FaTrash } from 'react-icons/fa';
 import problems from '../../../api/leetcode/scraped_problems.json';
 import Editor from '@monaco-editor/react';
-
-const { Content, Sider } = Layout;
-const { TextArea } = Input;
-const { Option } = Select;
+import { useToast } from "@/hooks/use-toast";
 
 interface Problem {
   id: string;
@@ -18,6 +18,7 @@ interface Problem {
 
 const BlindEditor: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const { toast } = useToast();
   const id = searchParams.get('id');
 
   const [problem, setProblem] = useState<Problem | null>(null);
@@ -38,173 +39,221 @@ const BlindEditor: React.FC = () => {
     }
   }, [id]);
 
-  // Timer function
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timeout;
     if (isRunning && timer > 0) {
       interval = setInterval(() => {
         setTimer((prev) => prev - 1);
       }, 1000);
     } else if (timer === 0) {
-      clearInterval(interval);
-      // Add your logic for when time runs out (optional)
+      setIsRunning(false);
+      toast({
+        title: "Time's up!",
+        description: "Your coding session has ended.",
+      });
     }
     return () => clearInterval(interval);
-  }, [isRunning, timer]);
+  }, [isRunning, timer, toast]);
 
   const handleApproachSubmit = () => {
     if (!approach.trim()) {
-      message.error('Please write your approach before proceeding');
+      toast({
+        title: "Error",
+        description: "Please write your approach before proceeding",
+        variant: "destructive",
+      });
       return;
     }
     setShowEditor(true);
-    setIsRunning(true); // Start the timer when the editor is shown
+    setIsRunning(true);
   };
 
   const handleCodeSubmit = () => {
-    message.success('Code submitted successfully!');
-    setIsRunning(false); // Stop the timer when code is submitted
-    // Simulate code execution (you can replace this with actual backend logic)
-    setOutput(`Output for the ${language} code:\n${code}`); // You can modify this to show the actual output
+    toast({
+      title: "Success",
+      description: "Code submitted successfully!",
+    });
+    setIsRunning(false);
+    setOutput(`Output for the ${language} code:\n${code}`);
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(output);
-    message.success('Output copied to clipboard');
+    toast({
+      title: "Copied",
+      description: "Output copied to clipboard",
+    });
   };
 
   const handlePaste = () => {
     navigator.clipboard.readText().then((text) => {
       setOutput(text);
-      message.success('Output pasted from clipboard');
+      toast({
+        title: "Pasted",
+        description: "Output pasted from clipboard",
+      });
     });
   };
 
   const handleClean = () => {
     setCode('');
     setOutput('');
-    message.success('Editor cleaned');
+    toast({
+      title: "Cleaned",
+      description: "Editor cleaned",
+    });
   };
 
   const handleRestart = () => {
-    setTimer(300); // Reset timer to 5 minutes
-    setIsRunning(true); // Restart the timer
-    setOutput(''); // Clear output
-    message.success('Editor restarted');
+    setTimer(300);
+    setIsRunning(true);
+    setOutput('');
+    toast({
+      title: "Restarted",
+      description: "Timer restarted",
+    });
   };
 
   if (!problem) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div>
+      </div>
+    );
   }
 
   return (
-    <Layout style={{ minHeight: '100vh', backgroundColor: 'black' }}>
-      <Sider width={500} theme="light" style={{ padding: '20px', overflowY: 'auto' }}>
-        <div className="mb-4 text-blue-600">
-          <h1 className="text-xl font-bold">{problem.title}</h1>
-          <div className="text-sm text-gray-500 mb-2">Topic: {problem.topic}</div>
-          <div
-            className="problem-description"
-            dangerouslySetInnerHTML={{ __html: problem.description }}
-          />
-        </div>
-        {!showEditor && (
-          <div className="mt-4">
-            <h2 className="text-lg font-semibold mb-2">Your Approach</h2>
-            <TextArea
-              rows={6}
-              value={approach}
-              onChange={(e) => setApproach(e.target.value)}
-              placeholder="Describe your approach to solve this problem..."
-            />
-            <Button type="primary" className="mt-4" onClick={handleApproachSubmit}>
-              Submit Approach
-            </Button>
-          </div>
-        )}
-      </Sider>
-      <Content style={{ padding: '20px' }}>
-        {showEditor ? (
-          <div className="h-full">
-            <div className="flex justify-between mb-4 items-center">
-              <Select
-                value={language}
-                onChange={setLanguage}
-                style={{ width: '200px' }}
-              >
-                <Option value="javascript">JavaScript</Option>
-                <Option value="python">Python</Option>
-                <Option value="c++">C++</Option>
-                <Option value="c">C</Option>
-              </Select>
-              <div className="flex items-center">
-                <FaClock className="mr-2" />
-                <span>{`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}</span>
-              </div>
-            </div>
-            <Editor
-              height="70vh"
-              defaultLanguage={language}
-              theme="vs-dark"
-              value={code}
-              onChange={(value) => setCode(value || '')}
-              options={{
-                minimap: { enabled: false },
-                fontSize: 14,
-              }}
-            />
-            <Button type="primary" className="mt-4" onClick={handleCodeSubmit}>
-              Submit Solution
-            </Button>
-            {output && (
-              <div className="mt-4 p-4 border rounded-md bg-gray-800 text-white">
-                <h3 className="font-semibold text-lg">Output:</h3>
-                <pre>{output}</pre>
-                <div className="flex space-x-4 mt-2">
-                  <Button
-                    icon={<FaCopy />}
-                    onClick={handleCopy}
-                    type="default"
-                    className="text-white"
+    <div className="min-h-screen bg-gray-900 text-gray-100">
+      <div className="container mx-auto p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Problem Description Panel */}
+          <Card className="bg-gray-800 border-none shadow-xl">
+            <CardContent className="p-6">
+              <h1 className="text-2xl font-bold text-primary mb-2">{problem.title}</h1>
+              <div className="text-sm text-primary/80 mb-4">Topic: {problem.topic}</div>
+              <div 
+                className="prose prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: problem.description }}
+              />
+              {!showEditor && (
+                <div className="mt-6 space-y-4">
+                  <h2 className="text-xl font-semibold mb-2">Your Approach</h2>
+                  <textarea
+                    rows={6}
+                    value={approach}
+                    onChange={(e) => setApproach(e.target.value)}
+                    className="w-full p-4 rounded-lg bg-gray-700 border-gray-600 focus:ring-primary focus:border-primary"
+                    placeholder="Describe your approach to solve this problem..."
+                  />
+                  <Button 
+                    onClick={handleApproachSubmit}
+                    className="w-full bg-primary hover:bg-primary/90"
                   >
-                    Copy
-                  </Button>
-                  <Button
-                    icon={<FaPaste />}
-                    onClick={handlePaste}
-                    type="default"
-                    className="text-white"
-                  >
-                    Paste
-                  </Button>
-                  <Button
-                    icon={<FaTrash />}
-                    onClick={handleClean}
-                    type="default"
-                    className="text-white"
-                  >
-                    Clean
-                  </Button>
-                  <Button
-                    icon={<FaRedo />}
-                    onClick={handleRestart}
-                    type="default"
-                    className="text-white"
-                  >
-                    Restart
+                    Submit Approach
                   </Button>
                 </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            Submit your approach to start coding
-          </div>
-        )}
-      </Content>
-    </Layout>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Editor Panel */}
+          {showEditor && (
+            <Card className="bg-gray-800 border-none shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <Select defaultValue={language} onValueChange={setLanguage}>
+                    <SelectTrigger className="w-[200px] bg-gray-700">
+                      <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="javascript">JavaScript</SelectItem>
+                      <SelectItem value="python">Python</SelectItem>
+                      <SelectItem value="cpp">C++</SelectItem>
+                      <SelectItem value="java">Java</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="flex items-center space-x-2 text-primary">
+                    <FaClock className="w-5 h-5" />
+                    <span className="font-mono">
+                      {`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="h-[calc(100vh-400px)] min-h-[400px] rounded-lg overflow-hidden mb-4">
+                  <Editor
+                    height="100%"
+                    defaultLanguage={language}
+                    theme="vs-dark"
+                    value={code}
+                    onChange={(value) => setCode(value || '')}
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      scrollBeyondLastLine: false,
+                    }}
+                  />
+                </div>
+
+                <div className="flex justify-between gap-4">
+                  <Button
+                    onClick={handleCodeSubmit}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    Submit Solution
+                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      onClick={handleCopy}
+                      className="bg-gray-700 hover:bg-gray-600"
+                    >
+                      <FaCopy className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      onClick={handlePaste}
+                      className="bg-gray-700 hover:bg-gray-600"
+                    >
+                      <FaPaste className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      onClick={handleClean}
+                      className="bg-gray-700 hover:bg-gray-600"
+                    >
+                      <FaTrash className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      onClick={handleRestart}
+                      className="bg-gray-700 hover:bg-gray-600"
+                    >
+                      <FaRedo className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {output && (
+                  <div className="mt-4 p-4 rounded-lg bg-gray-700">
+                    <h3 className="font-semibold text-lg mb-2">Output:</h3>
+                    <pre className="whitespace-pre-wrap font-mono text-sm">
+                      {output}
+                    </pre>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
 export default BlindEditor;
+
