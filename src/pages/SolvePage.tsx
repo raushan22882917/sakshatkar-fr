@@ -1,3 +1,6 @@
+<lov-code>
+import { useState, useEffect } from "react";
+lov-code>
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,6 +21,8 @@ import { TestCase } from "@/types/contest"; // Fixing TestCase import to use the
 import { codeExecutionService } from "@/services/codeExecutionService";
 import { saplingService } from "@/services/saplingService";
 import { SaplingEditor } from "@/components/SaplingEditor";
+import { Clock, Award, Plus, Loader2, Play } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const GROQ_API_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
@@ -113,7 +118,7 @@ const steps = [
   },
 ];
 
-export default function SolvePage() {
+const SolvePage: React.FC = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -690,92 +695,131 @@ ${JSON.stringify(stepData.examples)}`;
   const difficultyLevel = (Number(question.difficulty) as 1 | 2) || 1;
 
   return (
-    <div className={darkMode ? "dark" : ""}>
+    <div className={`min-h-screen ${darkMode ? "dark bg-[#1A1A1A]" : "bg-[#F7F9FC]"}`}>
       <Navbar />
-      <div className="container py-8">
-        <div className="grid gap-6 lg:grid-cols-[1fr,300px]">
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{question.title}</CardTitle>
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-6">
+          {/* Left Column - Problem Description and Solution */}
+          <div className="space-y-4">
+            <Card className="border-0 shadow-md">
+              <CardHeader className="border-b border-border/20 bg-card/50">
+                <div className="space-y-2">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    {question.title}
+                    <Badge variant={
+                      difficultyLevel === 1 ? "success" : 
+                      difficultyLevel === 2 ? "warning" : "destructive"
+                    }>
+                      {difficultyLevel === 1 ? "Easy" : 
+                       difficultyLevel === 2 ? "Medium" : "Hard"}
+                    </Badge>
+                  </CardTitle>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      30 min
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Award className="h-4 w-4" />
+                      {question.score || 0} points
+                    </span>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="prose dark:prose-invert">
-                  <p>{question.description}</p>
+              <CardContent className="p-6">
+                <div className="prose dark:prose-invert max-w-none">
+                  <div className="mb-6">
+                    <p className="text-base leading-relaxed">{question.description}</p>
+                  </div>
+
                   {currentStep === 0 && (
-                    <>
-                      <h3>Examples:</h3>
-                      {examples.map((example, index) => (
-                        <div key={index} className="grid grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <textarea
-                              className="w-full p-2 border rounded bg-transparent text-gray-900 dark:text-white dark:bg-gray-800"
-                              placeholder="Input"
-                              value={example.input}
-                              onChange={(e) => {
-                                const newExamples = [...examples];
-                                newExamples[index].input = e.target.value;
-                                setExamples(newExamples);
-                              }}
-                            />
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold">Examples:</h3>
+                      <div className="grid gap-4">
+                        {examples.map((example, index) => (
+                          <div key={index} className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-muted-foreground">Input:</label>
+                              <textarea
+                                className="w-full min-h-[100px] p-3 rounded-md border bg-muted/50 
+                                         font-mono text-sm resize-none focus:ring-1 focus:ring-primary"
+                                placeholder="Enter input..."
+                                value={example.input}
+                                onChange={(e) => {
+                                  const newExamples = [...examples];
+                                  newExamples[index].input = e.target.value;
+                                  setExamples(newExamples);
+                                }}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-muted-foreground">Output:</label>
+                              <textarea
+                                className="w-full min-h-[100px] p-3 rounded-md border bg-muted/50 
+                                         font-mono text-sm resize-none focus:ring-1 focus:ring-primary"
+                                placeholder="Enter output..."
+                                value={example.output}
+                                onChange={(e) => {
+                                  const newExamples = [...examples];
+                                  newExamples[index].output = e.target.value;
+                                  setExamples(newExamples);
+                                }}
+                              />
+                            </div>
                           </div>
-                          <div>
-                            <textarea
-                              className="w-full p-2 border rounded bg-transparent text-gray-900 dark:text-white dark:bg-gray-800"
-                              placeholder="Output"
-                              value={example.output}
-                              onChange={(e) => {
-                                const newExamples = [...examples];
-                                newExamples[index].output = e.target.value;
-                                setExamples(newExamples);
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                      <Button onClick={handleAddExample} className="mt-2">
-                        <span>+</span> Add Another Example
-                      </Button>
-                      <div className="mt-4">
-                        <Button onClick={handleContinue}>Continue</Button>
+                        ))}
                       </div>
-                    </>
+                      <div className="flex gap-4 mt-6">
+                        <Button
+                          variant="outline"
+                          onClick={handleAddExample}
+                          className="gap-2"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Add Example
+                        </Button>
+                        <Button onClick={handleContinue}>
+                          Continue
+                        </Button>
+                      </div>
+                    </div>
                   )}
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
+            {/* Solution Section */}
+            <Card className="border-0 shadow-md">
+              <CardHeader className="border-b border-border/20 bg-card/50">
                 <CardTitle>Your Solution</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {currentStep === 1 && (
-                  <div className="space-y-4">
-                    <div className="mb-4">
-                      <h3 className="text-lg font-semibold mb-2">Your Examples</h3>
+                  <div className="space-y-6">
+                    <div className="bg-muted/30 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold mb-4">Your Examples</h3>
                       <div className="grid gap-4">
                         {examples.map((example, index) => (
-                          <div key={index} className="grid grid-cols-2 gap-4 p-4 border rounded-lg bg-muted">
+                          <div key={index} className="grid grid-cols-2 gap-4 p-4 border rounded-lg bg-card">
                             <div>
-                              <p className="text-sm font-medium mb-1">Input:</p>
-                              <p className="font-mono whitespace-pre-wrap">{example.input}</p>
+                              <p className="text-sm font-medium mb-2">Input:</p>
+                              <pre className="font-mono text-sm bg-muted p-3 rounded">{example.input}</pre>
                             </div>
                             <div>
-                              <p className="text-sm font-medium mb-1">Output:</p>
-                              <p className="font-mono whitespace-pre-wrap">{example.output}</p>
+                              <p className="text-sm font-medium mb-2">Output:</p>
+                              <pre className="font-mono text-sm bg-muted p-3 rounded">{example.output}</pre>
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Your Approach:</label>
+                    <div className="space-y-4">
+                      <label className="text-sm font-medium">Approach:</label>
                       <SaplingEditor
                         value={approach}
                         onChange={setApproach}
                         placeholder="Explain your approach to solving this problem..."
-                        className="min-h-[200px]"
+                        className="min-h-[200px] border rounded-md"
                       />
                     </div>
                     <Button onClick={handleNext}>Next</Button>
@@ -783,121 +827,134 @@ ${JSON.stringify(stepData.examples)}`;
                 )}
 
                 {currentStep === 2 && (
-                  <div className="space-y-4">
-                    <div className="mb-4">
-                      <h3 className="text-lg font-semibold mb-2">Your Examples</h3>
-                      <div className="grid gap-4">
-                        {examples.map((example, index) => (
-                          <div key={index} className="grid grid-cols-2 gap-4 p-4 border rounded-lg bg-muted">
-                            <div>
-                              <p className="text-sm font-medium mb-1">Input:</p>
-                              <p className="font-mono whitespace-pre-wrap">{example.input}</p>
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium mb-1">Output:</p>
-                              <p className="font-mono whitespace-pre-wrap">{example.output}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <h3 className="text-lg font-semibold">Test Cases</h3>
-                    <div className="space-y-2">
-                      <Textarea
-                        placeholder="Basic Test Cases"
-                        value={testCases.basic}
-                        onChange={(e) => handleTestCaseChange(e, "basic")}
-                      />
-                      <Textarea
-                        placeholder="Edge Case Test Cases"
-                        value={testCases.edge}
-                        onChange={(e) => handleTestCaseChange(e, "edge")}
-                      />
-                      <Textarea
-                        placeholder="Performance Test Cases"
-                        value={testCases.performance}
-                        onChange={(e) => handleTestCaseChange(e, "performance")}
-                      />
-                      <Textarea
-                        placeholder="Negative Test Cases"
-                        value={testCases.negative}
-                        onChange={(e) => handleTestCaseChange(e, "negative")}
-                      />
-                      <Textarea
-                        placeholder="Boundary Test Cases"
-                        value={testCases.boundary}
-                        onChange={(e) => handleTestCaseChange(e, "boundary")}
-                      />
+                  <div className="space-y-6">
+                    <div className="grid gap-4">
+                      {Object.entries(testCases).map(([type, value]) => (
+                        <div key={type} className="space-y-2">
+                          <label className="text-sm font-medium capitalize">
+                            {type} Test Cases:
+                          </label>
+                          <Textarea
+                            placeholder={`Enter ${type} test cases...`}
+                            value={value}
+                            onChange={(e) => handleTestCaseChange(e, type)}
+                            className="font-mono min-h-[100px]"
+                          />
+                        </div>
+                      ))}
                     </div>
                     <Button onClick={handleNext}>Next</Button>
                   </div>
                 )}
 
                 {currentStep === 3 && (
-                  <div className="space-y-4">
-                    <div className="mb-4">
-                      <h3 className="text-lg font-semibold mb-2">Your Examples</h3>
-                      <div className="grid gap-4">
-                        {examples.map((example, index) => (
-                          <div key={index} className="grid grid-cols-2 gap-4 p-4 border rounded-lg bg-muted">
-                            <div>
-                              <p className="text-sm font-medium mb-1">Input:</p>
-                              <p className="font-mono whitespace-pre-wrap">{example.input}</p>
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium mb-1">Output:</p>
-                              <p className="font-mono whitespace-pre-wrap">{example.output}</p>
-                            </div>
+                  <div className="space-y-6">
+                    <div className="rounded-lg border bg-card">
+                      <div className="border-b border-border/20 p-4">
+                        <div className="flex items-center justify-between">
+                          <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Select language" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="javascript">JavaScript</SelectItem>
+                              <SelectItem value="python">Python</SelectItem>
+                              <SelectItem value="java">Java</SelectItem>
+                              <SelectItem value="cpp">C++</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <div className="flex items-center gap-2">
+                            <Button variant="outline" onClick={handleRunCode} disabled={isRunningTests}>
+                              {isRunningTests ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Running...
+                                </>
+                              ) : (
+                                <>
+                                  <Play className="mr-2 h-4 w-4" />
+                                  Run Code
+                                </>
+                              )}
+                            </Button>
+                            <Button onClick={handleNext}>Next</Button>
                           </div>
-                        ))}
+                        </div>
+                      </div>
+                      <div className="p-0">
+                        <CodeEditor
+                          value={code}
+                          onChange={(value) => setCode(value || "")}
+                          initialLanguage={selectedLanguage}
+                          testCases={editorTestCases}
+                          onTestCasesChange={setEditorTestCases}
+                        />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <CodeEditor
-                        value={code}
-                        onChange={(value) => setCode(value || "")}
-                        initialLanguage={selectedLanguage}
-                        testCases={editorTestCases}
-                        onTestCasesChange={setEditorTestCases}
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button onClick={handleRunCode}>Run Code</Button>
-                      <Button onClick={handleNext}>Next</Button>
-                    </div>
+                    
                     {executionResult && (
-                      <div className="mt-4 p-4 bg-muted rounded-lg">
+                      <div className="rounded-lg border bg-card p-4">
                         <h4 className="font-medium mb-2">Execution Result:</h4>
-                        <pre className="whitespace-pre-wrap">{executionResult}</pre>
+                        <pre className="font-mono text-sm bg-muted p-4 rounded overflow-x-auto">
+                          {executionResult}
+                        </pre>
                       </div>
                     )}
                   </div>
                 )}
 
                 {currentStep === 4 && (
-                  <div className="space-y-4">
-                    <p>Review your solution before submitting:</p>
-                    <div className="space-y-2">
-                      <h4 className="font-medium">Your Approach:</h4>
-                      <p className="text-sm">{approach}</p>
-                      <h4 className="font-medium">Your Test Cases:</h4>
-                      <p className="text-sm">{JSON.stringify(testCases)}</p>
-                      <h4 className="font-medium">Your Code:</h4>
-                      <pre className="text-sm bg-muted p-4 rounded-md">{code}</pre>
+                  <div className="space-y-6">
+                    <div className="rounded-lg border bg-card p-6">
+                      <h3 className="text-lg font-semibold mb-4">Review your solution:</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-medium mb-2">Approach:</h4>
+                          <div className="bg-muted rounded p-4">
+                            <p className="whitespace-pre-wrap">{approach}</p>
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2">Test Cases:</h4>
+                          <div className="bg-muted rounded p-4">
+                            <pre className="text-sm overflow-x-auto">
+                              {JSON.stringify(testCases, null, 2)}
+                            </pre>
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2">Code:</h4>
+                          <div className="bg-muted rounded p-4">
+                            <pre className="text-sm overflow-x-auto">{code}</pre>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-6">
+                        <Button onClick={handleSubmitSolution} disabled={isAnalyzing}>
+                          {isAnalyzing ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Analyzing...
+                            </>
+                          ) : (
+                            "Submit Solution"
+                          )}
+                        </Button>
+                      </div>
                     </div>
-                    <Button onClick={handleSubmitSolution}>Submit Solution</Button>
                   </div>
                 )}
               </CardContent>
             </Card>
           </div>
 
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
+          {/* Right Column - Progress */}
+          <div className="space-y-4">
+            <Card className="border-0 shadow-md sticky top-4">
+              <CardHeader className="border-b border-border/20 bg-card/50">
                 <CardTitle>Progress</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4">
                 <StepProgress steps={updatedSteps} />
               </CardContent>
             </Card>
@@ -905,15 +962,5 @@ ${JSON.stringify(stepData.examples)}`;
         </div>
       </div>
 
-      
-
       <FeedbackDialog
-        isOpen={isFeedbackOpen}
-        onClose={() => setIsFeedbackOpen(false)}
-        feedback={feedback}
-        title={question?.title || ""}
-        description={question?.description || ""}
-      />
-    </div>
-  );
-}
+        isOpen={isFeedback
