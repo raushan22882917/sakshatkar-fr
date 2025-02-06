@@ -1,0 +1,1758 @@
+[
+  {
+    "topic": "time-complexity",
+    "problems": [
+      {
+        "url": "/problems/loopcmpl/",
+        "title": "LOOP_CMPL"
+      },
+      {
+        "url": "/problems/nestedcmpl/",
+        "title": "NESTED_CMPL"
+      },
+      {
+        "url": "/problems/nestedcmpl2/",
+        "title": "NESTED_CMPL2"
+      },
+      {
+        "url": "/problems/choose4/",
+        "title": "CHOOSE4"
+      },
+      {
+        "url": "/problems/whilecmpl/",
+        "title": "WHILE_CMPL"
+      },
+      {
+        "url": "/problems/nestedcmpl3/",
+        "title": "NESTED_CMPL3"
+      },
+      {
+        "url": "/problems/loopcmpl2/",
+        "title": "LOOP_CMPL2"
+      },
+      {
+        "url": "/problems/gcdcmpl/",
+        "title": "GCD_CMPL"
+      },
+      {
+        "url": "/problems/choose3/",
+        "title": "CHOOSE3"
+      },
+      {
+        "url": "/problems/choose1/",
+        "title": "CHOOSE1"
+      },
+      {
+        "url": "/problems/choose2/",
+        "title": "CHOOSE2"
+      },
+      {
+        "url": "/problems/reccmpl1/",
+        "title": "REC_CMPL1"
+      },
+      {
+        "url": "/problems/reccmpl2/",
+        "title": "REC_CMPL2"
+      },
+      {
+        "url": "/problems/reccmpl3/",
+        "title": "REC_CMPL3"
+      },
+      {
+        "url": "/problems/amortized1/",
+        "title": "AMORTIZED1"
+      }
+    ]
+  },
+  {
+    "topic": "arrays",
+    "problems": [
+      {
+        "url": "/problems/array2d/",
+        "title": "ARRAY_2D"
+      },
+      {
+        "url": "/problems/arraybug/",
+        "title": "ARRAY_BUG"
+      },
+      {
+        "url": "/problems/arrayimpl1/",
+        "title": "ARRAY_IMPL1"
+      },
+      {
+        "url": "/problems/spiral-order-matrix-i/",
+        "title": "Spiral Order Matrix I"
+      },
+      {
+        "url": "/problems/max-non-negative-subarray/",
+        "title": "Max Non Negative SubArray"
+      },
+      {
+        "url": "/problems/large-factorial/",
+        "title": "Large Factorial"
+      },
+      {
+        "url": "/problems/pick-from-both-sides/",
+        "title": "Pick from both sides!"
+      },
+      {
+        "url": "/problems/min-steps-in-infinite-grid/",
+        "title": "Min Steps in Infinite Grid"
+      },
+      {
+        "url": "/problems/minimum-lights-to-activate/",
+        "title": "Minimum Lights to Activate"
+      },
+      {
+        "url": "/problems/maximum-sum-triplet/",
+        "title": "Maximum Sum Triplet"
+      },
+      {
+        "url": "/problems/max-sum-contiguous-subarray/",
+        "title": "Max Sum Contiguous Subarray"
+      },
+      {
+        "url": "/problems/add-one-to-number/",
+        "title": "Add One To Number"
+      },
+      {
+        "url": "/problems/maximum-absolute-difference/",
+        "title": "Maximum Absolute Difference"
+      },
+      {
+        "url": "/problems/partitions/",
+        "title": "Partitions"
+      },
+      {
+        "url": "/problems/maximum-area-of-triangle/",
+        "title": "Maximum Area of Triangle!"
+      },
+      {
+        "url": "/problems/flip/",
+        "title": "Flip"
+      },
+      {
+        "url": "/problems/max-min-05542f2f-69aa-4253-9cc7-84eb7bf739c4/",
+        "title": "Max Min"
+      },
+      {
+        "url": "/problems/merge-intervals/",
+        "title": "Merge Intervals"
+      },
+      {
+        "url": "/problems/merge-overlapping-intervals/",
+        "title": "Merge Overlapping Intervals"
+      },
+      {
+        "url": "/problems/perfect-peak-of-array/",
+        "title": "Perfect Peak of Array"
+      },
+      {
+        "url": "/problems/move-zeroes/",
+        "title": "Move Zeroes"
+      },
+      {
+        "url": "/problems/make-equal-elements-array/",
+        "title": "Make equal elements Array"
+      },
+      {
+        "url": "/problems/segregate-0s-and-1s-in-an-array/",
+        "title": "Segregate 0s and 1s in an array"
+      },
+      {
+        "url": "/problems/array-sum/",
+        "title": "Array Sum"
+      },
+      {
+        "url": "/problems/kth-row-of-pascals-triangle/",
+        "title": "Kth Row of Pascal's Triangle"
+      },
+      {
+        "url": "/problems/spiral-order-matrix-ii/",
+        "title": "Spiral Order Matrix II"
+      },
+      {
+        "url": "/problems/pascal-triangle/",
+        "title": "Pascal Triangle"
+      },
+      {
+        "url": "/problems/anti-diagonals/",
+        "title": "Anti Diagonals"
+      },
+      {
+        "url": "/problems/triplets-with-sum-between-given-range/",
+        "title": "Triplets with Sum between given range"
+      },
+      {
+        "url": "/problems/balance-array/",
+        "title": "Balance Array"
+      },
+      {
+        "url": "/problems/find-duplicate-in-array/",
+        "title": "Find Duplicate in Array"
+      },
+      {
+        "url": "/problems/maximum-consecutive-gap/",
+        "title": "Maximum Consecutive Gap"
+      },
+      {
+        "url": "/problems/sort-array-with-squares/",
+        "title": "Sort array with squares!"
+      },
+      {
+        "url": "/problems/largest-number/",
+        "title": "Largest Number"
+      },
+      {
+        "url": "/problems/rotate-matrix/",
+        "title": "Rotate Matrix"
+      },
+      {
+        "url": "/problems/next-permutation/",
+        "title": "Next Permutation"
+      },
+      {
+        "url": "/problems/find-permutation/",
+        "title": "Find Permutation"
+      },
+      {
+        "url": "/problems/occurence-of-each-number/",
+        "title": "Occurence of Each Number"
+      },
+      {
+        "url": "/problems/noble-integer/",
+        "title": "Noble Integer"
+      },
+      {
+        "url": "/problems/reorder-data-in-log-files/",
+        "title": "Reorder Data in Log Files"
+      },
+      {
+        "url": "/problems/set-intersection/",
+        "title": "Set Intersection"
+      },
+      {
+        "url": "/problems/wave-array/",
+        "title": "Wave Array"
+      },
+      {
+        "url": "/problems/hotel-bookings-possible/",
+        "title": "Hotel Bookings Possible"
+      },
+      {
+        "url": "/problems/max-distance/",
+        "title": "Max Distance"
+      },
+      {
+        "url": "/problems/maximum-unsorted-subarray/",
+        "title": "Maximum Unsorted Subarray"
+      },
+      {
+        "url": "/problems/set-matrix-zeros/",
+        "title": "Set Matrix Zeros"
+      },
+      {
+        "url": "/problems/maximum-sum-square-submatrix/",
+        "title": "Maximum Sum Square SubMatrix"
+      },
+      {
+        "url": "/problems/first-missing-integer/",
+        "title": "First Missing Integer"
+      },
+      {
+        "url": "/problems/repeat-and-missing-number-array/",
+        "title": "Repeat and Missing Number Array"
+      },
+      {
+        "url": "/problems/n3-repeat-number/",
+        "title": "N/3 Repeat Number"
+      }
+    ]
+  },
+  {
+    "topic": "math",
+    "problems": [
+      {
+        "url": "/problems/mathbug01/",
+        "title": "MATH_BUG01"
+      },
+      {
+        "url": "/problems/mathbug02/",
+        "title": "MATH_BUG02"
+      },
+      {
+        "url": "/problems/verify-prime/",
+        "title": "Verify Prime"
+      },
+      {
+        "url": "/problems/prime-numbers/",
+        "title": "Prime Numbers"
+      },
+      {
+        "url": "/problems/binary-representation/",
+        "title": "Binary Representation"
+      },
+      {
+        "url": "/problems/all-factors/",
+        "title": "All Factors"
+      },
+      {
+        "url": "/problems/sample-question/",
+        "title": "Sample Question"
+      },
+      {
+        "url": "/problems/total-moves-for-bishop/",
+        "title": "Total Moves For Bishop!"
+      },
+      {
+        "url": "/problems/distribute-in-circle/",
+        "title": "Distribute in Circle!"
+      },
+      {
+        "url": "/problems/prime-sum/",
+        "title": "Prime Sum"
+      },
+      {
+        "url": "/problems/sum-of-pairwise-hamming-distance/",
+        "title": "Sum of pairwise Hamming Distance"
+      },
+      {
+        "url": "/problems/fizzbuzz/",
+        "title": "FizzBuzz"
+      },
+      {
+        "url": "/problems/is-rectangle/",
+        "title": "Is Rectangle?"
+      },
+      {
+        "url": "/problems/step-by-step/",
+        "title": "Step by Step"
+      },
+      {
+        "url": "/problems/power-of-two-integers/",
+        "title": "Power Of Two Integers"
+      },
+      {
+        "url": "/problems/excel-column-number/",
+        "title": "Excel Column Number"
+      },
+      {
+        "url": "/problems/excel-column-title/",
+        "title": "Excel Column Title"
+      },
+      {
+        "url": "/problems/palindrome-integer/",
+        "title": "Palindrome Integer"
+      },
+      {
+        "url": "/problems/reverse-integer/",
+        "title": "Reverse integer"
+      },
+      {
+        "url": "/problems/next-smallest-palindrome/",
+        "title": "Next Smallest Palindrome!"
+      },
+      {
+        "url": "/problems/greatest-common-divisor/",
+        "title": "Greatest Common Divisor"
+      },
+      {
+        "url": "/problems/find-nth-fibonacci/",
+        "title": "Find Nth Fibonacci"
+      },
+      {
+        "url": "/problems/divisible-by-60/",
+        "title": "Divisible by 60"
+      },
+      {
+        "url": "/problems/powerful-divisors/",
+        "title": "Powerful Divisors"
+      },
+      {
+        "url": "/problems/trailing-zeros-in-factorial/",
+        "title": "Trailing Zeros in Factorial"
+      },
+      {
+        "url": "/problems/sorted-permutation-rank/",
+        "title": "Sorted Permutation Rank"
+      },
+      {
+        "url": "/problems/largest-coprime-divisor/",
+        "title": "Largest Coprime Divisor"
+      },
+      {
+        "url": "/problems/sorted-permutation-rank-with-repeats/",
+        "title": "Sorted Permutation Rank with Repeats"
+      },
+      {
+        "url": "/problems/k-th-permutation/",
+        "title": "K-th Permutation"
+      },
+      {
+        "url": "/problems/city-tour/",
+        "title": "City Tour"
+      },
+      {
+        "url": "/problems/grid-unique-paths/",
+        "title": "Grid Unique Paths"
+      },
+      {
+        "url": "/problems/highest-score/",
+        "title": "Highest Score"
+      },
+      {
+        "url": "/problems/addition-without-summation/",
+        "title": "Addition without Summation"
+      },
+      {
+        "url": "/problems/next-similar-number/",
+        "title": "Next Similar Number"
+      },
+      {
+        "url": "/problems/rearrange-array/",
+        "title": "Rearrange Array"
+      },
+      {
+        "url": "/problems/numbers-of-length-n-and-value-less-than-k/",
+        "title": "Numbers of length N and value less than K"
+      }
+    ]
+  },
+  {
+    "topic": "binary-search",
+    "problems": [
+      {
+        "url": "/problems/count-element-occurence/",
+        "title": "Count Element Occurence"
+      },
+      {
+        "url": "/problems/rotated-array/",
+        "title": "Rotated Array"
+      },
+      {
+        "url": "/problems/search-in-bitonic-array/",
+        "title": "Search in Bitonic Array!"
+      },
+      {
+        "url": "/problems/smaller-or-equal-elements/",
+        "title": "Smaller or equal elements"
+      },
+      {
+        "url": "/problems/woodcutting-made-easy/",
+        "title": "WoodCutting Made Easy!"
+      },
+      {
+        "url": "/problems/matrix-search/",
+        "title": "Matrix Search"
+      },
+      {
+        "url": "/problems/search-for-a-range/",
+        "title": "Search for a Range"
+      },
+      {
+        "url": "/problems/sorted-insert-position/",
+        "title": "Sorted Insert Position"
+      },
+      {
+        "url": "/problems/capacity-to-ship-packages-within-b-days/",
+        "title": "Capacity To Ship Packages Within B Days"
+      },
+      {
+        "url": "/problems/matrix-median/",
+        "title": "Matrix Median"
+      },
+      {
+        "url": "/problems/square-root-of-integer/",
+        "title": "Square Root of Integer"
+      },
+      {
+        "url": "/problems/allocate-books/",
+        "title": "Allocate Books"
+      },
+      {
+        "url": "/problems/painters-partition-problem/",
+        "title": "Painter's Partition Problem"
+      },
+      {
+        "url": "/problems/red-zone/",
+        "title": "Red Zone"
+      },
+      {
+        "url": "/problems/implement-power-function/",
+        "title": "Implement Power Function"
+      },
+      {
+        "url": "/problems/simple-queries/",
+        "title": "Simple Queries"
+      },
+      {
+        "url": "/problems/median-of-array/",
+        "title": "Median of Array"
+      },
+      {
+        "url": "/problems/rotated-sorted-array-search/",
+        "title": "Rotated Sorted Array Search"
+      }
+    ]
+  },
+  {
+    "topic": "bit-manipulation",
+    "problems": [
+      {
+        "url": "/problems/number-of-1-bits/",
+        "title": "Number of 1 Bits"
+      },
+      {
+        "url": "/problems/trailing-zeroes/",
+        "title": "Trailing Zeroes"
+      },
+      {
+        "url": "/problems/reverse-bits/",
+        "title": "Reverse Bits"
+      },
+      {
+        "url": "/problems/divide-integers/",
+        "title": "Divide Integers"
+      },
+      {
+        "url": "/problems/different-bits-sum-pairwise/",
+        "title": "Different Bits Sum Pairwise"
+      },
+      {
+        "url": "/problems/min-xor-value/",
+        "title": "Min XOR value"
+      },
+      {
+        "url": "/problems/count-total-set-bits/",
+        "title": "Count Total Set Bits"
+      },
+      {
+        "url": "/problems/palindromic-binary-representation/",
+        "title": "Palindromic Binary Representation"
+      },
+      {
+        "url": "/problems/xor-ing-the-subarrays/",
+        "title": "XOR-ing the Subarrays!"
+      },
+      {
+        "url": "/problems/single-number/",
+        "title": "Single Number"
+      },
+      {
+        "url": "/problems/single-number-ii/",
+        "title": "Single Number II"
+      }
+    ]
+  },
+  {
+    "topic": "strings",
+    "problems": [
+      {
+        "url": "/problems/palindrome-string/",
+        "title": "Palindrome String"
+      },
+      {
+        "url": "/problems/vowel-and-consonant-substrings/",
+        "title": "Vowel and Consonant Substrings!"
+      },
+      {
+        "url": "/problems/remove-consecutive-characters/",
+        "title": "Remove Consecutive Characters"
+      },
+      {
+        "url": "/problems/serialize/",
+        "title": "Serialize"
+      },
+      {
+        "url": "/problems/deserialize/",
+        "title": "Deserialize"
+      },
+      {
+        "url": "/problems/string-and-its-frequency/",
+        "title": "String And Its Frequency"
+      },
+      {
+        "url": "/problems/bulls-and-cows/",
+        "title": "Bulls and Cows"
+      },
+      {
+        "url": "/problems/self-permutation/",
+        "title": "Self Permutation"
+      },
+      {
+        "url": "/problems/longest-common-prefix/",
+        "title": "Longest Common Prefix"
+      },
+      {
+        "url": "/problems/count-and-say/",
+        "title": "Count And Say"
+      },
+      {
+        "url": "/problems/amazing-subarrays/",
+        "title": "Amazing Subarrays"
+      },
+      {
+        "url": "/problems/implement-strstr/",
+        "title": "Implement StrStr"
+      },
+      {
+        "url": "/problems/stringoholics/",
+        "title": "Stringoholics"
+      },
+      {
+        "url": "/problems/minimum-characters-required-to-make-a-string-palindromic/",
+        "title": "Minimum Characters required to make a String Palindromic"
+      },
+      {
+        "url": "/problems/convert-to-palindrome/",
+        "title": "Convert to Palindrome"
+      },
+      {
+        "url": "/problems/minimum-appends-for-palindrome/",
+        "title": "Minimum Appends for Palindrome!"
+      },
+      {
+        "url": "/problems/minimum-parantheses/",
+        "title": "Minimum Parantheses!"
+      },
+      {
+        "url": "/problems/longest-palindromic-substring/",
+        "title": "Longest Palindromic Substring"
+      },
+      {
+        "url": "/problems/salutes/",
+        "title": "Salutes"
+      },
+      {
+        "url": "/problems/integer-to-roman/",
+        "title": "Integer To Roman"
+      },
+      {
+        "url": "/problems/roman-to-integer/",
+        "title": "Roman To Integer"
+      },
+      {
+        "url": "/problems/add-binary-strings/",
+        "title": "Add Binary Strings"
+      },
+      {
+        "url": "/problems/power-of-2/",
+        "title": "Power of 2"
+      },
+      {
+        "url": "/problems/multiply-strings/",
+        "title": "Multiply Strings"
+      },
+      {
+        "url": "/problems/convert-the-amount-in-number-to-words/",
+        "title": "Convert the amount in number to words"
+      },
+      {
+        "url": "/problems/compare-version-numbers/",
+        "title": "Compare Version Numbers"
+      },
+      {
+        "url": "/problems/atoi/",
+        "title": "Atoi"
+      },
+      {
+        "url": "/problems/valid-ip-addresses/",
+        "title": "Valid Ip Addresses"
+      },
+      {
+        "url": "/problems/length-of-last-word/",
+        "title": "Length of Last Word"
+      },
+      {
+        "url": "/problems/reverse-the-string/",
+        "title": "Reverse the String"
+      },
+      {
+        "url": "/problems/zigzag-string/",
+        "title": "Zigzag String"
+      },
+      {
+        "url": "/problems/justified-text/",
+        "title": "Justified Text"
+      },
+      {
+        "url": "/problems/pretty-json/",
+        "title": "Pretty Json"
+      }
+    ]
+  },
+  {
+    "topic": "two-pointers",
+    "problems": [
+      {
+        "url": "/problems/pair-with-given-difference/",
+        "title": "Pair With Given Difference"
+      },
+      {
+        "url": "/problems/3-sum/",
+        "title": "3 Sum"
+      },
+      {
+        "url": "/problems/counting-triangles/",
+        "title": "Counting Triangles"
+      },
+      {
+        "url": "/problems/diffk/",
+        "title": "Diffk"
+      },
+      {
+        "url": "/problems/maximum-ones-after-modification/",
+        "title": "Maximum Ones After Modification"
+      },
+      {
+        "url": "/problems/counting-subarrays/",
+        "title": "Counting Subarrays!"
+      },
+      {
+        "url": "/problems/subarrays-with-distinct-integers/",
+        "title": "Subarrays with distinct integers!"
+      },
+      {
+        "url": "/problems/max-continuous-series-of-1s/",
+        "title": "Max Continuous Series of 1s"
+      },
+      {
+        "url": "/problems/array-3-pointers/",
+        "title": "Array 3 Pointers"
+      },
+      {
+        "url": "/problems/container-with-most-water/",
+        "title": "Container With Most Water"
+      },
+      {
+        "url": "/problems/merge-two-sorted-lists-ii/",
+        "title": "Merge Two Sorted Lists II"
+      },
+      {
+        "url": "/problems/intersection-of-sorted-arrays/",
+        "title": "Intersection Of Sorted Arrays"
+      },
+      {
+        "url": "/problems/remove-duplicates-from-sorted-array/",
+        "title": "Remove Duplicates from Sorted Array"
+      },
+      {
+        "url": "/problems/remove-duplicates-from-sorted-array-ii/",
+        "title": "Remove Duplicates from Sorted Array II"
+      },
+      {
+        "url": "/problems/remove-element-from-array/",
+        "title": "Remove Element from Array"
+      },
+      {
+        "url": "/problems/sort-by-color/",
+        "title": "Sort by Color"
+      }
+    ]
+  },
+  {
+    "topic": "linked-lists",
+    "problems": [
+      {
+        "url": "/problems/reverse-linked-list/",
+        "title": "Reverse Linked List"
+      },
+      {
+        "url": "/problems/intersection-of-linked-lists/",
+        "title": "Intersection of Linked Lists"
+      },
+      {
+        "url": "/problems/sort-binary-linked-list/",
+        "title": "Sort Binary Linked List"
+      },
+      {
+        "url": "/problems/partition-list/",
+        "title": "Partition List"
+      },
+      {
+        "url": "/problems/insertion-sort-list/",
+        "title": "Insertion Sort List"
+      },
+      {
+        "url": "/problems/sort-list/",
+        "title": "Sort List"
+      },
+      {
+        "url": "/problems/palindrome-list/",
+        "title": "Palindrome List"
+      },
+      {
+        "url": "/problems/remove-duplicates-from-sorted-list-ii/",
+        "title": "Remove Duplicates from Sorted List II"
+      },
+      {
+        "url": "/problems/merge-two-sorted-lists/",
+        "title": "Merge Two Sorted Lists"
+      },
+      {
+        "url": "/problems/remove-duplicates-from-sorted-list/",
+        "title": "Remove Duplicates from Sorted List"
+      },
+      {
+        "url": "/problems/remove-nth-node-from-list-end/",
+        "title": "Remove Nth Node from List End"
+      },
+      {
+        "url": "/problems/k-reverse-linked-list/",
+        "title": "K reverse linked list"
+      },
+      {
+        "url": "/problems/even-reverse/",
+        "title": "Even Reverse"
+      },
+      {
+        "url": "/problems/swap-list-nodes-in-pairs/",
+        "title": "Swap List Nodes in pairs"
+      },
+      {
+        "url": "/problems/rotate-list/",
+        "title": "Rotate List"
+      },
+      {
+        "url": "/problems/kth-node-from-middle/",
+        "title": "Kth Node From Middle"
+      },
+      {
+        "url": "/problems/reverse-alternate-k-nodes/",
+        "title": "Reverse Alternate K Nodes"
+      },
+      {
+        "url": "/problems/reverse-link-list-ii/",
+        "title": "Reverse Link List II"
+      },
+      {
+        "url": "/problems/reorder-list/",
+        "title": "Reorder List"
+      },
+      {
+        "url": "/problems/add-two-numbers-as-lists/",
+        "title": "Add Two Numbers as Lists"
+      },
+      {
+        "url": "/problems/list-cycle/",
+        "title": "List Cycle"
+      }
+    ]
+  },
+  {
+    "topic": "stacks-and-queues",
+    "problems": [
+      {
+        "url": "/problems/generate-all-parentheses/",
+        "title": "Generate all Parentheses"
+      },
+      {
+        "url": "/problems/reverse-string/",
+        "title": "Reverse String"
+      },
+      {
+        "url": "/problems/balanced-parantheses/",
+        "title": "Balanced Parantheses!"
+      },
+      {
+        "url": "/problems/simplify-directory-path/",
+        "title": "Simplify Directory Path"
+      },
+      {
+        "url": "/problems/redundant-braces/",
+        "title": "Redundant Braces"
+      },
+      {
+        "url": "/problems/min-stack/",
+        "title": "Min Stack"
+      },
+      {
+        "url": "/problems/maxspprod/",
+        "title": "MAXSPPROD"
+      },
+      {
+        "url": "/problems/nearest-smaller-element/",
+        "title": "Nearest Smaller Element"
+      },
+      {
+        "url": "/problems/largest-rectangle-in-histogram/",
+        "title": "Largest Rectangle in Histogram"
+      },
+      {
+        "url": "/problems/hotel-service/",
+        "title": "Hotel Service"
+      },
+      {
+        "url": "/problems/first-non-repeating-character-in-a-stream-of-characters/",
+        "title": "First non-repeating character in a stream of characters"
+      },
+      {
+        "url": "/problems/sliding-window-maximum/",
+        "title": "Sliding Window Maximum"
+      },
+      {
+        "url": "/problems/evaluate-expression/",
+        "title": "Evaluate Expression"
+      },
+      {
+        "url": "/problems/rain-water-trapped/",
+        "title": "Rain Water Trapped"
+      }
+    ]
+  },
+  {
+    "topic": "backtracking",
+    "problems": [
+      {
+        "url": "/problems/reverse-link-list-recursion/",
+        "title": "Reverse Link List Recursion"
+      },
+      {
+        "url": "/problems/modular-expression/",
+        "title": "Modular Expression"
+      },
+      {
+        "url": "/problems/all-possible-combinations/",
+        "title": "All Possible Combinations"
+      },
+      {
+        "url": "/problems/subset/",
+        "title": "Subset"
+      },
+      {
+        "url": "/problems/combination-sum/",
+        "title": "Combination Sum"
+      },
+      {
+        "url": "/problems/combination-sum-ii/",
+        "title": "Combination Sum II"
+      },
+      {
+        "url": "/problems/combinations/",
+        "title": "Combinations"
+      },
+      {
+        "url": "/problems/subsets-ii/",
+        "title": "Subsets II"
+      },
+      {
+        "url": "/problems/maximal-string/",
+        "title": "Maximal String"
+      },
+      {
+        "url": "/problems/kth-permutation-sequence/",
+        "title": "Kth Permutation Sequence"
+      },
+      {
+        "url": "/problems/gray-code/",
+        "title": "Gray Code"
+      },
+      {
+        "url": "/problems/letter-phone/",
+        "title": "Letter Phone"
+      },
+      {
+        "url": "/problems/palindrome-partitioning/",
+        "title": "Palindrome Partitioning"
+      },
+      {
+        "url": "/problems/generate-all-parentheses-ii/",
+        "title": "Generate all Parentheses II"
+      },
+      {
+        "url": "/problems/permutations/",
+        "title": "Permutations"
+      },
+      {
+        "url": "/problems/nqueens/",
+        "title": "NQueens"
+      },
+      {
+        "url": "/problems/sudoku/",
+        "title": "Sudoku"
+      }
+    ]
+  },
+  {
+    "topic": "hashing",
+    "problems": [
+      {
+        "url": "/problems/colorful-number/",
+        "title": "Colorful Number"
+      },
+      {
+        "url": "/problems/largest-continuous-sequence-zero-sum/",
+        "title": "Largest Continuous Sequence Zero Sum"
+      },
+      {
+        "url": "/problems/longest-subarray-length/",
+        "title": "Longest Subarray Length"
+      },
+      {
+        "url": "/problems/first-repeating-element/",
+        "title": "First Repeating element"
+      },
+      {
+        "url": "/problems/2-sum/",
+        "title": "2 Sum"
+      },
+      {
+        "url": "/problems/4-sum/",
+        "title": "4 Sum"
+      },
+      {
+        "url": "/problems/valid-sudoku/",
+        "title": "Valid Sudoku"
+      },
+      {
+        "url": "/problems/diffk-ii/",
+        "title": "Diffk II"
+      },
+      {
+        "url": "/problems/pairs-with-given-xor/",
+        "title": "Pairs With Given Xor"
+      },
+      {
+        "url": "/problems/anagrams/",
+        "title": "Anagrams"
+      },
+      {
+        "url": "/problems/equal/",
+        "title": "Equal"
+      },
+      {
+        "url": "/problems/copy-list/",
+        "title": "Copy List"
+      },
+      {
+        "url": "/problems/check-palindrome/",
+        "title": "Check Palindrome!"
+      },
+      {
+        "url": "/problems/fraction/",
+        "title": "Fraction"
+      },
+      {
+        "url": "/problems/points-on-the-straight-line/",
+        "title": "Points on the Straight Line"
+      },
+      {
+        "url": "/problems/an-increment-problem/",
+        "title": "An Increment Problem"
+      },
+      {
+        "url": "/problems/subarray-with-given-xor/",
+        "title": "Subarray with given XOR"
+      },
+      {
+        "url": "/problems/two-out-of-three/",
+        "title": "Two out of Three"
+      },
+      {
+        "url": "/problems/substring-concatenation/",
+        "title": "Substring Concatenation"
+      },
+      {
+        "url": "/problems/subarray-with-b-odd-numbers/",
+        "title": "Subarray with B odd numbers"
+      },
+      {
+        "url": "/problems/window-string/",
+        "title": "Window String"
+      },
+      {
+        "url": "/problems/longest-substring-without-repeat/",
+        "title": "Longest Substring Without Repeat"
+      }
+    ]
+  },
+  {
+    "topic": "heaps-and-maps",
+    "problems": [
+      {
+        "url": "/problems/ways-to-form-max-heap/",
+        "title": "Ways to form Max Heap"
+      },
+      {
+        "url": "/problems/n-max-pair-combinations/",
+        "title": "N max pair combinations"
+      },
+      {
+        "url": "/problems/k-largest-elements/",
+        "title": "K Largest Elements"
+      },
+      {
+        "url": "/problems/profit-maximisation/",
+        "title": "Profit Maximisation"
+      },
+      {
+        "url": "/problems/merge-k-sorted-arrays/",
+        "title": "Merge K sorted arrays!"
+      },
+      {
+        "url": "/problems/connect-ropes/",
+        "title": "Connect Ropes"
+      },
+      {
+        "url": "/problems/magician-and-chocolates/",
+        "title": "Magician and Chocolates"
+      },
+      {
+        "url": "/problems/maximum-sum-combinations/",
+        "title": "Maximum Sum Combinations"
+      },
+      {
+        "url": "/problems/merge-k-sorted-lists/",
+        "title": "Merge K Sorted Lists"
+      },
+      {
+        "url": "/problems/distinct-numbers-in-window/",
+        "title": "Distinct Numbers in Window"
+      },
+      {
+        "url": "/problems/lru-cache/",
+        "title": "LRU Cache"
+      }
+    ]
+  },
+  {
+    "topic": "tree-data-structure",
+    "problems": [
+      {
+        "url": "/problems/next-greater-number-bst/",
+        "title": "Next Greater Number BST"
+      },
+      {
+        "url": "/problems/valid-bst-from-preorder/",
+        "title": "Valid BST from Preorder"
+      },
+      {
+        "url": "/problems/kth-smallest-element-in-tree/",
+        "title": "Kth Smallest Element In Tree"
+      },
+      {
+        "url": "/problems/2sum-binary-tree/",
+        "title": "2-Sum Binary Tree"
+      },
+      {
+        "url": "/problems/bst-iterator/",
+        "title": "BST Iterator"
+      },
+      {
+        "url": "/problems/recover-binary-search-tree/",
+        "title": "Recover Binary Search Tree"
+      },
+      {
+        "url": "/problems/xor-between-two-arrays/",
+        "title": "Xor Between Two Arrays!"
+      },
+      {
+        "url": "/problems/hotel-reviews/",
+        "title": "Hotel Reviews"
+      },
+      {
+        "url": "/problems/shortest-unique-prefix/",
+        "title": "Shortest Unique Prefix"
+      },
+      {
+        "url": "/problems/path-to-given-node/",
+        "title": "Path to Given Node"
+      },
+      {
+        "url": "/problems/remove-half-nodes/",
+        "title": "Remove Half Nodes"
+      },
+      {
+        "url": "/problems/nodes-at-distance-k/",
+        "title": "Nodes at Distance K"
+      },
+      {
+        "url": "/problems/last-node-in-a-complete-binary-tree/",
+        "title": "Last Node in a Complete Binary Tree"
+      },
+      {
+        "url": "/problems/consecutive-parent-child/",
+        "title": "Consecutive Parent - Child"
+      },
+      {
+        "url": "/problems/balanced-binary-tree/",
+        "title": "Balanced Binary Tree"
+      },
+      {
+        "url": "/problems/maximum-edge-removal/",
+        "title": "Maximum Edge Removal"
+      },
+      {
+        "url": "/problems/merge-two-binary-tree/",
+        "title": "Merge two Binary Tree"
+      },
+      {
+        "url": "/problems/symmetric-binary-tree/",
+        "title": "Symmetric Binary Tree"
+      },
+      {
+        "url": "/problems/identical-binary-trees/",
+        "title": "Identical Binary Trees"
+      },
+      {
+        "url": "/problems/construct-bst-from-preorder/",
+        "title": "Construct BST from Preorder"
+      },
+      {
+        "url": "/problems/inorder-traversal-of-cartesian-tree/",
+        "title": "Inorder Traversal of Cartesian Tree"
+      },
+      {
+        "url": "/problems/sorted-array-to-balanced-bst/",
+        "title": "Sorted Array To Balanced BST"
+      },
+      {
+        "url": "/problems/construct-binary-tree-from-inorder-and-preorder/",
+        "title": "Construct Binary Tree From Inorder And Preorder"
+      },
+      {
+        "url": "/problems/binary-tree-from-inorder-and-postorder/",
+        "title": "Binary Tree From Inorder And Postorder"
+      },
+      {
+        "url": "/problems/vertical-order-traversal-of-binary-tree/",
+        "title": "Vertical Order traversal of Binary Tree"
+      },
+      {
+        "url": "/problems/diagonal-traversal/",
+        "title": "Diagonal Traversal"
+      },
+      {
+        "url": "/problems/vertical-sum-of-a-binary-tree/",
+        "title": "Vertical Sum of a Binary Tree"
+      },
+      {
+        "url": "/problems/covered-uncovered-nodes/",
+        "title": "Covered / Uncovered Nodes"
+      },
+      {
+        "url": "/problems/inorder-traversal/",
+        "title": "Inorder Traversal"
+      },
+      {
+        "url": "/problems/preorder-traversal/",
+        "title": "Preorder Traversal"
+      },
+      {
+        "url": "/problems/postorder-traversal/",
+        "title": "Postorder Traversal"
+      },
+      {
+        "url": "/problems/right-view-of-binary-tree/",
+        "title": "Right view of Binary tree"
+      },
+      {
+        "url": "/problems/cousins-in-binary-tree/",
+        "title": "Cousins in Binary Tree"
+      },
+      {
+        "url": "/problems/reverse-level-order/",
+        "title": "Reverse Level Order"
+      },
+      {
+        "url": "/problems/zigzag-level-order-traversal-bt/",
+        "title": "ZigZag Level Order Traversal BT"
+      },
+      {
+        "url": "/problems/populate-next-right-pointers-tree/",
+        "title": "Populate Next Right Pointers Tree"
+      },
+      {
+        "url": "/problems/burn-a-tree/",
+        "title": "Burn a Tree"
+      },
+      {
+        "url": "/problems/max-depth-of-binary-tree/",
+        "title": "Max Depth of Binary Tree"
+      },
+      {
+        "url": "/problems/sum-root-to-leaf-numbers/",
+        "title": "Sum Root to Leaf Numbers"
+      },
+      {
+        "url": "/problems/path-sum/",
+        "title": "Path Sum"
+      },
+      {
+        "url": "/problems/min-depth-of-binary-tree/",
+        "title": "Min Depth of Binary Tree"
+      },
+      {
+        "url": "/problems/root-to-leaf-paths-with-sum/",
+        "title": "Root to Leaf Paths With Sum"
+      },
+      {
+        "url": "/problems/invert-the-binary-tree/",
+        "title": "Invert the Binary Tree"
+      },
+      {
+        "url": "/problems/least-common-ancestor/",
+        "title": "Least Common Ancestor"
+      },
+      {
+        "url": "/problems/flatten-binary-tree-to-linked-list/",
+        "title": "Flatten Binary Tree to Linked List"
+      },
+      {
+        "url": "/problems/order-of-people-heights/",
+        "title": "Order of People Heights"
+      }
+    ]
+  },
+  {
+    "topic": "dynamic-programming",
+    "problems": [
+      {
+        "url": "/problems/longest-common-subsequence/",
+        "title": "Longest Common Subsequence"
+      },
+      {
+        "url": "/problems/longest-palindromic-subsequence/",
+        "title": "Longest Palindromic Subsequence"
+      },
+      {
+        "url": "/problems/edit-distance/",
+        "title": "Edit Distance"
+      },
+      {
+        "url": "/problems/repeating-subsequence/",
+        "title": "Repeating Sub-Sequence"
+      },
+      {
+        "url": "/problems/distinct-subsequences/",
+        "title": "Distinct Subsequences"
+      },
+      {
+        "url": "/problems/scramble-string/",
+        "title": "Scramble String"
+      },
+      {
+        "url": "/problems/regular-expression-match/",
+        "title": "Regular Expression Match"
+      },
+      {
+        "url": "/problems/regular-expression-ii/",
+        "title": "Regular Expression II"
+      },
+      {
+        "url": "/problems/interleaving-strings/",
+        "title": "Interleaving Strings"
+      },
+      {
+        "url": "/problems/length-of-longest-subsequence/",
+        "title": "Length of Longest Subsequence"
+      },
+      {
+        "url": "/problems/smallest-sequence-with-given-primes/",
+        "title": "Smallest sequence with given Primes"
+      },
+      {
+        "url": "/problems/largest-area-of-rectangle-with-permutations/",
+        "title": "Largest area of rectangle with permutations"
+      },
+      {
+        "url": "/problems/tiling-with-dominoes/",
+        "title": "Tiling With Dominoes"
+      },
+      {
+        "url": "/problems/paint-house/",
+        "title": "Paint House!"
+      },
+      {
+        "url": "/problems/ways-to-decode/",
+        "title": "Ways to Decode"
+      },
+      {
+        "url": "/problems/stairs/",
+        "title": "Stairs"
+      },
+      {
+        "url": "/problems/longest-increasing-subsequence/",
+        "title": "Longest Increasing Subsequence"
+      },
+      {
+        "url": "/problems/intersecting-chords-in-a-circle/",
+        "title": "Intersecting Chords in a Circle"
+      },
+      {
+        "url": "/problems/tushars-birthday-bombs/",
+        "title": "Tushar's Birthday Bombs"
+      },
+      {
+        "url": "/problems/jump-game-array/",
+        "title": "Jump Game Array"
+      },
+      {
+        "url": "/problems/min-jumps-array/",
+        "title": "Min Jumps Array"
+      },
+      {
+        "url": "/problems/longest-arithmetic-progression/",
+        "title": "Longest Arithmetic Progression"
+      },
+      {
+        "url": "/problems/n-digit-numbers-with-digit-sum-s-/",
+        "title": "N digit numbers with digit sum S"
+      },
+      {
+        "url": "/problems/shortest-common-superstring/",
+        "title": "Shortest common superstring"
+      },
+      {
+        "url": "/problems/ways-to-color-a-3xn-board/",
+        "title": "Ways to color a 3xN Board"
+      },
+      {
+        "url": "/problems/kth-manhattan-distance-neighbourhood/",
+        "title": "Kth Manhattan Distance Neighbourhood"
+      },
+      {
+        "url": "/problems/best-time-to-buy-and-sell-stock-atmost-b-times/",
+        "title": "Best Time to Buy and Sell Stock atmost B times"
+      },
+      {
+        "url": "/problems/coins-in-a-line/",
+        "title": "Coins in a Line"
+      },
+      {
+        "url": "/problems/evaluate-expression-to-true/",
+        "title": "Evaluate Expression To True"
+      },
+      {
+        "url": "/problems/egg-drop-problem/",
+        "title": "Egg Drop Problem!"
+      },
+      {
+        "url": "/problems/best-time-to-buy-and-sell-stocks-iii/",
+        "title": "Best Time to Buy and Sell Stocks III"
+      },
+      {
+        "url": "/problems/longest-valid-parentheses/",
+        "title": "Longest valid Parentheses"
+      },
+      {
+        "url": "/problems/max-edge-queries/",
+        "title": "Max edge queries!"
+      },
+      {
+        "url": "/problems/max-sum-path-in-binary-tree/",
+        "title": "Max Sum Path in Binary Tree"
+      },
+      {
+        "url": "/problems/kingdom-war/",
+        "title": "Kingdom War"
+      },
+      {
+        "url": "/problems/maximum-path-in-triangle/",
+        "title": "Maximum Path in Triangle"
+      },
+      {
+        "url": "/problems/maximum-size-square-sub-matrix/",
+        "title": "Maximum Size Square Sub-matrix"
+      },
+      {
+        "url": "/problems/increasing-path-in-matrix/",
+        "title": "Increasing Path in Matrix"
+      },
+      {
+        "url": "/problems/minimum-difference-subsets/",
+        "title": "Minimum Difference Subsets!"
+      },
+      {
+        "url": "/problems/subset-sum-problem/",
+        "title": "Subset Sum Problem!"
+      },
+      {
+        "url": "/problems/unique-paths-in-a-grid/",
+        "title": "Unique Paths in a Grid"
+      },
+      {
+        "url": "/problems/dungeon-princess/",
+        "title": "Dungeon Princess"
+      },
+      {
+        "url": "/problems/min-sum-path-in-matrix/",
+        "title": "Min Sum Path in Matrix"
+      },
+      {
+        "url": "/problems/min-sum-path-in-triangle/",
+        "title": "Min Sum Path in Triangle"
+      },
+      {
+        "url": "/problems/max-rectangle-in-binary-matrix/",
+        "title": "Max Rectangle in Binary Matrix"
+      },
+      {
+        "url": "/problems/rod-cutting/",
+        "title": "Rod Cutting"
+      },
+      {
+        "url": "/problems/queen-attack/",
+        "title": "Queen Attack"
+      },
+      {
+        "url": "/problems/dice-throw/",
+        "title": "Dice Throw"
+      },
+      {
+        "url": "/problems/sub-matrices-with-sum-zero/",
+        "title": "Sub Matrices with sum Zero"
+      },
+      {
+        "url": "/problems/coin-sum-infinite/",
+        "title": "Coin Sum Infinite"
+      },
+      {
+        "url": "/problems/max-product-subarray/",
+        "title": "Max Product Subarray"
+      },
+      {
+        "url": "/problems/best-time-to-buy-and-sell-stocks-i/",
+        "title": "Best Time to Buy and Sell Stocks I"
+      },
+      {
+        "url": "/problems/arrange-ii/",
+        "title": "Arrange II"
+      },
+      {
+        "url": "/problems/chain-of-pairs/",
+        "title": "Chain of Pairs"
+      },
+      {
+        "url": "/problems/max-sum-without-adjacent-elements/",
+        "title": "Max Sum Without Adjacent Elements"
+      },
+      {
+        "url": "/problems/merge-elements/",
+        "title": "Merge elements"
+      },
+      {
+        "url": "/problems/flip-array/",
+        "title": "Flip Array"
+      },
+      {
+        "url": "/problems/tushars-birthday-party/",
+        "title": "Tushar's Birthday Party"
+      },
+      {
+        "url": "/problems/0-1-knapsack/",
+        "title": "0-1 Knapsack"
+      },
+      {
+        "url": "/problems/equal-average-partition/",
+        "title": "Equal Average Partition"
+      },
+      {
+        "url": "/problems/potions/",
+        "title": "Potions"
+      },
+      {
+        "url": "/problems/best-time-to-buy-and-sell-stocks-ii/",
+        "title": "Best Time to Buy and Sell Stocks II"
+      },
+      {
+        "url": "/problems/word-break-ii/",
+        "title": "Word Break II"
+      },
+      {
+        "url": "/problems/unique-binary-search-trees-ii/",
+        "title": "Unique Binary Search Trees II"
+      },
+      {
+        "url": "/problems/count-permutations-of-bst/",
+        "title": "Count Permutations of BST"
+      },
+      {
+        "url": "/problems/palindrome-partitioning-ii/",
+        "title": "Palindrome Partitioning II"
+      },
+      {
+        "url": "/problems/word-break/",
+        "title": "Word Break"
+      }
+    ]
+  },
+  {
+    "topic": "greedy-algorithm",
+    "problems": [
+      {
+        "url": "/problems/highest-product/",
+        "title": "Highest Product"
+      },
+      {
+        "url": "/problems/interview-questions/",
+        "title": "Bulbs"
+      },
+      {
+        "url": "/problems/disjoint-intervals/",
+        "title": "Disjoint Intervals"
+      },
+      {
+        "url": "/problems/largest-permutation/",
+        "title": "Largest Permutation"
+      },
+      {
+        "url": "/problems/meeting-rooms/",
+        "title": "Meeting rooms"
+      },
+      {
+        "url": "/problems/distribute-candy/",
+        "title": "Distribute Candy"
+      },
+      {
+        "url": "/problems/seats/",
+        "title": "Seats"
+      },
+      {
+        "url": "/problems/assign-mice-to-holes/",
+        "title": "Assign Mice to Holes"
+      },
+      {
+        "url": "/problems/majority-element/",
+        "title": "Majority Element"
+      },
+      {
+        "url": "/problems/gas-station/",
+        "title": "Gas Station"
+      }
+    ]
+  },
+  {
+    "topic": "graph-data-structure-algorithms",
+    "problems": [
+      {
+        "url": "/problems/path-in-directed-graph/",
+        "title": "Path in Directed Graph"
+      },
+      {
+        "url": "/problems/water-flow/",
+        "title": "Water Flow"
+      },
+      {
+        "url": "/problems/stepping-numbers/",
+        "title": "Stepping Numbers"
+      },
+      {
+        "url": "/problems/capture-regions-on-board/",
+        "title": "Capture Regions on Board"
+      },
+      {
+        "url": "/problems/word-search-board/",
+        "title": "Word Search Board"
+      },
+      {
+        "url": "/problems/path-with-good-nodes/",
+        "title": "Path with good nodes!"
+      },
+      {
+        "url": "/problems/largest-distance-between-nodes-of-a-tree/",
+        "title": "Largest Distance between nodes of a Tree"
+      },
+      {
+        "url": "/problems/good-graph/",
+        "title": "Good Graph"
+      },
+      {
+        "url": "/problems/cycle-in-directed-graph/",
+        "title": "Cycle in Directed Graph"
+      },
+      {
+        "url": "/problems/delete-edge/",
+        "title": "Delete Edge!"
+      },
+      {
+        "url": "/problems/two-teams/",
+        "title": "Two teams?"
+      },
+      {
+        "url": "/problems/valid-path/",
+        "title": "Valid Path"
+      },
+      {
+        "url": "/problems/region-in-binarymatrix/",
+        "title": "Region in BinaryMatrix"
+      },
+      {
+        "url": "/problems/path-in-matrix/",
+        "title": "Path in Matrix"
+      },
+      {
+        "url": "/problems/level-order/",
+        "title": "Level Order"
+      },
+      {
+        "url": "/problems/smallest-multiple-with-0-and-1/",
+        "title": "Smallest Multiple With 0 and 1"
+      },
+      {
+        "url": "/problems/snake-ladder-problem/",
+        "title": "Snake Ladder Problem!"
+      },
+      {
+        "url": "/problems/min-cost-path/",
+        "title": "Min Cost Path"
+      },
+      {
+        "url": "/problems/permutation-swaps/",
+        "title": "Permutation Swaps!"
+      },
+      {
+        "url": "/problems/commutable-islands/",
+        "title": "Commutable Islands"
+      },
+      {
+        "url": "/problems/possibility-of-finishing-all-courses-given-prerequisites/",
+        "title": "Possibility of finishing all courses given pre-requisites"
+      },
+      {
+        "url": "/problems/cycle-in-undirected-graph/",
+        "title": "Cycle in Undirected Graph"
+      },
+      {
+        "url": "/problems/mother-vertex/",
+        "title": "Mother Vertex"
+      },
+      {
+        "url": "/problems/file-search/",
+        "title": "File Search"
+      },
+      {
+        "url": "/problems/black-shapes/",
+        "title": "Black Shapes"
+      },
+      {
+        "url": "/problems/convert-sorted-list-to-binary-search-tree/",
+        "title": "Convert Sorted List to Binary Search Tree"
+      },
+      {
+        "url": "/problems/sum-of-fibonacci-numbers/",
+        "title": "Sum Of Fibonacci Numbers"
+      },
+      {
+        "url": "/problems/knight-on-chess-board/",
+        "title": "Knight On Chess Board"
+      },
+      {
+        "url": "/problems/useful-extra-edges/",
+        "title": "Useful Extra Edges"
+      },
+      {
+        "url": "/problems/word-ladder-i/",
+        "title": "Word Ladder I"
+      },
+      {
+        "url": "/problems/word-ladder-ii/",
+        "title": "Word Ladder II"
+      },
+      {
+        "url": "/problems/clone-graph/",
+        "title": "Clone Graph"
+      }
+    ]
+  }
+]
