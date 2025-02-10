@@ -1,11 +1,8 @@
-<lov-code>
-import { useState, useEffect } from "react";
-lov-code>
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CodeEditor from "@/components/CodeEditor"; // Fixing CodeEditor import to use default import
+import CodeEditor from "@/components/CodeEditor";
 import { StepProgress } from "@/components/StepProgress";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
@@ -17,12 +14,19 @@ import { useAuth } from "@/contexts/AuthContext";
 import { evaluationService } from "@/services/evaluationService";
 import axios from "axios";
 import { useSubscription } from "@/contexts/SubscriptionContext";
-import { TestCase } from "@/types/contest"; // Fixing TestCase import to use the correct type from contest.ts
+import { TestCase } from "@/types/contest";
 import { codeExecutionService } from "@/services/codeExecutionService";
 import { saplingService } from "@/services/saplingService";
 import { SaplingEditor } from "@/components/SaplingEditor";
 import { Clock, Award, Plus, Loader2, Play } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const GROQ_API_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
@@ -160,10 +164,7 @@ const SolvePage: React.FC = () => {
   const [isRunningTests, setIsRunningTests] = useState(false);
   const [aiDetectionResult, setAiDetectionResult] = useState<AIDetectionResult | null>(null);
 
-  // Get the current path to determine which practice mode we're in
   const path = window.location.pathname.split("/")[1];
-
-  // Get the appropriate question based on whether we're accessing via ID or practice mode
   const question = id
     ? questions[Number(id) as keyof typeof questions]
     : practiceQuestions[path as keyof typeof practiceQuestions];
@@ -189,14 +190,12 @@ const SolvePage: React.FC = () => {
 
   useEffect(() => {
     if (question && currentStep === 3) {
-      // Convert examples to test cases
       const exampleTestCases: TestCase[] = question.examples.map(example => ({
         input: example.input,
         expectedOutput: example.expectedOutput,
         explanation: example.explanation
       }));
       
-      // Add basic test cases
       const basicTestCases = question.testCases.basic.map(test => ({
         input: test.input,
         expectedOutput: test.expectedOutput,
@@ -210,7 +209,6 @@ const SolvePage: React.FC = () => {
   const handleRunCode = async () => {
     setIsRunningTests(true);
     try {
-      // First run the code against test cases
       const updatedTestCases = [...editorTestCases];
       
       for (const testCase of updatedTestCases) {
@@ -236,7 +234,6 @@ const SolvePage: React.FC = () => {
 
       setEditorTestCases(updatedTestCases);
 
-      // Format the results for display
       const resultText = updatedTestCases.map(testCase => `
 Input: ${testCase.input}
 Expected Output: ${testCase.expectedOutput}
@@ -247,7 +244,6 @@ ${testCase.explanation ? `Explanation: ${testCase.explanation}` : ''}
 
       setExecutionResult(resultText);
 
-      // Show toast based on results
       const allPassed = updatedTestCases.every(tc => tc.passed);
       const passedCount = updatedTestCases.filter(tc => tc.passed).length;
       const totalCount = updatedTestCases.length;
@@ -374,17 +370,11 @@ ${testCase.explanation ? `Explanation: ${testCase.explanation}` : ''}
         code: ""
       };
 
-      // Analyze examples
-      try {
-        if (!stepData.examples || stepData.examples.length === 0) {
-          throw new Error("No examples provided. Please add at least one example.");
-        }
+      const formattedExamples = stepData.examples.map((ex, i) => 
+        `Example ${i + 1}:\nInput: ${ex.input}\nOutput: ${ex.output}`
+      ).join('\n\n');
 
-        const formattedExamples = stepData.examples.map((ex, i) => 
-          `Example ${i + 1}:\nInput: ${ex.input}\nOutput: ${ex.output}`
-        ).join('\n\n');
-
-        const systemPrompt = `You are an expert coding instructor that evaluates coding examples. 
+      const systemPrompt = `You are an expert coding instructor that evaluates coding examples. 
 Provide feedback based on the following categories: Good, Bad, Very Good, Excellent, Awesome, and Need Improvement.
 Also assign a score between 1 to 5 based on the quality.
 
@@ -399,31 +389,18 @@ Score: [1-5]
 Analysis: [your detailed analysis]
 Suggestions: [specific suggestions if any]`;
 
-        const userPrompt = `Problem: ${question.title}
+      const userPrompt = `Problem: ${question.title}
 Description: ${question.description}
 
 Examples Provided:
 ${formattedExamples}`;
 
-        analyses.examples = await callGroqAPI(systemPrompt, userPrompt);
-        if (!analyses.examples.includes("Score:")) {
-          throw new Error("Invalid analysis format. Please try again.");
-        }
-      } catch (error: any) {
-        if (error.message.includes("API key") || error.message.includes("Authentication Error")) {
-          analyses.examples = "Score: 0\nError: GROQ API authentication failed. Please check your API key configuration.";
-        } else {
-          analyses.examples = `Score: 0\nError: ${error.message}`;
-        }
+      analyses.examples = await callGroqAPI(systemPrompt, userPrompt);
+      if (!analyses.examples.includes("Score:")) {
+        throw new Error("Invalid analysis format. Please try again.");
       }
 
-      // Analyze approach
-      try {
-        if (!stepData.approach?.trim()) {
-          throw new Error("No approach provided. Please explain your solution approach.");
-        }
-
-        const systemPrompt = `You are an expert coding instructor that evaluates solution approaches.
+      const systemPrompt2 = `You are an expert coding instructor that evaluates solution approaches.
 Provide feedback based on the following categories: Good, Bad, Very Good, Excellent, Awesome, and Need Improvement.
 Also assign a score between 1 to 5 based on the quality.
 
@@ -438,35 +415,22 @@ Score: [1-5]
 Analysis: [your detailed analysis]
 Suggestions: [specific suggestions if any]`;
 
-        const userPrompt = `Problem: ${question.title}
+      const userPrompt2 = `Problem: ${question.title}
 Description: ${question.description}
 
 Student's Approach:
 ${stepData.approach}`;
 
-        analyses.approach = await callGroqAPI(systemPrompt, userPrompt);
-        if (!analyses.approach.includes("Score:")) {
-          throw new Error("Invalid analysis format. Please try again.");
-        }
-      } catch (error: any) {
-        if (error.message.includes("API key") || error.message.includes("Authentication Error")) {
-          analyses.approach = "Score: 0\nError: GROQ API authentication failed. Please check your API key configuration.";
-        } else {
-          analyses.approach = `Score: 0\nError: ${error.message}`;
-        }
+      analyses.approach = await callGroqAPI(systemPrompt2, userPrompt2);
+      if (!analyses.approach.includes("Score:")) {
+        throw new Error("Invalid analysis format. Please try again.");
       }
 
-      // Analyze test cases
-      try {
-        if (!Object.values(stepData.testCases).some(tc => tc.trim())) {
-          throw new Error("No test cases provided. Please add at least one test case.");
-        }
+      const formattedTestCases = Object.entries(stepData.testCases).map(([type, cases]) => 
+        `${type.charAt(0).toUpperCase() + type.slice(1)} Test Cases:\n${cases}`
+      ).join('\n\n');
 
-        const formattedTestCases = Object.entries(stepData.testCases).map(([type, cases]) => 
-          `${type.charAt(0).toUpperCase() + type.slice(1)} Test Cases:\n${cases}`
-        ).join('\n\n');
-
-        const systemPrompt = `You are an expert coding instructor that evaluates test cases.
+      const systemPrompt3 = `You are an expert coding instructor that evaluates test cases.
 Provide feedback based on the following categories: Good, Bad, Very Good, Excellent, Awesome, and Need Improvement.
 Also assign a score between 1 to 5 based on the quality.
 
@@ -481,31 +445,18 @@ Score: [1-5]
 Analysis: [your detailed analysis]
 Suggestions: [specific suggestions if any]`;
 
-        const userPrompt = `Problem: ${question.title}
+      const userPrompt3 = `Problem: ${question.title}
 Description: ${question.description}
 
 Test Cases Provided:
 ${formattedTestCases}`;
 
-        analyses.testCases = await callGroqAPI(systemPrompt, userPrompt);
-        if (!analyses.testCases.includes("Score:")) {
-          throw new Error("Invalid analysis format. Please try again.");
-        }
-      } catch (error: any) {
-        if (error.message.includes("API key") || error.message.includes("Authentication Error")) {
-          analyses.testCases = "Score: 0\nError: GROQ API authentication failed. Please check your API key configuration.";
-        } else {
-          analyses.testCases = `Score: 0\nError: ${error.message}`;
-        }
+      analyses.testCases = await callGroqAPI(systemPrompt3, userPrompt3);
+      if (!analyses.testCases.includes("Score:")) {
+        throw new Error("Invalid analysis format. Please try again.");
       }
 
-      // Analyze code
-      try {
-        if (!stepData.code?.trim()) {
-          throw new Error("No code provided. Please write your solution code.");
-        }
-
-        const systemPrompt = `You are an expert coding instructor that evaluates code solutions.
+      const systemPrompt4 = `You are an expert coding instructor that evaluates code solutions.
 Provide feedback based on the following categories: Good, Bad, Very Good, Excellent, Awesome, and Need Improvement.
 Also assign a score between 1 to 5 based on the quality.
 
@@ -520,7 +471,7 @@ Score: [1-5]
 Analysis: [your detailed analysis]
 Suggestions: [specific suggestions if any]`;
 
-        const userPrompt = `Problem: ${question.title}
+      const userPrompt4 = `Problem: ${question.title}
 Description: ${question.description}
 
 Student's Code:
@@ -532,19 +483,11 @@ ${JSON.stringify(stepData.testCases)}
 Examples:
 ${JSON.stringify(stepData.examples)}`;
 
-        analyses.code = await callGroqAPI(systemPrompt, userPrompt);
-        if (!analyses.code.includes("Score:")) {
-          throw new Error("Invalid analysis format. Please try again.");
-        }
-      } catch (error: any) {
-        if (error.message.includes("API key") || error.message.includes("Authentication Error")) {
-          analyses.code = "Score: 0\nError: GROQ API authentication failed. Please check your API key configuration.";
-        } else {
-          analyses.code = `Score: 0\nError: ${error.message}`;
-        }
+      analyses.code = await callGroqAPI(systemPrompt4, userPrompt4);
+      if (!analyses.code.includes("Score:")) {
+        throw new Error("Invalid analysis format. Please try again.");
       }
 
-      // Set feedback with all analyses
       setFeedback(analyses);
       setIsFeedbackOpen(true);
       
@@ -613,7 +556,6 @@ ${JSON.stringify(stepData.examples)}`;
       return;
     }
 
-    // First check for AI-generated content
     const hasAIContent = await detectAIContent(approach, code);
     
     if (hasAIContent) {
@@ -685,7 +627,6 @@ ${JSON.stringify(stepData.examples)}`;
     );
   }
 
-  // Update steps based on current step
   const updatedSteps = steps.map((step, index) => ({
     ...step,
     completed: index < currentStep,
@@ -699,7 +640,6 @@ ${JSON.stringify(stepData.examples)}`;
       <Navbar />
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-6">
-          {/* Left Column - Problem Description and Solution */}
           <div className="space-y-4">
             <Card className="border-0 shadow-md">
               <CardHeader className="border-b border-border/20 bg-card/50">
@@ -788,7 +728,6 @@ ${JSON.stringify(stepData.examples)}`;
               </CardContent>
             </Card>
 
-            {/* Solution Section */}
             <Card className="border-0 shadow-md">
               <CardHeader className="border-b border-border/20 bg-card/50">
                 <CardTitle>Your Solution</CardTitle>
@@ -948,7 +887,6 @@ ${JSON.stringify(stepData.examples)}`;
             </Card>
           </div>
 
-          {/* Right Column - Progress */}
           <div className="space-y-4">
             <Card className="border-0 shadow-md sticky top-4">
               <CardHeader className="border-b border-border/20 bg-card/50">
@@ -963,4 +901,12 @@ ${JSON.stringify(stepData.examples)}`;
       </div>
 
       <FeedbackDialog
-        isOpen={isFeedback
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        feedback={feedback}
+      />
+    </div>
+  );
+};
+
+export default SolvePage;
