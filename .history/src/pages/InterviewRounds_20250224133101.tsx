@@ -36,7 +36,7 @@ export default function InterviewRounds() {
       title: "HR Round Simulation",
       description: "Practice common HR interview questions and scenarios.",
       icon: UserCog,
-      route: "/hr-intewrview-emotion",
+      route: "/hr-",
       image: "https://media.gettyimages.com/id/1365436662/photo/successful-partnership.jpg?s=612x612&w=0&k=20&c=B1xspe9Q5WMsLc7Hc9clR8MWUL4bsK1MfUdDNVNR2Xg=",
     },
     {
